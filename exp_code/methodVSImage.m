@@ -1,18 +1,17 @@
-%% the diferent method for solving the matric recovery
+%% the different method for solving the matric recovery
 clear;clc
 rng(22);format short 
-cwd = cd;
+cwd = fileparts(pwd) ;
 path_lena = strcat(cwd,'\img_image\lena.png');
 path_re1 = strcat(cwd,'\img_image\re1.jpg');
 
 img_ori = double(imread(path_lena))/255;
 img_size = size(img_ori);
 
- %% strictly low rank
+  %% strictly low rank
   rt = ceil(min(size(img_ori(:,:,1)))/5); 
   for i=1:3
     [U,S,V]=svd(img_ori(:,:,i));
-    Sigma(:,:,i) = S ; 
     Xt(:,:,i)=U(:,1:rt)*S(1:rt,1:rt)*V(:,1:rt)';
   end
   %% mask
