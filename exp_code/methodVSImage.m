@@ -16,12 +16,12 @@ img_size = size(img_ori);
   end
   %% mask
     %% random mask
-    missrate = 0.5;
-    mask = zeros(img_size(1:2));
+    missrate = 0.3;
+    mask = ones(img_size(1:2));
     for i=1:img_size(2)  
         idx = 1:1:img_size(1) ;
         randidx = randperm(img_size(1),img_size(1)); % 随机[n] 中的 k 个 index
-        mask(randidx(1:ceil(img_size(1)*missrate)),i)=1; 
+        mask(randidx(1:ceil(img_size(1)*missrate)),i)=0; 
     end
     mask = ~mask;
     %% block_column mask 
@@ -90,29 +90,42 @@ img_size = size(img_ori);
   % EPIRNN
   optionsEP = optionsA; optionsEP.alpha = 0.7;
   Parsol = {}; 
-      %% 
+      %% PIRNN 
   for i =1:3
     Xm = XM(:,:,i);
     PIR = MC_PIRNN(Xm,Xm,sp, lambda, mask, tol, optionsP);
     X_PIR(:,:,i) = PIR.Xsol; Parsol{i,1} = PIR;
   end
-  %%
+      %% AIRNN
   for i=1:3
     Xm = XM(:,:,i);
     AIR = MC_AIRNN(Xm,Xm,sp, lambda, mask, tol, optionsA);
     X_AIR(:,:,i) = AIR.Xsol; Parsol{i,2} = AIR;
   end
+      %% EPIRNN
   for i=1:3
     Xm = XM(:,:,i);
     EPIR = MC_EPIRNN(Xm,Xm,sp, lambda, mask, tol, optionsEP);
     X_EPIR(:,:,i) = EPIR.Xsol; Parsol{i,3} = EPIR;
   end
+      %% SCP ADMM 
   for i=1:3
     Xm = XM(:,:,i);
     SCP = MC_SCpADMM(Xm,Xm,sp, lambda, mask, tol, optionsEP);     
     X_SCP(:,:,i) = SCP.Xsol; Parsol{i,4} = SCP;
   end
-  %% imshow show
+      %% FGSRp 
+  optionsFGSR.p = sp ; 
+  optionsFGSR.d = ceil(1.5*rt);
+  optionsFGSR.regul_B = "L2";
+  optionsFGSR.tol = 1e-4;
+  optionsFGSR.lambda = 0.09;
+  for i = 1:3
+    Xm = XM(:,:,i);
+    Xr = MC_FGSRp_PALM(Xm,mask,optionsFGSR);
+    X_FGSR(:,:,i) = Xr;
+  end
+  %% imshow show 
 imshow(X_SCP)
 
 
