@@ -5,7 +5,8 @@ cwd = fileparts(pwd) ;
 path_lena = strcat(cwd,'\img_image\lena.png');
 path_re1 = strcat(cwd,'\img_image\re1.jpg');
 
-img_ori = double(imread(path_lena))/255;
+img_ori = double(imread(path_lena))/255 ; 
+% img_ori = double(imread(path_lena))/255;
 img_size = size(img_ori);
 
   %% strictly low rank
@@ -37,12 +38,12 @@ img_size = size(img_ori);
   %% ------------------------ RECOVERY ------------------------
   % 初始矩阵 + 线性参数 + 正则参数
   XM = mask.*Xt;
-%   X0 = zeros(img_size(1:2)) ; 
-  X0 = (randn(img_size(1),rt))*(randn(rt,img_size(2)));
+  X_INIT_0 = zeros(img_size(1:2)) ; 
+  X_INIT_RAND1 = (1+randn(img_size(1),rt))*(randn(rt,img_size(2)));
   tol = 1e-5 ;
   options.max_iter = 5e3; 
-  options.eps = 1e-3; 
-  options.mu = 1.1;
+  options.eps = 1e-10; 
+  options.mu = 1.3;
 %   options.KLopt = 1e-5;   
     %% search p
     optionsEP = options; 
@@ -81,7 +82,7 @@ img_size = size(img_ori);
     [~,optLambdaIdx] = max(SOL_PSNR);
     %% 
     sp = 0.3 ; 
-    lambda = 0.028 ; 
+    lambda = 0.1 ; 
     %%
   % PIRNN
   optionsP = options; 
@@ -93,19 +94,19 @@ img_size = size(img_ori);
       %% PIRNN 
   for i =1:3
     Xm = XM(:,:,i);
-    PIR = MC_PIRNN(Xm,Xm,sp, lambda, mask, tol, optionsP);
+    PIR = MC_PIRNN(X_INIT_RAND1,Xm,sp, lambda, mask, tol, optionsP);
     X_PIR(:,:,i) = PIR.Xsol; Parsol{i,1} = PIR;
   end
-      %% AIRNN
+%       %% AIRNN
   for i=1:3
     Xm = XM(:,:,i);
-    AIR = MC_AIRNN(Xm,Xm,sp, lambda, mask, tol, optionsA);
+    AIR = MC_AIRNN(X_INIT_RAND1,Xm,sp, lambda, mask, tol, optionsA);
     X_AIR(:,:,i) = AIR.Xsol; Parsol{i,2} = AIR;
   end
-      %% EPIRNN
+%       %% EPIRNN
   for i=1:3
     Xm = XM(:,:,i);
-    EPIR = MC_EPIRNN(Xm,Xm,sp, lambda, mask, tol, optionsEP);
+    EPIR = MC_EPIRNN(X_INIT_RAND1,Xm,sp, lambda, mask, 1e-5, optionsEP);
     X_EPIR(:,:,i) = EPIR.Xsol; Parsol{i,3} = EPIR;
   end
       %% SCP ADMM 
@@ -126,7 +127,7 @@ img_size = size(img_ori);
     X_FGSR(:,:,i) = Xr;
   end
   %% imshow show 
-imshow(X_SCP)
+imshow(X_EPIR)
 
 
 

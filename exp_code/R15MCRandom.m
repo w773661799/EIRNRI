@@ -1,4 +1,6 @@
 %% test the PIRNN / AIRNN / EPIRNN with random data  
+% this experiment shows the EPIRNN will convergence faster than PIRNN
+% the AIRNN has the similar convergence rate with PIRNN
 clc,clear,format long 
 rng(22)
 nr = 150; nc = 150; r = 15 ;
@@ -25,11 +27,11 @@ tol = 1e-5;
   rcSen = 15; X0 = (1+randn(nr,rcSen))*(randn(rcSen,nc)); 
   optionsP.Rel = Y; 
   optionsP.max_iter = itmax; 
+  optionsP.eps = eps(1);
   PIR = MC_PIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
   optionsP.Scalar = 0.8; 
   AIR = MC_AIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
   optionsP.alpha = 5e-1; 
-  optionsP.eps = eps(1)
   EPIR = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
     %% plot 
     pPIR = min(itmax,PIR.iterTol); pAIR = min(itmax,AIR.iterTol);
@@ -41,23 +43,23 @@ tol = 1e-5;
     set(h,'Position',[500 500 1500 500]);
 %     subplot(1,3,1)
 subplot('Position',[0.05,0.1,0.28,0.85])
-    plot(PIRx,log10(PIR.RelErr(1:pPIR)),':.k','linewidth',1);hold on
-    plot(AIRx,log10(AIR.RelErr(1:pAIR)),'--b','linewidth',1);
-    plot(EPIRx,log10(EPIR.RelErr(1:pEPI)),'-.r','linewidth',1); hold off
+    plot(PIRx,log10(PIR.RelErr(1:pPIR)),':ko','linewidth',1);hold on
+    plot(AIRx,log10(AIR.RelErr(1:pAIR)),'--b^','linewidth',1);
+    plot(EPIRx,log10(EPIR.RelErr(1:pEPI)),'-.rs','linewidth',1); hold off
     xlabel("iteration"); ylabel("log(RelErr)")
     legend("PIRNN","AIRNN","EPIRNN")
-    subplot('Position',[0.38,0.1,0.28,0.85])
+subplot('Position',[0.38,0.1,0.28,0.85])
 %     subplot(1,3,2,'position',[0.35,0,0.3,1])
-    plot(PIRx,log10(PIR.RelDist(1:pPIR)),':.k','linewidth',1);hold on
-    plot(AIRx,log10(AIR.RelDist(1:pAIR)),'--b','linewidth',1);
-    plot(EPIRx,log10(EPIR.RelDist(1:pEPI)),'-.r','linewidth',1);hold off
+    plot(PIRx,log10(PIR.RelDist(1:pPIR)),':ko','linewidth',1);hold on
+    plot(AIRx,log10(AIR.RelDist(1:pAIR)),'--b^','linewidth',1);
+    plot(EPIRx,log10(EPIR.RelDist(1:pEPI)),'-.rs','linewidth',1);hold off
     xlabel("iteration"); ylabel("log(RelDist)")
     legend("PIRNN","AIRNN","EPIRNN")
-    subplot('Position',[0.71,0.1,0.28,0.85])
+subplot('Position',[0.71,0.1,0.28,0.85])
 %     subplot(1,3,3,'position',[0.7,0,0.3,1])
-    plot(PIRx,PIR.f(1:pPIR),':.k','linewidth',1);hold on; 
-    plot(AIRx,AIR.f(1:pAIR),'--b','linewidth',1);
-    plot(EPIRx,EPIR.f(1:pEPI),'-.r','linewidth',1);hold off
+    plot(PIRx,PIR.f(1:pPIR),':ko','linewidth',1);hold on; 
+    plot(AIRx,AIR.f(1:pAIR),'--b^','linewidth',1);
+    plot(EPIRx,EPIR.f(1:pEPI),'-.rs','linewidth',1);hold off
     xlabel("iteration"); ylabel("F(x)")
     legend("PIRNN","AIRNN","EPIRNN")
     %%

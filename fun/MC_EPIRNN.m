@@ -35,7 +35,8 @@ function Par = MC_EPIRNN(X0,M,sp, lambda, mask, tol, options)
     ReX = options.Rel;
     spRelErr = -ones(max_iter,1);
   end
-  if isfield(options,'zero')==0,zero = 1e-10;
+  
+  if isfield(options,'zero')==0,zero = 0;
   else,zero = options.zero;   % thresholding
   end
   
@@ -46,14 +47,14 @@ function Par = MC_EPIRNN(X0,M,sp, lambda, mask, tol, options)
   weps = ones(rc,1)*epsre; 
   
   Gradf = @(X)(mask.*(X-M)) ; 
-  Objf = @(x)(norm(mask.*(x-M),'fro')/2 + lambda*norm(svds(x,rank(x)),sp))^(sp);
+  Objf = @(x)(norm(mask.*(x-M),'fro')/2 + lambda*norm(svds(x,rank(x)),sp)^(sp));
   ALF = @(x,y)(norm(mask.*(x-M),'fro')/2 + lambda*norm(svd(x)+y,sp)^(sp));
   iter = 0;  X1 = X0; sigma = svd(X1); 
   
 %   Objf(X0)
-  goon = true;
+
   tic;
-  while goon && iter < max_iter 
+  while iter <= max_iter 
     iter = iter + 1 ; 
     Xc = X1 + alpha*(X1-X0);  
     [U,S,V] = svd(Xc - Gradf(Xc)/mu,'econ') ;
@@ -74,50 +75,77 @@ function Par = MC_EPIRNN(X0,M,sp, lambda, mask, tol, options)
     sigma = sort(NewS.*idx,'descend') ;% update the sigma 
 %     sigma = NewS.*idx ;
     RelDist = norm(U(:,idx)'*Gradf(Xc)*V(:,idx)+...
-      lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk,Rk),'fro')/norm(M,'fro');
-    
-%     RelErr= norm(X1-M,inf)/norm(M,'fro');
-    if exist('ReX','var')
-      Rtol = norm(Xc-ReX,'fro')/norm(ReX,'fro');
-      Rate(iter) = norm(mask.*(Xc-ReX),'fro')/norm(mask.*(X1-ReX),'fro');
-      spRelErr(iter) = Rtol; 
-      goon = (Rtol>tol)&&(RelDist>tol); 
-    else
-      goon = RelDist>tol;
-      goon = goon && norm(M-mask.*Xc,inf)>tol ;
-    end
+      lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk,Rk),'fro')/norm(Xc,'fro');
     KLdist = norm(Xc-X1,"fro")+(1-Scalar)*norm(weps(1:Rk),1)/Scalar;
-    goon = goon && (norm(Xc-X1,"fro")+(1-Scalar)*norm(weps(1:Rk),1)/Scalar > KLopt);
-    spRelDist(iter) = RelDist; spf(iter) = ALF(X1,weps);
+
+% The Initialization Information
+    if iter==1
+      fprintf(1, 'iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
+              iter, RelDist, rank(X1),Objf(X1) );
+    end
+    
+% save for plot 
+    spRelDist(iter) = RelDist; spf(iter) = ALF(Xc,weps);
     sprank(iter) = rank(X1);
     Rsim(iter) = (Objf(Xc)-Objf(X1))/(norm(Xc-X1,'fro')^2); 
     Ssim(iter) = norm(U(:,idx)'*Gradf(Xc)*V(:,idx)+...
       lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk,Rk),'fro')/norm(Xc-X1,'fro');    
     GMinf(iter) = norm(Gradf(Xc),inf);
-% update the iteration
-    X0 = X1; X1 = Xc; 
-% -----
-    if (iter == 1)||(mod(iter,5e8) == 0)||(~goon)||(iter==max_iter)
-      fprintf(1, 'iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
-              iter, RelDist, rank(X1),Objf(X1) );
-            %nnz(X1(~unobserved))
+    sprKLdist(iter) = KLdist;
+
+% Optimal Condition 
+    if exist('ReX','var')
+      Rtol = norm(Xc-ReX,'fro')/norm(ReX,'fro');
+      Rate(iter) = norm(mask.*(Xc-ReX),'fro')/norm(mask.*(X1-ReX),'fro');
+      spRelErr(iter) = Rtol; 
+      if Rtol<=tol
+        disp('Satisfying the optimality condition:Relative error'); 
+        fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
+          iter, RelDist, rank(Xc),Objf(Xc))
+      end
+      break;
     end
 
+    if RelDist<=tol 
+      disp('Satisfying the optimality condition:Relative Distance'); 
+      fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
+        iter, RelDist, rank(X1),Objf(X1))
+      break
+    end
+
+    
+    if KLdist<=KLopt
+      disp("Satisfying  the KL optimality condition"); 
+      fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
+        iter, RelDist, rank(X1),Objf(X1))
+      break
+    end
+    
+    if iter==max_iter
+      disp("Reach the MAX_ITERATION");
+      fprintf( 'iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
+        iter, RelDist, rank(X1),Objf(X1) );
+      break
+    end
+
+% update the iteration
+    X0 = X1; X1 = Xc; 
   end  % end while 
   estime = toc; 
+
   if exist('ReX','var')
     Par.RelErr = spRelErr(1:iter); 
     Par.Rate = Rate;
   end
   Par.weps = weps(1:rank(X1));
   Par.RelDist = spRelDist(1:iter); 
-  Par.Obj = Objf(X1); 
+  Par.Obj = Objf(Xc); 
   Par.f = spf(1:iter) ;
   Par.rank = sprank(1:iter); Par.iterTol = iter ;
   Par.S = Ssim;    
   Par.R = Rsim;
-  Par.Xsol = X1; 
+  Par.Xsol = Xc; 
   Par.time = estime; 
   Par.GMinf = GMinf;
-  Par.KLdist = KLdist;
+  Par.KLdist = sprKLdist;
 end
