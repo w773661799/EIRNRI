@@ -17,7 +17,7 @@ function Par = MC_EPIRNN(X0,M,sp, lambda, mask, tol, options)
   else,mu = options.mu ;
   end
   
-  if isfield(options,'KLopt')==0,KLopt = 1e-5*min([size(M),rank(M)]);
+  if isfield(options,'KLopt')==0,KLopt = 1e-5*min(size(M));
   else,KLopt = options.KLopt ;
   end
 
@@ -54,17 +54,17 @@ function Par = MC_EPIRNN(X0,M,sp, lambda, mask, tol, options)
 %   Objf(X0)
 
   tic;
-  while iter <= max_iter 
+  while iter <= max_iter && iter<332
     iter = iter + 1 ; 
     Xc = X1 + alpha*(X1-X0);  
     [U,S,V] = svd(Xc - Gradf(Xc)/mu,'econ') ;
 % restart the weps
-    if ~isempty(find(and(diag(S)>zero,(sigma+weps)<zero),1)) && (iter<=1e2)
-      weps(and(diag(S)>zero,(sigma+weps)<zero)) = epsre;
-    end 
+%     if ~isempty(find(and(diag(S)>zero,(sigma+weps)<zero),1)) && (iter<=1e2)
+%       weps(and(diag(S)>zero,(sigma+weps)<zero)) = epsre;
+%     end 
     
     NewS = diag(S) - 2*lambda*sp*(sigma+weps).^(sp-1)/mu; 
-    NewS(isinf(NewS))=0;
+%     NewS(isinf(NewS))=0;
 %     NewS(isnan(NewS))=0; 
 
     idx = NewS>eps(1); Rk = sum(idx);

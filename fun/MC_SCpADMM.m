@@ -20,11 +20,11 @@ function Par = MC_SCpADMM(X0,M,sp, lambda, mask, tol, options)
   Z = Y_omega;
   rou = 1.5;
   mv = 1.5;
-  iter = 0 ;goon = true;
+  iter = 0 ;
   sprank = -ones(max_iter,1);
 %   X1 = X0 ;
   tic;
-  while iter<=max_iter && goon
+  while iter<=max_iter
     iter = iter + 1;
     X = opt_X(E_omega,Y_omega,W,Z,mv,opt);
     E_omega = opt_E(X,Y_omega,mv,opt);
@@ -38,23 +38,33 @@ function Par = MC_SCpADMM(X0,M,sp, lambda, mask, tol, options)
     idx = sgv>eps(1); Rk = sum(idx);
     RelDist = norm(U(:,idx)'*Gradf(X)*V(:,idx)+...
       lambda*sp*spdiags(sgv(idx).^(sp-1),0,Rk,Rk),'fro')/norm(X,'fro');
+% Optimal Condition    
     if exist('ReX','var')
-      Rtol = norm(X-ReX,'fro')/norm(ReX,'fro');
-      goon = (Rtol>tol)&&(RelDist>tol); 
-    else
-      goon = RelDist>tol;
+      Rtol = norm(X1-ReX,'fro')/norm(ReX,'fro');
+      Rate(iter) = norm(mask.*(X1-ReX),'fro')/norm(mask.*(X0-ReX),'fro');
+      spRelErr(iter) = Rtol;
+      if Rtol<=tol
+        disp('Satisfying the optimality condition:Relative error'); 
+        fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
+          iter, RelDist, rank(X),Objf(X));
+        break;  
+      end
+    end
+
+    if RelDist<=tol
+      disp('Satisfying the optimality condition:Relative Distance'); 
+      fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
+        iter, RelDist, rank(X),Objf(X));
+      break
+    end
+    
+    if iter==max_iter
+      disp("Reach the MAX_ITERATION");
+      fprintf( 'iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
+        iter, RelDist, rank(X),Objf(X) );
+      break
     end
     sprank(iter) = rank(X);
-% what if the two iterations is colse? 
-% there is no evidence shows that we can terminate iteration if the two is so close
-%     goon = goon && (norm(X-X1,"fro")+(1-Scalar)*norm(weps(1:Rk),1)/Scalar > KLopt);
-%     X1 =X; 
-% -----
-    if (iter == 1)||(mod(iter,5e8) == 0)||(~goon)||(iter==max_iter)
-      fprintf(1, 'iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
-              iter, RelDist, rank(X),Objf(X) );
-            %nnz(X1(~unobserved))
-    end
   end % end while
   estime = toc; 
   

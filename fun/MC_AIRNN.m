@@ -17,7 +17,7 @@ function Par = MC_AIRNN(X0,M,sp, lambda, mask, tol, options)
   else,mu = options.mu ;
   end
   
-  if isfield(options,'KLopt')==0,KLopt = 1e-5*min([size(M),rank(M)]);
+  if isfield(options,'KLopt')==0,KLopt = 1e-5*min(size(M));
   else,KLopt = options.KLopt ;
   end
   

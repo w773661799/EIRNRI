@@ -17,12 +17,12 @@ img_size = size(img_ori);
   end
   %% mask
     %% random mask
-    missrate = 0.3;
-    mask = ones(img_size(1:2));
+    missrate = 0.3; % sampleRate = 1 - missRate
+    mask = zeros(img_size(1:2));
     for i=1:img_size(2)  
         idx = 1:1:img_size(1) ;
         randidx = randperm(img_size(1),img_size(1)); % 随机[n] 中的 k 个 index
-        mask(randidx(1:ceil(img_size(1)*missrate)),i)=0; 
+        mask(randidx(1:ceil(img_size(1)*missrate)),i)=1; 
     end
     mask = ~mask;
     %% block_column mask 
@@ -112,6 +112,9 @@ img_size = size(img_ori);
       %% SCP ADMM 
   for i=1:3
     Xm = XM(:,:,i);
+    labmda = 1 ;
+    optionsEP.max_iter = 1e2 ;  
+%     lambda = norm(Xm,"fro")*1;
     SCP = MC_SCpADMM(Xm,Xm,sp, lambda, mask, tol, optionsEP);     
     X_SCP(:,:,i) = SCP.Xsol; Parsol{i,4} = SCP;
   end

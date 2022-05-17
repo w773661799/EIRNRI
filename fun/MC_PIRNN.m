@@ -17,7 +17,7 @@ function Par = MC_PIRNN(X0,M,sp, lambda, mask, tol, options)
   else,mu = options.mu ;
   end
   
-  if isfield(options,'KLopt')==0,KLopt = 1e-5*min([size(M),rank(M)]);
+  if isfield(options,'KLopt')==0,KLopt = 1e-5*min(size(M));
   else,KLopt = options.KLopt ;
   end
   
@@ -96,12 +96,12 @@ function Par = MC_PIRNN(X0,M,sp, lambda, mask, tol, options)
         iter, RelDist, rank(X1),Objf(X1))
       break
     end 
-    if iter==max_iter
-      disp("Reach the MAX_ITERATION");
-      fprintf( 'iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
-        iter, RelDist, rank(X1),Objf(X1) );
-      break
-    end
+%     if iter==max_iter
+%       disp("Reach the MAX_ITERATION");
+%       fprintf( 'iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
+%         iter, RelDist, rank(X1),Objf(X1) );
+%       break
+%     end
 
 % update the iteration     
     X0 = X1;  
