@@ -1,6 +1,13 @@
 X0 = X_INIT_0;
 iter = 0;
+format long 
 %%
+    Xm = XM(:,:,i); 
+    M = Xm;
+    lambda = norm(Xm,"fro")*10;
+    optionsEP.max_iter = 1e2;
+    X_INIT_EPIR = X_INIT_RAND1; 
+
 if isfield(options,'max_iter')==0,max_iter = 5e3;
   else,max_iter = options.max_iter ;
   end
@@ -100,18 +107,6 @@ if isfield(options,'max_iter')==0,max_iter = 5e3;
           iter, RelDist, rank(Xc),Objf(Xc))
     end  
 
-%     if exist('ReX','var')
-%       Rtol = norm(Xc-ReX,'fro')/norm(ReX,'fro');
-%       Rate(iter) = norm(mask.*(Xc-ReX),'fro')/norm(mask.*(X1-ReX),'fro');
-%       spRelErr(iter) = Rtol; 
-%       if Rtol<=tol
-%         disp('Satisfying the optimality condition:Relative error'); 
-%         fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
-%           iter, RelDist, rank(Xc),Objf(Xc))
-%       end
-%       break;
-%     end
-
     if RelDist<=tol 
       disp('Satisfying the optimality condition:Relative Distance'); 
       fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
@@ -129,7 +124,7 @@ if isfield(options,'max_iter')==0,max_iter = 5e3;
     end
     
     if iter==max_iter
-      disp("Reach the MAX_ITERATION");
+      disp("Reach the MAX_iterTOTALATION");
       fprintf( 'iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
         iter, RelDist, rank(X1),Objf(X1) );
       break
@@ -160,96 +155,171 @@ img_size = size(img_ori);
   %% mask
     %% random mask
     missrate = 0.3; % sampleRate = 1 - missRate
-    mask = zeros(img_size(1:2));
+    mask = ones(img_size(1:2));
     for i=1:img_size(2)
         idx = 1:1:img_size(1) ;
         randidx = randperm(img_size(1),img_size(1)); % 随机[n] 中的 k 个 index
-        mask(randidx(1:ceil(img_size(1)*missrate)),i)=1; 
+        mask(randidx(1:ceil(img_size(1)*missrate)),i)=0; 
     end
-    mask = ~mask;
 %% ------------------------ RECOVERY ------------------------
   % 初始矩阵 + 线性参数 + 正则参数
   XM = mask.*Xt;
   X_INIT_0 = zeros(img_size(1:2)) ; 
-  X_INIT_RAND1 = (1+randn(img_size(1),rt))*(randn(rt,img_size(2)));
+  X_INIT_RAND1 = 1+(1+randn(img_size(1),rt))*(randn(rt,img_size(2)));
   tol = 1e-5 ;
   options.max_iter = 1e2; 
-  options.eps = 1e-10; 
-  options.mu = 1.3;
+  options.mu = 1.3;  
+  options.eps = 1;
+
 %   options.KLopt = 1e-5;   
 
-    %% search p
-    sp = 0.3; 
-    optionsP = options;
-    optionsEP = options; 
-    optionsEP.eps = 1; 
-    optionsEP.Scalar = 0.3;
-    optionsEP.alpha = 0.7;
-%     optionsEP.KLopt = 1e-5;  
-%       %% EPIRNN
-
+    %% different method with warm start to solve the MC
+% iterTOTAL.pir={}; iterTOTAL.air={}; iterTOTAL.epir={};      
+% timeTOTAL.pir={}; timeTOTAL.air={}; timeTOTAL.epir={};
+% OBJF.pir={}; OBJF.air={}; OBJF.epir={};
+iterTOTAL.pir=zeros(1,3); timeTOTAL.pir={}; OBJF.pir={};
+iterTOTAL.air=zeros(1,3); timeTOTAL.air={}; OBJF.air={}; 
+iterTOTAL.epir=zeros(1,3); timeTOTAL.epir={}; OBJF.epir={};
+%%
+  sp = 0.3; 
+  lambdaRho = 0.3 ; 
+  optionsP = options;
+  optionsP.eps = 1e-3;
 % PIR
-  PIR_time = 0;
+
   for i=1:3
-    Xm = XM(:,:,i); 
-    lambda = norm(Xm,"fro")*10;
+    iter = 1;
+    Xm = XM(:,:,i);
+    lambda = 100;
     optionsP.max_iter = 1e2;
     X_INIT_PIR = X_INIT_RAND1; 
-    while lambda>=1e-3
+    while lambda>norm(Xm,"fro")*1e-4
       PIR = MC_PIRNN(X_INIT_PIR,Xm,sp, lambda, mask, tol, optionsP);
       X_INIT_PIR = PIR.Xsol; 
-      lambda = lambda*0.1; 
-      PIR_time = PIR_time + PIR.time; 
+      lambda = lambda*lambdaRho; 
+      
+      iterTOTAL.pir(i) = iterTOTAL.pir(i) + PIR.iterTol;
+      if iter==1
+        timeTOTAL.pir{i} = PIR.time;
+        OBJF.pir{i} = PIR.f;
+      else
+        timeTOTAL.pir{i} = [timeTOTAL.pir{i},timeTOTAL.pir{i}(end)+PIR.time];
+        OBJF.pir{i} = [OBJF.pir{i},PIR.f];
+      end
+      iter = iter+1;
     end
-    optionsP.max_iter = 1e3;
+    lambda =  norm(Xm,"fro")*1e-5;
+    optionsP.max_iter = 3e3; %optionsP.eps = 1e-5; 
     PIR = MC_PIRNN(X_INIT_PIR,Xm,sp, lambda, mask, tol, optionsP);
-    PIR_time = PIR_time + PIR.time; 
-    X_PIR(:,:,i) = PIR.Xsol; Parsol{i,1} = PIR;
+    X_PIR(:,:,i) = PIR.Xsol;
+    
+    iterTOTAL.pir(i) = iterTOTAL.pir(i) + PIR.iterTol;
+    if iter==1
+      timeTOTAL.pir{i} = PIR.time;
+      OBJF.pir{i} = PIR.f;
+    else
+      timeTOTAL.pir{i} = [timeTOTAL.pir{i},timeTOTAL.pir{i}(end)+PIR.time];
+      OBJF.pir{i} = [OBJF.pir{i},PIR.f];
+    end
+    disp(" ----------------------------------------------------- PIR ")
   end
 
 %%
 % AIR
-  AIR_time = 0 ; 
+  optionsA = options;
+  optionsA.eps = 1; 
+  optionsA.Scalar = 0.5;
+  
   for i=1:3
+    iter = 1;
     Xm = XM(:,:,i); 
-    lambda = norm(Xm,"fro")*10;
-    optionsEP.max_iter = 1e2;
+    lambda = 100;
+    optionsA.max_iter = 1e2;
     X_INIT_AIR = X_INIT_RAND1; 
-    while lambda>=1e-3
-      AIR = MC_AIRNN(X_INIT_AIR,Xm,sp, lambda, mask, tol, optionsEP);
+    while lambda>norm(Xm,"fro")*1e-4
+      AIR = MC_AIRNN(X_INIT_AIR,Xm,sp, lambda, mask, tol, optionsA);
       X_INIT_AIR = AIR.Xsol;
-      lambda = lambda*0.1;
-      AIR_time = AIR_time + AIR.time;
+      lambda = lambda*lambdaRho;
+      
+      iterTOTAL.air(i) = iterTOTAL.air(i) + AIR.iterTol;
+      if iter==1
+        timeTOTAL.air{i} = AIR.time;
+        OBJF.air{i} = AIR.f;
+      else
+        timeTOTAL.air{i} = [timeTOTAL.air{i},timeTOTAL.air{i}(end)+AIR.time];
+        OBJF.air{i} = [OBJF.air{i},AIR.f];
+      end
+      iter = iter+1;
     end
-    optionsEP.max_iter = 1e3;
-    AIR = MC_AIRNN(X_INIT_AIR, Xm, sp, lambda, mask, tol, optionsEP);
+    lambda = norm(Xm,"fro")*1e-5;
+    optionsA.max_iter = 3e3;
+    AIR = MC_AIRNN(X_INIT_AIR, Xm, sp, lambda, mask, tol, optionsA);
     X_AIR(:,:,i) = AIR.Xsol; 
-    AIR_time = AIR_time + AIR.time;
-    Parsol{i,2} = PIR;
+    
+    iterTOTAL.air(i) = iterTOTAL.air(i) + AIR.iterTol;
+    if iter==1
+      timeTOTAL.air{i} = AIR.time;
+      OBJF.air{i} = AIR.f;
+    else
+      timeTOTAL.air{i} = [timeTOTAL.air{i},timeTOTAL.air{i}(end)+AIR.time];
+      OBJF.air{i} = [OBJF.air{i},AIR.f];
+    end
+    iter = iter+1;
+    disp(" ----------------------------------------------------- AIR ")
   end
 
 %%
 % EPIRNN
-  EPIR_time = 0;
+  
+  optionsEP = options;
+  optionsEP.eps = 1;
+  optionsEP.Scalar = 0.5; % optionsEP = optionsA;
+  optionsEP.alpha = 0.7; 
+  
   for i=1:3
+    iter = 1; 
     Xm = XM(:,:,i); 
-    lambda = norm(Xm,"fro")*10;
+    lambda = 100;
     optionsEP.max_iter = 1e2;
     X_INIT_EPIR = X_INIT_RAND1; 
-    while lambda>=1e-3
+    while lambda>norm(Xm,"fro")*1e-4
       EPIR = MC_EPIRNN(X_INIT_EPIR,Xm,sp, lambda, mask, tol, optionsEP);
       X_INIT_EPIR = EPIR.Xsol;
-      lambda = lambda*0.1;
-      EPIR_time = EPIR_time + PIR.time; 
+      lambda = lambda*lambdaRho;
+      
+      iterTOTAL.epir(i) = iterTOTAL.epir(i) + EPIR.iterTol;
+      if iter==1
+        timeTOTAL.epir{i} = EPIR.time;
+        OBJF.epir{i} = EPIR.f;
+      else
+        timeTOTAL.epir{i} = [timeTOTAL.epir{i},timeTOTAL.epir{i}(end)+EPIR.time];
+        OBJF.epir{i} = [OBJF.epir{i},EPIR.f];
+      end
+      iter = iter+1;
     end
-    optionsEP.max_iter = 1e3;
+    lambda = norm(Xm,"fro")*1e-5;
+    optionsEP.max_iter = 3e3;
     EPIR = MC_EPIRNN(X_INIT_EPIR,Xm,sp, lambda, mask, 1e-5, optionsEP);
-    EPIR_time = EPIR_time + PIR.time; 
-    X_EPIR(:,:,i) = EPIR.Xsol; Parsol{i,3} = EPIR;
+    X_EPIR(:,:,i) = EPIR.Xsol; 
+      iterTOTAL.epir(i) = iterTOTAL.epir(i) + EPIR.iterTol;
+      if iter==1
+        timeTOTAL.epir{i} = EPIR.time;
+        OBJF.epir{i} = EPIR.f;
+      else
+        timeTOTAL.epir{i} = [timeTOTAL.epir{i},timeTOTAL.epir{i}(end)+EPIR.time];
+        OBJF.epir{i} = [OBJF.epir{i},EPIR.f];
+      end
+      iter = iter+1;
+    disp(" ----------------------------------------------------- EPIR ")
   end
+
+%%
+% IRNN 2014 / 2016 Canyi Lu
+% parameter should be to the same
 
 %% 
 % ADMM SCP
+
   SCP_time = 0;
   for i=1:3
     Xm = XM(:,:,i); 
@@ -269,6 +339,8 @@ img_size = size(img_ori);
   end
 
 
+
+%% 
 
 
 
