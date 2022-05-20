@@ -5,7 +5,7 @@ function Par = MC_PIRNN(X0,M,sp, lambda, mask, tol, options)
   % - tol - reconstruction error tolerance, default = 1e-6
   % - max_iter - maximum number of iterations, default = 1000
   
-  if isfield(options,'max_iter')==0,max_iter = 5e3;
+  if isfield(options,'max_iter')==0,max_iter = 2e3;
   else,max_iter = options.max_iter ;
   end
   
@@ -68,13 +68,15 @@ function Par = MC_PIRNN(X0,M,sp, lambda, mask, tol, options)
 
 % save for plot 
     spRelDist(iter) = RelDist; 
-    spf(iter) = Objf(X1);
     Stime(iter) = toc; % recored the computing time 
     sprank(iter) = rank(X1);
-    Rsim(iter) = (Objf(X1)-Objf(X0))/(norm(X1-X0,'fro')^2); 
-    Ssim(iter) = norm(U(:,idx)'*Gradf(X1)*V(:,idx)+...
-      lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk,Rk),'fro')/norm(X1-X0,'fro'); 
-    GMinf(iter) = norm(Gradf(X1),inf);
+    
+%     spf(iter) = Objf(X1);
+%     Rsim(iter) = (Objf(X1)-Objf(X0))/(norm(X1-X0,'fro')^2); 
+%     Ssim(iter) = norm(U(:,idx)'*Gradf(X1)*V(:,idx)+...
+%       lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk,Rk),'fro')/norm(X1-X0,'fro'); 
+%     GMinf(iter) = norm(Gradf(X1),inf);
+
 % % The Initialization Information
 %     if iter==1
 %       fprintf(1, 'iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
@@ -114,7 +116,7 @@ function Par = MC_PIRNN(X0,M,sp, lambda, mask, tol, options)
       break
     end 
     
-    if iter>max_iter
+    if iter==max_iter
       disp("Reach the MAX_ITERATION");
       fprintf( 'iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
         iter, RelDist, rank(X1),Objf(X1) );
@@ -130,15 +132,17 @@ function Par = MC_PIRNN(X0,M,sp, lambda, mask, tol, options)
     Par.RelErr = spRelErr(1:iter);
     Par.Rate = Rate;
   end
-  
+%   
   Par.time = Stime;
-  Par.RelDist = spRelDist(1:iter);
   Par.Obj = Objf(X1); 
-  Par.f = spf(1:iter) ;
-  Par.rank = sprank(1:iter);
-  Par.iterTol = iter ;
-  Par.S = Ssim; Par.R = Rsim;
   Par.Xsol = X1; 
-  Par.GMinf = GMinf;
-  Par.KLdist = KLdist;
+  
+%   Par.RelDist = spRelDist(1:iter);
+%   Par.rank = sprank(1:iter);
+%   Par.iterTol = iter ;
+%   Par.f = spf(1:iter) ;
+%   Par.S = Ssim; Par.R = Rsim;
+
+%   Par.GMinf = GMinf;
+%   Par.KLdist = KLdist;
 end

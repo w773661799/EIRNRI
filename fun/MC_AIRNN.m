@@ -5,7 +5,7 @@ function Par = MC_AIRNN(X0,M,sp, lambda, mask, tol, options)
   % - tol - reconstruction error tolerance, default = 1e-6
   % - max_iter - maximum number of iterations, default = 1000
  
-  if isfield(options,'max_iter')==0,max_iter = 5e3;
+  if isfield(options,'max_iter')==0,max_iter = 2e3;
   else,max_iter = options.max_iter ;
   end
   
@@ -32,7 +32,7 @@ function Par = MC_AIRNN(X0,M,sp, lambda, mask, tol, options)
     spRelErr = -ones(max_iter,1); 
   end
   
-  if isfield(options,'zero')==0,zero = 0;
+  if isfield(options,'zero')==0,zero = 1e-20;
   else,zero = options.zero;   % thresholding
   end
 
@@ -123,13 +123,16 @@ function Par = MC_AIRNN(X0,M,sp, lambda, mask, tol, options)
       break
     end  
     
-    if iter>max_iter
+    if iter==max_iter
       disp("Reach the MAX_ITERATION");
       fprintf( 'iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
         iter, RelDist, rank(X1),Objf(X1) );
       break
     end
-
+  if mod(iter,1000)==0
+     fprintf( 'iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
+        iter, RelDist, rank(X1),Objf(X1) );
+  end
 % update the iteration 
     X0 = X1 ;   
   end % end while 
@@ -140,7 +143,7 @@ function Par = MC_AIRNN(X0,M,sp, lambda, mask, tol, options)
     Par.Rate = Rate;
   end
 
-  Par.weps = weps(Rk);
+  Par.weps = weps(1:Rk);
   Par.time = Stime;
   Par.RelDist = spRelDist(1:iter); 
   Par.Obj = Objf(X1); 
