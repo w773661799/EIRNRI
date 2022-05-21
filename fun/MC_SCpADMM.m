@@ -17,7 +17,7 @@ function Par = MC_SCpADMM(M, sp, lambda, mask, tol, opt)
   
   Objf = @(x)(norm(mask.*(x-M),'fro')^2/2 + lambda*norm(svds(x,rank(x)),sp)^(sp));
 
-    
+
   Y_omega = opt.D_omega;
   E_omega = opt.D_omega; % E = X-D 
   W = opt.D_omega;

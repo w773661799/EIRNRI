@@ -1,14 +1,11 @@
-
-%% 
-clear;clc
 rng(22);format long
 cwd = fileparts(pwd) ;
 path_lena = strcat(cwd,'\img_image\lena.png');
 path_re1 = strcat(cwd,'\img_image\re1.jpg');
-
 img_ori = double(imread(path_lena))/255 ; 
 % img_ori = double(imread(path_lena))/255;
 img_size = size(img_ori);
+
 
   %% strictly low rank
   rt = ceil(min(size(img_ori(:,:,1)))/5); 
@@ -16,16 +13,7 @@ img_size = size(img_ori);
     [U,S,V]=svd(img_ori(:,:,i));
     Xt(:,:,i)=U(:,1:rt)*S(1:rt,1:rt)*V(:,1:rt)';
   end
-  %% mask
-    %% random mask
-    missrate = 0.3; % sampleRate = 1 - missRate
-    mask = ones(img_size(1:2));
-    for i=1:img_size(2)
-        idx = 1:1:img_size(1) ;
-        randidx = randperm(img_size(1),img_size(1)); % 随机[n] 中的 k 个 index
-        mask(randidx(1:ceil(img_size(1)*missrate)),i)=0; 
-    end
-    % mask should obtain (1-missrate)*m*n elements from the original image
+  
 %% ------------------------ RECOVERY ------------------------
 % \lambda ~ [7e-3,50];
 % 
@@ -228,7 +216,6 @@ for idx=1:scpMaxLen
   peak_snr(idx) = psnr(img_ori,X_SCP);
 end
 %%
-omega = mask;
 optionsSCP.max_iter = 2e3;
 optionsSCP.tau = 30;
 % [~,scpBestIdx] = max(peak_snr); opt.p = scpStep*scpBestIdx;

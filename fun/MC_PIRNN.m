@@ -25,7 +25,7 @@ function Par = MC_PIRNN(X0,M,sp, lambda, mask, tol, options)
     disp("Calculation of correlation distance...");
   else
     ReX = options.Rel; 
-    spRelErr = -ones(max_iter,1);
+    spRelErr = [];
   end
   
   if isfield(options,'zero')==0,zero = 0;
@@ -48,42 +48,24 @@ function Par = MC_PIRNN(X0,M,sp, lambda, mask, tol, options)
   tic;
   while iter <= max_iter  
     iter = iter + 1; 
-%     [ud,sigma,vd] = svd(X0);
-%     Rk = rank(X0) ; 
-%     RelErr = norm(ud(1:Rk,:)*Gradf(X0)*vd(1:Rk,:)'+...
-%       lambda*sp*spdiags(diag(sigma).^(sp-1),0,Rk,Rk),'fro')/norm(M,'fro'); 
 
     [U,S,V] = svd(X0 - Gradf(X0)/mu,'econ') ;
     NewS = diag(S) - 2*lambda*sp*(sigma+weps).^(sp-1)/mu ;
-%     NewS = diag(S) - 2*lambda*sp*(diag(S)+weps).^(sp-1)/mu ;
-    idx = NewS>zero; Rk = sum(idx);  
+    idx = NewS>zero; 
     X1 = U*spdiags(NewS.*idx,0,rc,rc)*V';
-    
     sigma = sort(NewS.*idx,'descend'); % update the sigma 
-%     sigma = NewS.*idx ;
-    RelDist = norm(U(:,idx)'*Gradf(X1)*V(:,idx)+...
-      lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk,Rk),'fro')/norm(M,'fro'); 
-%     RelErr = norm(X1-M,'fro')/norm(M,'fro');
-    KLdist = norm(X1-X0,"fro");
-
 % save for plot 
-    spRelDist(iter) = RelDist; 
-    Stime(iter) = toc; % recored the computing time 
     sprank(iter) = rank(X1);
-    
-%     spf(iter) = Objf(X1);
+    spf(iter) = Objf(X1);
+    Stime(iter) = toc; % recored the computing time
+
+% optional information for the iteration 
 %     Rsim(iter) = (Objf(X1)-Objf(X0))/(norm(X1-X0,'fro')^2); 
 %     Ssim(iter) = norm(U(:,idx)'*Gradf(X1)*V(:,idx)+...
 %       lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk,Rk),'fro')/norm(X1-X0,'fro'); 
 %     GMinf(iter) = norm(Gradf(X1),inf);
 
-% % The Initialization Information
-%     if iter==1
-%       fprintf(1, 'iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
-%               iter, RelDist, rank(X1),Objf(X1) );
-%     end
-    
-% Optimal Condition    
+%% ---------------------- Optimal Condition ---------------------- 
     if exist('ReX','var')
       Rtol = norm(X1-ReX,'fro')/norm(ReX,'fro');
       Rate(iter) = norm(mask.*(X1-ReX),'fro')/norm(mask.*(X0-ReX),'fro');
@@ -96,26 +78,31 @@ function Par = MC_PIRNN(X0,M,sp, lambda, mask, tol, options)
       end
     end
     
-    if norm(mask.*(X1-M),inf)<tol
-      disp("Iteration terminates");
-      fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
-          iter, RelDist, rank(X1),Objf(X1));
-    end
-    
+    Rk = sum(idx);
+    RelDist = norm(U(:,idx)'*Gradf(X1)*V(:,idx)+...
+      lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk,Rk),'fro')/norm(M,'fro'); 
+    spRelDist(iter) = RelDist;
     if RelDist<tol
       disp('Satisfying the optimality condition:Relative Distance'); 
       fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
         iter, RelDist, rank(X1),Objf(X1));
       break
     end
-    
+
+    KLdist = norm(X1-X0,"fro");
     if KLdist<KLopt
       disp("Satisfying  the KL optimality condition"); 
       fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
-        iter, RelDist, rank(X1),Objf(X1))
+        iter, KLdist, rank(X1),Objf(X1))
       break
-    end 
-    
+    end
+
+%     if norm(mask.*(X1-M),inf)<tol
+%       disp("Iteration terminates");
+%       fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
+%           iter, RelDist, rank(X1),Objf(X1));
+%     end
+
     if iter==max_iter
       disp("Reach the MAX_ITERATION");
       fprintf( 'iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
@@ -134,15 +121,16 @@ function Par = MC_PIRNN(X0,M,sp, lambda, mask, tol, options)
   end
 %   
   Par.time = Stime;
+  Par.f = spf(1:iter);
+  Par.rank = sprank(1:iter);
+  
+  Par.RelDist = spRelDist(1:iter); 
+  
   Par.Obj = Objf(X1); 
   Par.Xsol = X1; 
-  
-%   Par.RelDist = spRelDist(1:iter);
-%   Par.rank = sprank(1:iter);
-%   Par.iterTol = iter ;
-%   Par.f = spf(1:iter) ;
-%   Par.S = Ssim; Par.R = Rsim;
+  Par.iterTol = iter ;
 
+%   Par.S = Ssim; Par.R = Rsim;
 %   Par.GMinf = GMinf;
 %   Par.KLdist = KLdist;
 end
