@@ -10,81 +10,97 @@ Y = xb*xc ;
 % --------------- random mask ---------------
 M_org = zeros(nr,nc); 
 missrate = 0.5; 
-for i=1:nc  
-    idx = 1:1:nr;
-    randidx=randperm(nr,nr); % random sequence
-    M_org(randidx(1:ceil(nr*missrate)),i)=1; 
+for i=1:nc
+  idx = 1:1:nr;
+  randidx=randperm(nr,nr); % random sequence
+  M_org(randidx(1:ceil(nr*missrate)),i)=1; 
 end
 mask = ~M_org; Xm=Y.*mask; 
 % --------------- parameters ---------------
 lambda = 1e-4*norm(Xm,inf);
-itmax = 2e4; 
-sp = 0.1; 
+itmax = 5e3; 
+sp = 0.5; 
 tol = 1e-5; 
-%% basic algorithm for sp=0.5 ,SR=0.5
+% basic algorithm for sp=0.5 ,SR=0.5
   % Initial point
   % with default eps = eps(1)
-  rcSen = 15; X0 = (1+randn(nr,rcSen))*(randn(rcSen,nc)); 
-  optionsP.Rel = Y; 
-  optionsP.max_iter = itmax; 
-  optionsP.eps = eps(1); 
+  rcSen = 15; 
+%   X0 = zeros(size(Y));
+  X0 = (randn(nr,rcSen))*(randn(rcSen,nc));  
+%%
+  options.Rel = Y; 
+  options.max_iter = itmax; 
+  options.eps = eps(1);  
+  options.beta = 1.1; 
+  
+  optionsP= options;
   PIR = MC_PIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
-  optionsP.Scalar = 0.8; 
-  AIR = MC_AIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
-  optionsP.alpha = 5e-1; 
-  EPIR = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
-    %% plot 
+
+  optionsA = options;
+%   optionsA.eps = 1e0;
+  optionsA.mu = 0.1; 
+  AIR = MC_AIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
+  
+  optionsEP = optionsA; 
+  optionsEP.alpha = 5e-1; 
+  EPIR = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsEP); 
+  
+    %% plot
     pPIR = min(itmax,PIR.iterTol); pAIR = min(itmax,AIR.iterTol);
     pEPI = min(itmax,EPIR.iterTol); 
     PIRx = (1:1:pPIR); AIRx = (1:1:pAIR); EPIRx = (1:1:pEPI); 
-    % ------------ RelErr plot 
-    h = figure(1);
+    %% plot subplot 
+% ------------ RelErr plot 
+h = figure(1);
 %     set (gca,'position',[0.1,0.1,0.9,0.9] );
     set(h,'Position',[500 500 1500 500]);
 %     subplot(1,3,1)
 subplot('Position',[0.05,0.1,0.28,0.85])
-    plot(PIRx,log10(PIR.RelErr(1:pPIR)),':ko','linewidth',1);hold on
-    plot(AIRx,log10(AIR.RelErr(1:pAIR)),'--b^','linewidth',1);
-    plot(EPIRx,log10(EPIR.RelErr(1:pEPI)),'-.rs','linewidth',1); hold off
+    plot(PIRx,log(PIR.RelErr(1:pPIR)),':k','linewidth',2);hold on
+    plot(AIRx,log(AIR.RelErr(1:pAIR)),'--b','linewidth',2);
+    plot(EPIRx,log(EPIR.RelErr(1:pEPI)),'-.r','linewidth',2); hold off
     xlabel("iteration"); ylabel("log(RelErr)")
     legend("PIRNN","AIRNN","EPIRNN")
 subplot('Position',[0.38,0.1,0.28,0.85])
 %     subplot(1,3,2,'position',[0.35,0,0.3,1])
-    plot(PIRx,log10(PIR.RelDist(1:pPIR)),':ko','linewidth',1);hold on
-    plot(AIRx,log10(AIR.RelDist(1:pAIR)),'--b^','linewidth',1);
-    plot(EPIRx,log10(EPIR.RelDist(1:pEPI)),'-.rs','linewidth',1);hold off
+    plot(PIRx,log(PIR.RelDist(1:pPIR)),':k','linewidth',2);hold on
+    plot(AIRx,log(AIR.RelDist(1:pAIR)),'--b','linewidth',2);
+    plot(EPIRx,log(EPIR.RelDist(1:pEPI)),'-r','linewidth',2);hold off
     xlabel("iteration"); ylabel("log(RelDist)")
     legend("PIRNN","AIRNN","EPIRNN")
 subplot('Position',[0.71,0.1,0.28,0.85])
 %     subplot(1,3,3,'position',[0.7,0,0.3,1])
-    plot(PIRx,PIR.f(1:pPIR),':ko','linewidth',1);hold on; 
-    plot(AIRx,AIR.f(1:pAIR),'--b^','linewidth',1);
-    plot(EPIRx,EPIR.f(1:pEPI),'-.rs','linewidth',1);hold off
+    plot(PIRx,PIR.f(1:pPIR),':k','linewidth',2);hold on; 
+    plot(AIRx,AIR.f(1:pAIR),'--b','linewidth',2);
+    plot(EPIRx,EPIR.f(1:pEPI),'-r','linewidth',2);hold off
     xlabel("iteration"); ylabel("F(x)")
     legend("PIRNN","AIRNN","EPIRNN")
-    %%
-%     plot(PIRx,log10(PIR.RelErr(1:pPIR)),':.k','linewidth',1);
-%     plot(AIRx,log10(AIR.RelErr(1:pAIR)),'--b','linewidth',1);
-%     plot(EPIRx,log10(EPIR.RelErr(1:pEPI)),'-.r','linewidth',1);
-%     xlabel("iteration"); ylabel("log(RelErr)")
-%     legend("PIRNN","AIRNN","EPIRNN")
-%     % ------------ RelDist plot 
-%     figure(2)
-%     plot(PIRx,log10(PIR.RelDist(1:pPIR)),':.k','linewidth',1);hold on
-%     plot(AIRx,log10(AIR.RelDist(1:pAIR)),'--b','linewidth',1);
-%     plot(EPIRx,log10(EPIR.RelDist(1:pEPI)),'-.r','linewidth',1);hold off
-%     xlabel("iteration"); ylabel("log(RelDist)")
-%     legend("PIRNN","AIRNN","EPIRNN")
-%     % ------------ objective value plot 
-%     figure(3)
-%     plot(PIRx,PIR.f(1:pPIR),':.k','linewidth',1);hold on; 
-%     plot(AIRx,AIR.f(1:pAIR),'--b','linewidth',1);
-%     plot(EPIRx,EPIR.f(1:pEPI),'-.r','linewidth',1);hold off
-%     xlabel("iteration"); ylabel("F(x)")
-%     legend("PIRNN","AIRNN","EPIRNN")
+    %% plot 3 
+  figure(1)
+    plot(PIRx,log(PIR.RelErr(1:pPIR)),':k','linewidth',2);hold on
+    plot(AIRx,log(AIR.RelErr(1:pAIR)),'--b','linewidth',2);
+    plot(EPIRx,log(EPIR.RelErr(1:pEPI)),'-r','linewidth',2); hold off
+    xlabel("iteration"); ylabel("log(RelErr)")
+    legend("PIRNN","AIRNN","EPIRNN")
+    % ------------ RelDist plot 
+  figure(2)
+    plot(PIRx,log(PIR.RelDist(1:pPIR)),':k','linewidth',2);hold on
+    plot(AIRx,log(AIR.RelDist(1:pAIR)),'--b','linewidth',2);
+    plot(EPIRx,log(EPIR.RelDist(1:pEPI)),'-r','linewidth',2);hold off
+    xlabel("iteration"); ylabel("log(RelDist)")
+    legend("PIRNN","AIRNN","EPIRNN")
+    % ------------ objective value plot 
+  figure(3)
+    plot(PIRx,PIR.f(1:pPIR),':k','linewidth',2);hold on; 
+    plot(AIRx,AIR.f(1:pAIR),'--b','linewidth',2);
+    plot(EPIRx,EPIR.f(1:pEPI),'-r','linewidth',2);hold off
+    xlabel("iteration"); ylabel("F(x)")
+    legend("PIRNN","AIRNN","EPIRNN")
 % -/end -----------------------------------------------------------------
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% ------------------ sensitive of alpha and plot
+%-----------------------------------------------------------------
+%% ------------------ sensitive of alpha/extrapolation parameter 
+clc; 
+optionsP= options;
 Lalpha = [0 0.1 0.3 0.5 0.7 0.9];
 for i = 1:length(Lalpha)
   optionsP.alpha = Lalpha(i) ;
@@ -93,37 +109,134 @@ end
   %% plot 
   figure(1) % RelErr
     pltLEPx = min(itmax,LEPIR{i}.iterTol);
-    plot(log10(LEPIR{1}.RelErr),'-.r','linewidth',1);hold on
-    plot(log10(LEPIR{2}.RelErr),':or','linewidth',1);
-    plot(log10(LEPIR{3}.RelErr),':+k','linewidth',1);
-    plot(log10(LEPIR{4}.RelErr),':.k','linewidth',1);
-    plot(log10(LEPIR{5}.RelErr),'-b','linewidth',1);
-    plot(log10(LEPIR{6}.RelErr),'--.b','linewidth',1);hold off
+    plot(log(LEPIR{1}.RelErr),'-.r','linewidth',2);hold on
+    plot(log(LEPIR{2}.RelErr),':+r','linewidth',2);
+    plot(log(LEPIR{3}.RelErr),':+k','linewidth',2);
+    plot(log(LEPIR{4}.RelErr),':.k','linewidth',2);
+    plot(log(LEPIR{5}.RelErr),'-b','linewidth',2);
+    plot(log(LEPIR{6}.RelErr),'--.b','linewidth',2);hold off
     xlabel("iteration"); ylabel("log(RelErr)")
     legend("\alpha = 0","\alpha = 0.1","\alpha = 0.3","\alpha = 0.5",...
     "\alpha = 0.7","\alpha = 0.9")
   figure(2) % Errdist
-    plot(log10(LEPIR{1}.RelDist),'-.r','linewidth',1);hold on
-    plot(log10(LEPIR{2}.RelDist),':or','linewidth',1);
-    plot(log10(LEPIR{3}.RelDist),':+k','linewidth',1);
-    plot(log10(LEPIR{4}.RelDist),':.k','linewidth',1);
-    plot(log10(LEPIR{5}.RelDist),'-b','linewidth',1);
-    plot(log10(LEPIR{6}.RelDist),'--.b','linewidth',1);hold off
+    plot(log(LEPIR{1}.RelDist),'-.r','linewidth',1);hold on
+    plot(log(LEPIR{2}.RelDist),':+r','linewidth',1);
+    plot(log(LEPIR{3}.RelDist),':+k','linewidth',1);
+    plot(log(LEPIR{4}.RelDist),':.k','linewidth',1);
+    plot(log(LEPIR{5}.RelDist),'-b','linewidth',1);
+    plot(log(LEPIR{6}.RelDist),'--.b','linewidth',1);hold off
     xlabel("iteration"); ylabel("log(RelDist)")
     legend("\alpha = 0","\alpha = 0.1","\alpha = 0.3","\alpha = 0.5",...
     "\alpha = 0.7","\alpha = 0.9")
   figure(3) % obj
-    plot(log10(LEPIR{1}.f),'-.r','linewidth',1);hold on
-    plot(log10(LEPIR{2}.f),':or','linewidth',1);
-    plot(log10(LEPIR{3}.f),':+k','linewidth',1);
-    plot(log10(LEPIR{4}.f),':.k','linewidth',1);
-    plot(log10(LEPIR{5}.f),'-b','linewidth',1);
-    plot(log10(LEPIR{6}.f),'--.b','linewidth',1);hold off
+    plot(log(LEPIR{1}.f),'-.r','linewidth',1);hold on
+    plot(log(LEPIR{2}.f),':+r','linewidth',1);
+    plot(log(LEPIR{3}.f),':+k','linewidth',1);
+    plot(log(LEPIR{4}.f),':.k','linewidth',1);
+    plot(log(LEPIR{5}.f),'-b','linewidth',1);
+    plot(log(LEPIR{6}.f),'--.b','linewidth',1);hold off
     xlabel("iteration"); ylabel("F(X)")
     legend("\alpha = 0","\alpha = 0.1","\alpha = 0.3","\alpha = 0.5",...
     "\alpha = 0.7","\alpha = 0.9")
 % -/end -----------------------------------------------------------------
+%-----------------------------------------------------------------
+%% robust of the initial points and eps for AIRNN
+% Initial point 
+clc
+rcSen = 10; 
+X0 = (randn(nr,rcSen))*randn(rcSen,nc); 
+lambda = 1e-3*norm(Y,inf);
+itmax = 5e3; 
+sp = 0.5; 
+options.Rel = Y; 
+options.beta = 1.3;
+options.max_iter = itmax;
+options.mu = 0.1; 
+options.alpha = 0.7; 
+options.KLopt = 1e-9;
+%
+  orieps_spl = 10.^(0:-1:-5);
+  optionsA = options;
+  optionsA.eps = 1e-4;
+%     optionsA.zero = 1e-4;
+  tol = 1e-6; 
+  for i = 1:length(orieps_spl)
+    optionsP = options;
+    optionsP.eps = orieps_spl(i);  
+    PIReps{i} = MC_PIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
+    optionsA.eps = orieps_spl(i);
+    AIReps{i} = MC_AIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
+    EPIReps{i} = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
+  end
 
+%     optionsA.eps = orieps_spl(1);
+%     AIReps{1} = MC_AIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
+%     EPIReps{1} = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
+  %%
+  
+  clear F R T
+  
+   for i = 1:6
+F(i,1:3) = [PIReps{i}.f(end), AIReps{i}.f(end),EPIReps{i}.f(end)];
+R(i,1:3) = [PIReps{i}.rank(end), AIReps{i}.rank(end),EPIReps{i}.rank(end)];
+T(i,1:3) = [PIReps{i}.time(end), AIReps{i}.time(end),EPIReps{i}.time(end)];
+   end
+format short g
+  
+    %% polt sensitive of eps for PIRNN and robust for AIRNN/EPIRNN
+%     timeStveps 
+% time VS f
+figure(1)
+
+    stimeeps = 0.03;
+    timelen = 0.97;
+
+    % for epsidx =1:length(orieps_spl)
+    for epsidx =2:2:4
+      begtime = find(PIReps{epsidx}.time>stimeeps ,1); 
+      endtime = find(PIReps{epsidx}.time>stimeeps+timelen ,1);
+      plot(PIReps{epsidx}.time(begtime:endtime),PIReps{epsidx}.f(begtime:endtime),".",'linewidth',2); hold on
+      
+      begtime = find(AIReps{epsidx}.time>stimeeps ,1);
+      endtime = find(AIReps{epsidx}.time>stimeeps+timelen ,1);
+      plot(AIReps{epsidx}.time(begtime:endtime),AIReps{epsidx}.f(begtime:endtime),"-.",'linewidth',2)
+    
+      begtime = find(EPIReps{epsidx}.time>stimeeps ,1);
+      endtime = find(EPIReps{epsidx}.time>stimeeps+timelen ,1);
+      plot(EPIReps{epsidx}.time(begtime:endtime),EPIReps{epsidx}.f(begtime:endtime),"-r",'linewidth',2)
+    end
+  axis([0 1.05 200 700])
+  legend("PIR-\epsilon  = 10^{-2}","AIR-\epsilon_{0} = 10^{-2}","EPIR-\epsilon_{0}=10^{-2}",...
+  "PIR-\epsilon  = 10^{-4}","AIR-\epsilon_{0} = 10^{-4}","EPIR-\epsilon_{0}=10^{-4}")       
+    xlabel("CPU-time(s)"); ylabel("Objective F(x)")
+
+%       begtime = find(AIReps{1}.time>stimeeps ,1);
+%       endtime = find(AIReps{1}.time>stimeeps+timelen ,1);
+%       plot(AIReps{1}.time(begtime:endtime),AIReps{1}.f(begtime:endtime),"-.ko")
+%     
+%       begtime = find(EPIReps{1}.time>stimeeps ,1);
+%       endtime = find(EPIReps{1}.time>stimeeps+timelen ,1);
+%       plot(EPIReps{1}.time(begtime:endtime),EPIReps{1}.f(begtime:endtime),"-.bs")
+  hold off
+%   legend("PIR-\epsilon = 1","PIR-\epsilon  = 10^{-1}","PIR-\epsilon  = 10^{-2}",...
+%     "PIR-\epsilon = 10^{-3}","PIR-\epsilon = 10^{-4}",...
+%     "AIR-\epsilon_{0}=1","EPIR-\epsilon_{0}=1")
+    %% polt sensitive of eps for PIRNN and robust for AIRNN/EPIRNN
+% iteration VS f
+figure(1)
+    pbeg = 10;
+    pend = 1e2;
+    % for epsidx =1:length(orieps_spl)
+    for epsidx =2:3
+      plot(PIReps{epsidx}.f(pbeg:pend),"^"); hold on
+          plot(AIReps{epsidx}.f(pbeg:pend),"-.+")
+    plot(EPIReps{epsidx}.f(pbeg:pend),"-.s")
+    end
+
+    legend("PIR-\epsilon = 1","PIR-\epsilon  = 10^{-1}","PIR-\epsilon  = 10^{-2}",...
+      "PIR-\epsilon = 10^{-3}","PIR-\epsilon = 10^{-4}",...
+      "AIR-\epsilon_{0}=1","EPIR-\epsilon_{0}=1")
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% ?????????????????????????????????????????????????????????????
 %% ------------------ sensitive of eps and plot
 rcSen = 15; X0 = (1+randn(nr,rcSen))*(randn(rcSen,nc)); 
@@ -131,7 +244,7 @@ optionsP.Rel = Y;
 optionsP.eps = 5e-1;
 optionsP.max_iter = itmax; 
 PIR = MC_PIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
-optionsP.Scalar = 0.8; 
+optionsP.mu = 0.8; 
 AIR = MC_AIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
 optionsP.alpha = 0.7; 
 EPIR = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
@@ -226,7 +339,7 @@ orieps = 1e-8;optionsP.eps = orieps;
 optionsP.max_iter = itmax;
 optionsP.Rel = Y; 
 optionsP.eps = orieps; 
-optionsP.Scalar = 0.3;
+optionsP.mu = 0.3;
 
 mu = 1.1:0.45:2; 
 

@@ -12,18 +12,19 @@ function Par = MC_SCpADMM(M, sp, lambda, mask, tol, opt)
   
   opt.lambda = lambda; % regularization parameter
   opt.p = sp; % Scp norm  
-  opt.omega = mask; % mask set
-  opt.D_omega = M; % observation set
+  opt.omega = mask; % observed set
+  opt.D_omega = M; % sampling set
   
   Objf = @(x)(norm(mask.*(x-M),'fro')^2/2 + lambda*norm(svds(x,rank(x)),sp)^(sp));
 
 
   Y_omega = opt.D_omega;
   E_omega = opt.D_omega; % E = X-D 
+  
   W = opt.D_omega;
   Z = Y_omega;
-  rou = 1.5;
-  mv = 1.5;
+  rou = 1.5; % 1.5 ???
+  mv = 1.5; % mv = rou ^ iterMax \mv_0 
   iter = 0 ;
   sprank = [];Stime =[]; 
   X0 = zeros(size(E_omega));  
@@ -34,7 +35,7 @@ function Par = MC_SCpADMM(M, sp, lambda, mask, tol, opt)
     X1 = opt_X(E_omega,Y_omega,W,Z,mv,opt);
     E_omega = opt_E(X1,Y_omega,mv,opt);
     W = opt_W(X1,Z,mv,opt);
-    Y_omega = Y_omega + mv*(E_omega - X1 .* opt.omega + opt.D_omega); 
+    tY_omega = Y_omega + mv*(E_omega - X1 .* opt.omega + opt.D_omega); 
     Z = Z + mv*(X1 - W);
     mv = rou*mv;
 

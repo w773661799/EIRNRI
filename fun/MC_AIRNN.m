@@ -1,9 +1,9 @@
 function Par = MC_AIRNN(X0,M,sp, lambda, mask, tol, options)
   % - M is the observation matrix
   % - lambda - regularization parameter, default = 1/sqrt(max(N,M))
-  % - mu - the augmented lagrangian parameter, default = 10*lambda
+  % - beta - the augmented lagrangian parameter, default = 10*lambda
   % - tol - reconstruction error tolerance, default = 1e-6
-  % - max_iter - maximum number of iterations, default = 1000
+  % - max_iter - maxibetam number of iterations, default = 1000
  
   if isfield(options,'max_iter')==0,max_iter = 2e3;
   else,max_iter = options.max_iter ;
@@ -13,16 +13,16 @@ function Par = MC_AIRNN(X0,M,sp, lambda, mask, tol, options)
   else,epsre = options.eps ;
   end
   
-  if isfield(options,'mu')==0,mu = 1.1;
-  else,mu = options.mu ;
+  if isfield(options,'beta')==0,beta = 1.1;
+  else,beta = options.beta ;
   end
   
   if isfield(options,'KLopt')==0,KLopt = 1e-5*min(size(M));
   else,KLopt = options.KLopt ;
   end
   
-  if isfield(options,'Scalar')==0,Scalar = 0.99;
-  else,Scalar = options.Scalar; 
+  if isfield(options,'mu')==0,mu = 0.5;
+  else,mu = options.mu; 
   end
   
   if isfield(options,'Rel')==0
@@ -32,7 +32,7 @@ function Par = MC_AIRNN(X0,M,sp, lambda, mask, tol, options)
     spRelErr = []; 
   end
   
-  if isfield(options,'zero')==0,zero = 1e-20;
+  if isfield(options,'zero')==0,zero = 0;
   else,zero = options.zero;   % thresholding
   end
 
@@ -52,22 +52,22 @@ function Par = MC_AIRNN(X0,M,sp, lambda, mask, tol, options)
   tic ;
   while iter <= max_iter
     iter = iter + 1; 
-    [U,S,V] = svd(X0 - Gradf(X0)/mu,'econ') ;
+    [U,S,V] = svd(X0 - Gradf(X0)/beta,'econ') ;
 % restart the eps
 %     if ~isempty(find(and(diag(S)>zero,(sigma+weps)<zero),1)) && (iter<=1e2)
 %       weps(and(diag(S)>zero,(sigma+weps)<zero)) = epsre;
 %     end 
-
-    NewS = diag(S) - 2*lambda*sp*(sigma+weps).^(sp-1)/mu;
+spf(iter) = Objf(X0);
+    NewS = diag(S) - lambda*sp*(sigma+weps).^(sp-1)/beta;
     NewS(isinf(NewS))=0; 
     idx = NewS>zero; Rk = sum(idx);  
     X1 = U*spdiags(NewS.*idx,0,rc,rc)*V'; 
-    weps(weps(1:Rk)>zero) = weps(weps(1:Rk)>zero)*Scalar ;
+    weps(weps(1:Rk)>zero) = weps(weps(1:Rk)>zero)*mu ;
     sigma = sort(NewS.*idx,'descend'); % update the sigma 
 % save for plot    
-    Stime(iter) = toc; % recored the computing time 
-    spf(iter) = Objf(X1);
     sprank(iter) = rank(X1);
+%     spf(iter) = Objf(X1);
+    Stime(iter) = toc; % recored the computing time 
     
 % optional information for the iteration 
 %     Rsim(iter) = (Objf(X1)-Objf(X0))/(norm(X1-X0,'fro')^2); 
@@ -95,7 +95,7 @@ function Par = MC_AIRNN(X0,M,sp, lambda, mask, tol, options)
     end
     
     RelDist = norm(U(:,idx)'*Gradf(X1)*V(:,idx)+...
-      lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk,Rk),'fro')/norm(M,'fro'); 
+      lambda*sp*spdiags((weps(idx)+NewS(idx)).^(sp-1),0,Rk,Rk),'fro')/norm(M,'fro'); 
     spRelDist(iter) = RelDist; 
     if RelDist<tol
       disp('Satisfying the optimality condition:Relative Distance'); 
@@ -103,8 +103,8 @@ function Par = MC_AIRNN(X0,M,sp, lambda, mask, tol, options)
         iter, RelDist, rank(X1),Objf(X1));
       break
     end
-
-    KLdist = norm(X1-X0,"fro")+(1-Scalar)*norm(weps(1:Rk),1)/Scalar;
+KLdist = norm(X1-X0,"fro");
+%     KLdist = norm(X1-X0,"fro")+(1-mu)*norm(weps(1:Rk),1)/mu;
     if KLdist<KLopt
       disp("Satisfying  the KL optimality condition"); 
       fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
@@ -120,7 +120,7 @@ function Par = MC_AIRNN(X0,M,sp, lambda, mask, tol, options)
        
     if iter==max_iter
       disp("Reach the MAX_ITERATION");
-      fprintf( 'iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
+      fprintf( 'iter:%04d\t rank(X):%d\t Obj(F):%d\n', ...
         iter, rank(X1),Objf(X1) );
       break
     end
@@ -149,7 +149,7 @@ function Par = MC_AIRNN(X0,M,sp, lambda, mask, tol, options)
   Par.Xsol = X1; 
   Par.iterTol = iter;
   
-%   Par.weps = weps(1:Rk);
+  Par.weps = weps(1:Rk);
 %   Par.S = Ssim; Par.R = Rsim;
 %   Par.GMinf = GMinf;
 %   Par.KLdist = KLdist;

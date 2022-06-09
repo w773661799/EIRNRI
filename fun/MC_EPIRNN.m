@@ -1,9 +1,9 @@
 function Par = MC_EPIRNN(X0,M,sp, lambda, mask, tol, options)
   % - M is the observation matrix
   % - lambda - regularization parameter, default = 1/sqrt(max(N,M))
-  % - mu - the augmented lagrangian parameter, default = 10*lambda
+  % - beta - the augmented lagrangian parameter, default = 10*lambda
   % - tol - reconstruction error tolerance, default = 1e-6
-  % - max_iter - maximum number of iterations, default = 5e3
+  % - max_iter - maxibetam number of iterations, default = 5e3
   
   if isfield(options,'max_iter')==0,max_iter = 2e3;
   else,max_iter = options.max_iter ;
@@ -13,16 +13,16 @@ function Par = MC_EPIRNN(X0,M,sp, lambda, mask, tol, options)
   else,epsre = options.eps ;
   end
   
-  if isfield(options,'mu')==0,mu = 1.1; % proximal parameter
-  else,mu = options.mu ;
+  if isfield(options,'beta')==0,beta = 1.1; % proximal parameter
+  else,beta = options.beta ;
   end
   
   if isfield(options,'KLopt')==0,KLopt = 1e-5*min(size(M));
   else,KLopt = options.KLopt ;
   end
 
-  if isfield(options,'Scalar')==0,Scalar = 0.3; % Scalar for eps 
-  else,Scalar = options.Scalar ;
+  if isfield(options,'mu')==0,mu = 0.5; % mu for eps 
+  else,mu = options.mu ;
   end  
   
   if isfield(options,'alpha')==0,alpha = 0.7;
@@ -36,7 +36,7 @@ function Par = MC_EPIRNN(X0,M,sp, lambda, mask, tol, options)
     spRelErr = [];
   end
   
-  if isfield(options,'zero')==0,zero = 1e-20;
+  if isfield(options,'zero')==0,zero = 0;
   else,zero = options.zero;   % thresholding
   end
   
@@ -58,24 +58,27 @@ function Par = MC_EPIRNN(X0,M,sp, lambda, mask, tol, options)
   while iter <= max_iter 
     iter = iter + 1 ; 
     Xc = X1 + alpha*(X1-X0);  
-    [U,S,V] = svd(Xc - Gradf(Xc)/mu,'econ') ;
+    
+    [U,S,V] = svd(Xc - Gradf(Xc)/beta,'econ') ;
+
 % restart the weps
 %     if ~isempty(find(and(diag(S)>zero,(sigma+weps)<zero),1)) && (iter<=1e2)
 %       weps(and(diag(S)>zero,(sigma+weps)<zero)) = epsre;
 %     end 
-
-    NewS = diag(S) - 2*lambda*sp*(sigma+weps).^(sp-1)/mu; 
+spf(iter) = Objf(X1);
+    NewS = diag(S) - lambda*sp*(sigma+weps).^(sp-1)/beta; 
+% NewS = diag(S) - 2*lambda*sp*(diag(S)+weps).^(sp-1)/beta; 
     NewS(isinf(NewS))=0;
     idx = NewS>zero; Rk = sum(idx);
     Xc = U*spdiags(NewS.*idx,0,rc,rc)*V'; 
 
-    weps(weps(1:Rk)>zero) = weps(weps(1:Rk)>zero)*Scalar ; 
+    weps(weps(1:Rk)>zero) = weps(weps(1:Rk)>zero)*mu ; 
     sigma = sort(NewS.*idx,'descend') ;% update the sigma 
 
 % save for plot    
-    Stime(iter) = toc; % recored the computing time 
-    spf(iter) = Objf(Xc); % objective
     sprank(iter) = rank(Xc);
+%     spf(iter) = Objf(Xc); % objective
+    Stime(iter) = toc; % recored the computing time 
 
 % optional information for the iteration 
 %     Rsim(iter) = (Objf(Xc)-Objf(X1))/(norm(Xc-X1,'fro')^2); 
@@ -97,16 +100,17 @@ function Par = MC_EPIRNN(X0,M,sp, lambda, mask, tol, options)
     end
 
     RelDist = norm(U(:,idx)'*Gradf(Xc)*V(:,idx)+...
-      lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk,Rk),'fro')/norm(M,'fro');
+      lambda*sp*spdiags((weps(idx)+NewS(idx)).^(sp-1),0,Rk,Rk),'fro')/norm(M,'fro');
     spRelDist(iter) = RelDist; 
     if RelDist<tol
       disp('Satisfying the optimality condition:Relative Distance'); 
       fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
         iter, RelDist, rank(Xc),Objf(Xc))
       break
-    end    
-
-    KLdist = norm(Xc-X1,"fro")+(1-Scalar)*norm(weps(1:Rk),1)/Scalar;
+    end
+    
+%     KLdist = norm(Xc-X1,"fro");
+    KLdist = norm(Xc-X1,"fro")+(1-mu)*norm(weps(1:Rk),1)/mu;
     if KLdist<KLopt
       disp("Satisfying  the KL optimality condition"); 
       fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
@@ -148,7 +152,7 @@ function Par = MC_EPIRNN(X0,M,sp, lambda, mask, tol, options)
   Par.Xsol = Xc; 
   Par.iterTol = iter ;
 
-%   Par.weps = weps(1:Rk);
+  Par.weps = weps(1:Rk);
 %   Par.S = Ssim; Par.R = Rsim;
 %   Par.GMinf = GMinf;
 %   Par.KLdist = KLdist;

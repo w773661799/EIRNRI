@@ -1,9 +1,9 @@
 function Par = MC_PIRNN(X0,M,sp, lambda, mask, tol, options)
   % - M is the observation matrix
   % - lambda - regularization parameter, default = 1/sqrt(max(N,M))
-  % - mu - the augmented lagrangian parameter, default = 10*lambda
+  % - beta - the augmented lagrangian parameter, default = 10*lambda
   % - tol - reconstruction error tolerance, default = 1e-6
-  % - max_iter - maximum number of iterations, default = 1000
+  % - max_iter - maxibetam number of iterations, default = 1000
   
   if isfield(options,'max_iter')==0,max_iter = 2e3;
   else,max_iter = options.max_iter ;
@@ -13,8 +13,8 @@ function Par = MC_PIRNN(X0,M,sp, lambda, mask, tol, options)
   else,epsre = options.eps ;
   end
   
-  if isfield(options,'mu')==0,mu = 1.1;
-  else,mu = options.mu ;
+  if isfield(options,'beta')==0,beta = 1.1;
+  else,beta = options.beta ;
   end
   
   if isfield(options,'KLopt')==0,KLopt = 1e-5*min(size(M));
@@ -48,15 +48,15 @@ function Par = MC_PIRNN(X0,M,sp, lambda, mask, tol, options)
   tic;
   while iter <= max_iter  
     iter = iter + 1; 
-
-    [U,S,V] = svd(X0 - Gradf(X0)/mu,'econ') ;
-    NewS = diag(S) - 2*lambda*sp*(sigma+weps).^(sp-1)/mu ;
+spf(iter) = Objf(X0);
+    [U,S,V] = svd(X0 - Gradf(X0)/beta,'econ') ;
+    NewS = diag(S) - lambda*sp*(sigma+weps).^(sp-1)/beta ;
     idx = NewS>zero; 
     X1 = U*spdiags(NewS.*idx,0,rc,rc)*V';
     sigma = sort(NewS.*idx,'descend'); % update the sigma 
 % save for plot 
     sprank(iter) = rank(X1);
-    spf(iter) = Objf(X1);
+%     spf(iter) = Objf(X1);
     Stime(iter) = toc; % recored the computing time
 
 % optional information for the iteration 
@@ -80,7 +80,7 @@ function Par = MC_PIRNN(X0,M,sp, lambda, mask, tol, options)
     
     Rk = sum(idx);
     RelDist = norm(U(:,idx)'*Gradf(X1)*V(:,idx)+...
-      lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk,Rk),'fro')/norm(M,'fro'); 
+      lambda*sp*spdiags((weps(idx)+NewS(idx)).^(sp-1),0,Rk,Rk),'fro')/norm(M,'fro'); 
     spRelDist(iter) = RelDist;
     if RelDist<tol
       disp('Satisfying the optimality condition:Relative Distance'); 
@@ -105,8 +105,8 @@ function Par = MC_PIRNN(X0,M,sp, lambda, mask, tol, options)
 
     if iter==max_iter
       disp("Reach the MAX_ITERATION");
-      fprintf( 'iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
-        iter, RelDist, rank(X1),Objf(X1) );
+      fprintf( 'iter:%04d\t rank(X):%d\t Obj(F):%d\n', ...
+        iter, rank(X1),Objf(X1) );
       break
     end
 

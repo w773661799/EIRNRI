@@ -34,9 +34,9 @@ X0 = (1+randn(nr,rt))*(randn(rt,nc));
 XM = mask.*Xt;
 sp = 0.5;
 tol = 1e-5 ;
-options.max_iter = 1e4; 
-options.eps = 1e-8; 
-options.mu = 1.1;
+options.max_iter = 5e3; 
+options.eps = 1e-5; 
+options.beta = 1.7;
 options.KLopt = 1e-5; 
 % options.KLopt = 1e-6 ;  
 
@@ -49,7 +49,7 @@ optionsEP = optionsA; optionsEP.alpha = 0.8;
 Parsol = {}; 
 for i =1:3
   Xm = XM(:,:,i);
-  lambda = 5e-3*norm(Xm,"fro");
+  lambda = 3e-3*norm(Xm,"fro");
   PIR = MC_PIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
   AIR = MC_AIRNN(X0,Xm,sp, lambda, mask, tol, optionsA);
   EPIR = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsEP);

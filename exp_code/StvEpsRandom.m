@@ -17,17 +17,18 @@ mask = ~M_org;
 Xm=Y.*mask; 
 % --------------- parameters ---------------
 orieps_spl = [1,1e-2,1e-4,1e-6] ;
-lambda = 1e-4*norm(Y,inf);
+lambda = 1e-3*norm(Y,inf);
 tol_spl = [1e-6; 1e-7; 1e-8]; 
 itmax = 5e3; 
   %% basic algorithm for sp=0.1 ,SR=0.5
-  % Initial point
-  rcSen = 15; X0 = (1+randn(nr,rcSen))*randn(rcSen,nc); 
+  % Initial point 
+  rcSen = 10; X0 = (randn(nr,rcSen))*randn(rcSen,nc); 
   sp = 0.5; 
   optionsP.Rel = Y; 
   optionsP.max_iter = itmax;
   optionsP.Scalar = 0.3; 
   optionsP.alpha = 0.7; 
+  optionsP.KLopt = 1e-5;
   tol = 5e-6; 
   for i = 1:length(orieps_spl)
     optionsP.eps = orieps_spl(i);  
@@ -37,7 +38,7 @@ itmax = 5e3;
   end
 
   %%
-  Titor = []; Trank = []; Tobj=[];format short
+  Titor = []; Trank = []; Tobj=[];
   for i = 1:length(orieps_spl)
     Titor(i,1:3) = [PIReps{i}.iterTol, AIReps{i}.iterTol, EPIReps{i}.iterTol];
     Trank(i,1:3) = [PIReps{i}.rank(end), AIReps{i}.rank(end), EPIReps{i}.rank(end)];
@@ -45,7 +46,7 @@ itmax = 5e3;
   end
   
  %% plot 
- pit = 2;
+ pit = 1;
     pPIR = min(itmax,PIReps{pit}.iterTol); pAIR = min(itmax,AIReps{pit}.iterTol);
     pEPI = min(itmax,EPIReps{pit}.iterTol); 
     PIRx = (1:1:pPIR); AIRx = (1:1:pAIR); EPIRx = (1:1:pEPI); 
@@ -57,12 +58,13 @@ itmax = 5e3;
 %     xlabel("iteration"); ylabel("log(RelErr)")
 %     legend("PIRNN","AIRNN","EPIRNN")
     % ------------ RelDist plot 
-    figure(2) % Errdist 
+figure(2) % Errdist 
     plot(PIRx,log10(PIReps{pit}.RelDist(1:pPIR)),':.r','linewidth',2);hold on
     plot(AIRx,log10(AIReps{pit}.RelDist(1:pAIR)),'--b','linewidth',2);
     plot(EPIRx,log10(EPIReps{pit}.RelDist(1:pEPI)),'-.g','linewidth',2);hold off
     xlabel("iteration"); ylabel("log(RelDist)")
     legend("PIRNN","AIRNN","EPIRNN")
+
 figure(3) % obj 
     plot(PIRx,PIReps{pit}.f(1:pPIR),':.r','linewidth',2);hold on
     plot(AIRx,AIReps{pit}.f(1:pAIR),'--b','linewidth',2);

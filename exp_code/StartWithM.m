@@ -20,7 +20,7 @@ img_ori = double(imread(path_lena))/255 ;
 img_size = size(img_ori);
 
 %% mask
-  %% random mask
+  %% random mask. mask = 1 
   SR = 0.5; % sampleRate = 1 - missRate
   mask = zeros(img_size(1:2));
   for i=1:img_size(2)
@@ -31,29 +31,56 @@ img_size = size(img_ori);
   % mask should obtain (1-missrate)*m*n elements from the original image
 %% strictly low rank
 % save the top 20% of the singular value
-  rt = ceil(min(size(img_ori(:,:,1)))/5); 
+  rt = ceil(max(size(img_ori(:,:,1)))/5); 
   for i=1:3
     [U,S,V]=svd(img_ori(:,:,i));
     Xt(:,:,i)=U(:,1:rt)*S(1:rt,1:rt)*V(:,1:rt)';
   end
 
 %% ------------------------ RECOVERY ------------------------
-
+X0 = randn(img_size(1:2));
 XM = mask.*Xt;
 tol = 1e-5 ;
-mu = 1.3; 
+scale_lambda = 2e-3;
+mu = 0.1; 
+proxbeta = 1.3;
 maxIter = 2e3;
-options.max_iter = maxIter; 
-options.mu = mu;  
-options.KLopt = 1e-5;
-sp = 0.1; 
+options.max_iter = maxIter;  
+options.beta = proxbeta;
+options.KLopt = tol;
+sp = 0.5; 
+% PIRNN
+optionsP = options; optionsP.eps = 1e-5;
 
+% %% optionsEP = options; 
+optionsEP.eps=1e-3;
+optionsEP.mu = mu; 
+optionsEP.alpha = 0.75; 
+
+
+  %% search best parameters for PIRNN IRNN EPIRNN
+  % search lambda 
+  Lambda_search = (2:0.1:3).*10^(-4);
+  Xm = XM(:,:,1);
+  for lambda_iter = 1:length(Lambda_search)
+    lambda = Lambda_search(lambda_iter)*norm(Xm,"fro");
+    EPIR_Lambda = MC_EPIRNN(X0+Xm,Xm,sp, lambda, mask, tol, optionsEP);
+    lambda_psnr(lambda_iter) = psnr(Xt(:,:,1),EPIR_Lambda.Xsol); 
+  end
+
+  [lambda_best,lambda_ldx] = max(lambda_psnr);
+  scale_lambda = Lambda_search(lambda_ldx);
+  %%
+  for channel=1:3
+    Xm = XM(:,:,channel);
+    EPIR_XWS = MC_EPIRNN(Xm,Xm,sp, norm(Xm,"fro")*scale_lambda*1e1, mask, tol, optionsEP);
+    X_WS(:,:,channel) = EPIR_XWS.Xsol;
+  end
 %% PIRNN
-optionsP = options; optionsP.eps = 1e-15;
 for channel=1:3
   Xm = XM(:,:,channel); 
-  lambda = norm(Xm,"fro")*1e-2;
-  PIR = MC_PIRNN(Xm,Xm,sp, lambda, mask, tol, optionsP);
+  lambda = norm(Xm,"fro")*scale_lambda;
+  PIR = MC_PIRNN(X_WS(:,:,channel),Xm,sp, lambda, mask, tol, optionsP);
   imgR.pir(:,:,channel) = PIR.Xsol;
   timeTotal.pir{channel} = PIR.time;
   Objective.pir{channel} = PIR.f;
@@ -61,12 +88,13 @@ for channel=1:3
 end
 disp("---------------------------------- PIRNN")
 %% AIRNN
-optionsA = options; optionsA.eps=1e1;
-optionsA.Scalar = 0.1; 
+optionsA = options; 
+optionsA.eps=1e-3;
+optionsA.mu = mu; 
 for channel=1:3
   Xm = XM(:,:,channel); 
-  lambda = norm(Xm,"fro")*1e-2;
-  AIR = MC_AIRNN(Xm,Xm,sp, lambda, mask, tol, optionsA);
+  lambda = norm(Xm,"fro")*scale_lambda;
+  AIR = MC_AIRNN(X_WS(:,:,channel),Xm,sp, lambda, mask, tol, optionsA);
   imgR.air(:,:,channel) = AIR.Xsol;
   timeTotal.air{channel} = AIR.time;
   Objective.air{channel} = AIR.f;
@@ -74,71 +102,138 @@ for channel=1:3
 end
 disp("---------------------------------- AIRNN")
 %% EPIRNN
-optionsEP = options; optionsEP.eps=1e1;
-optionsEP.Scalar = 0.1; optionsEP.alpha = 0.75; 
 for channel=1:3
   Xm = XM(:,:,channel); 
-  lambda = norm(Xm,"fro")*1e-2;
-  EPIR = MC_EPIRNN(Xm,Xm,sp, lambda, mask, tol, optionsEP);
+  lambda = norm(Xm,"fro")*scale_lambda;
+  EPIR = MC_EPIRNN(X_WS(:,:,channel),Xm,sp, lambda, mask, tol, optionsEP);
   imgR.epir(:,:,channel) = EPIR.Xsol;
   timeTotal.epir{channel} = EPIR.time;
   Objective.epir{channel} = EPIR.f;
   iterRank.epir{channel} = EPIR.rank;
 end
 disp("---------------------------------- EPIRNN")
+%% Comparative with SCP ADMM 
+  %% search lambda for SCP
+  clear scale_lambda lambda_psnr
+  Lambda_SCP = (1:1:9).*10.^(-3);
+  Xm = XM(:,:,1);
+  for lambda_iter = 1:length(Lambda_SCP)
+    lambda = norm(Xm,"fro")*Lambda_SCP(lambda_iter);
+    SCP = MC_SCpADMM(Xm, sp, lambda, mask, tol, optionsSCP);
+    lambda_psnr(lambda_iter) = psnr(Xt(:,:,1),SCP.Xsol); 
+  end
+  [lambda_best,lambda_ldx] = max(lambda_psnr);
+  scale_lambda = Lambda_SCP(lambda_ldx)
 %% SCP ADMM
-optionsSCP.max_iter = 5e2;
+optionsSCP.max_iter = 200;
+% optionsSCP.max_iter = maxIter; %200;
 optionsSCP.tau = 30;
+lambda_scp = 1; 
 for channel=1:3
   Xm = XM(:,:,channel); 
-  lambda = norm(Xm,"fro")*1e-2;
-  SCP = MC_SCpADMM(Xm, sp, lambda, mask, tol, optionsSCP);
+%   lambda = norm(Xm,"fro")*scale_lambda*10;
+  SCP = MC_SCpADMM(Xm, sp, lambda_scp, mask, tol, optionsSCP);
   imgR.scp(:,:,channel) = SCP.Xsol;
   timeTotal.scp{channel} = SCP.time;
   Objective.scp{channel} = SCP.f;
   iterRank.scp{channel} = SCP.rank;
 end
 disp("---------------------------------- SCPADMM")
-%% IRNN
-fun_irnn = 'lp'; 
-optionsIRNN.max_iter = 2e3;
-optionsIRNN.gamma = sp;
-optionsIRNN.tol = tol;
-optionsIRNN.mu = mu;
-m = img_size(1); n = img_size(2);
-M_IRNN = opRestriction(m*n,find(mask==1));
+%% IRNN_Lu 2014
+% % % % ??? 啥玩意儿啊, 热启动也不行???
+% fun_irnn = 'lp'; 
+% optionsIRNN.max_iter = 2e3;
+% optionsIRNN.gamma = sp;
+% optionsIRNN.tol = tol;
+% optionsIRNN.mu = proxbeta;
+% m = img_size(1); n = img_size(2);
+% M_IRNN = opRestriction(m*n,find(mask==1));
+% 
+% for channel=1:3
+%   Xm = XM(:,:,channel); 
+% %   xIR = Xm(:);
+% xIR = X_WS(:,:,channel);
+%   y = M_IRNN(Xm(:),1);
+% %   optionsIRNN.lambda_Init = norm(Xm)*1e0;
+%   optionsIRNN.lambda_Target = norm(Xm,"fro")*scale_lambda;
+%   optionsIRNN.lambda_rho = 0.98; 
+%   Sol_IRNN = IRNN_MCLu(xIR(:), fun_irnn, y, M_IRNN, m, n, optionsIRNN);
+%   imgR.irnn(:,:,channel) = Sol_IRNN.Xsol;
+%   timeTotal.irnn{channel} = Sol_IRNN.time; 
+%   Objective.irnn{channel} = Sol_IRNN.f; 
+%   iterRank.irnn{channel} = Sol_IRNN.rank; 
+% end
+% disp("---------------------------------- IRNN_Lu")
+% %% 
+% Sol_IRNN = IRNN(fun_irnn,y,M,m,n,0.5,optionsIRNN.lambda_Init,0.98,tol);
+
+%% search lambda for FGSR
+clear scale_lambda lambda_psnr 
+Lambda_FGSR = (1:1:9).*10.^(-1);
+Xm = XM(:,:,1); 
+for lmabda_iter = 1:length(Lambda_FGSR)
+  optionsFGSR.lambda = norm(Xm,"fro")*Lambda_FGSR(lmabda_iter);
+  Sol_FGSRP = MC_FGSRp_PALM(Xm,mask,optionsFGSR);
+  lambda_psnr(lmabda_iter) = psnr(Xt(:,:,1),Sol_FGSRP.Xsol);
+end
+  [lambda_best,lambda_ldx] = max(lambda_psnr);
+  scale_lambda = Lambda_FGSR(lambda_ldx);
+%% FGSR
+
+% optionsFGSR.tol=1e-5;
+% optionsFGSR.p = sp;
+optionsFGSR.maxiter = maxIter*1e1;
 
 for channel=1:3
   Xm = XM(:,:,channel); 
-  xIR = Xm(:);
-  y = M_IRNN(xIR,1);
-  optionsIRNN.lambda_Init = norm(Xm)*1e2;
-  optionsIRNN.lambda_Target = norm(Xm,"fro")*1e-1;
-  optionsIRNN.lambda_rho = 0.65; 
-  Sol_IRNN = IRNN(xIR, fun_irnn, y, M_IRNN, m, n, optionsIRNN);
-  imgR.irnn(:,:,channel) = Sol_IRNN.Xsol;
+  optionsFGSR.lambda = norm(Xm,"fro")*scale_lambda;
+  Sol_FGSRP = MC_FGSRp_PALM(Xm,mask,optionsFGSR);
+  imgR.fgsrp(:,:,channel) = Sol_FGSRP.Xsol;
+  timeTotal.fgsrp{channel} = Sol_FGSRP.time; 
+  iterRank.fgsrp{channel} = Sol_FGSRP.rank; 
 end
-disp("---------------------------------- IRNN")
-
-%% FGSR
-optionsFGSR.tol=1e-5;
-optionsFGSR.maxiter = maxIter;
+disp("---------------------------------- FGSR")
+%% niAPG
+optionsFGSR.tol=1e-4;
+optionsFGSR.maxiter = maxIter*1e1;
 optionsFGSR.p = sp;
 for channel=1:3
   Xm = XM(:,:,channel); 
-  optionsFGSR.lambda = norm(Xm,"fro")*1e-2;
-  [X,~,~] = MC_FGSRp_PALM(Xm,Xm,optionsFGSR);
+  optionsFGSR.lambda = norm(Xm,"fro")*5e-1;
+  Sol_FGSRP = APGncext(Xm,mask,optionsFGSR);
+  imgR.fgsrp(:,:,channel) = Sol_FGSRP.Xsol;
+  timeTotal.fgsrp{channel} = Sol_FGSRP.time; 
+  iterRank.fgsrp{channel} = Sol_FGSRP.rank; 
 end
-disp("---------------------------------- IRNN")
-
+disp("---------------------------------- FGSR")
 
 end
 %% 
+sp = 0.5;
 
+%% plot
 
+% figure("units","normalized","position",[0, 0, 0.4, 0.33])
+%   imshow(img_ori,"border","tight","initialmagnification","fit"); 
+% figure("units","normalized","position",[0, 0, 0.4, 0.33])  
+%   imshow(Xt,"border","tight","initialmagnification","fit");
+% figure("units","normalized","position",[0, 0, 0.4, 0.33])  
+%   imshow(imgR.pir,"border","tight","initialmagnification","fit");
+% figure("units","normalized","position",[0, 0, 0.4, 0.33])  
+%   imshow(imgR.air,"border","tight","initialmagnification","fit");
+% figure("units","normalized","position",[0, 0, 0.4, 0.33])  
+%   imshow(imgR.pir,"border","tight","initialmagnification","fit"); 
+figure("units","normalized","position",[0.1, 0.1, 0.8, 0.2])  
+  subplot('Position',[0 0.2 0.1 0.8]); imshow(img_ori); 
+  hold on; xlabel("(a)")
+  subplot('Position',[0.15 0.2  0.1 0.8]); imshow(Xt)
+  xlabel("(b)")
+  subplot('Position',[0.3 0.2 0.1 0.8]); imshow(imgR.pir)
+  xlabel("(c)")
+  subplot('Position',[0.45 0.2 0.1 0.8]); imshow(imgR.air)
+  xlabel("(d)")
+  subplot('Position',[0.6 0.2 0.1 0.8]); imshow(imgR.epir);
+  xlabel("(e)");  hold off
 
-
-
-
-
-
+%%
+timeTotal
