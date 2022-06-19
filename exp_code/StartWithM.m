@@ -37,11 +37,12 @@ img_size = size(img_ori);
     Xt(:,:,i)=U(:,1:rt)*S(1:rt,1:rt)*V(:,1:rt)';
   end
 
-%% ------------------------ RECOVERY ------------------------
+%%% ------------------------ RECOVERY ------------------------
+%% Comparative with IRNN 
 X0 = randn(img_size(1:2));
 XM = mask.*Xt;
 tol = 1e-5 ;
-scale_lambda = 2e-3;
+% scale_lambda = 2e-3;
 mu = 0.1; 
 proxbeta = 1.3;
 maxIter = 2e3;
@@ -68,7 +69,7 @@ optionsEP.alpha = 0.75;
     lambda_psnr(lambda_iter) = psnr(Xt(:,:,1),EPIR_Lambda.Xsol); 
   end
 
-  [lambda_best,lambda_ldx] = max(lambda_psnr);
+  [~,lambda_ldx] = max(lambda_psnr);
   scale_lambda = Lambda_search(lambda_ldx);
   %%
   for channel=1:3
@@ -76,44 +77,48 @@ optionsEP.alpha = 0.75;
     EPIR_XWS = MC_EPIRNN(Xm,Xm,sp, norm(Xm,"fro")*scale_lambda*1e1, mask, tol, optionsEP);
     X_WS(:,:,channel) = EPIR_XWS.Xsol;
   end
-%% PIRNN
-for channel=1:3
-  Xm = XM(:,:,channel); 
-  lambda = norm(Xm,"fro")*scale_lambda;
-  PIR = MC_PIRNN(X_WS(:,:,channel),Xm,sp, lambda, mask, tol, optionsP);
-  imgR.pir(:,:,channel) = PIR.Xsol;
-  timeTotal.pir{channel} = PIR.time;
-  Objective.pir{channel} = PIR.f;
-  iterRank.pir{channel} = PIR.rank;
-end
-disp("---------------------------------- PIRNN")
-%% AIRNN
-optionsA = options; 
-optionsA.eps=1e-3;
-optionsA.mu = mu; 
-for channel=1:3
-  Xm = XM(:,:,channel); 
-  lambda = norm(Xm,"fro")*scale_lambda;
-  AIR = MC_AIRNN(X_WS(:,:,channel),Xm,sp, lambda, mask, tol, optionsA);
-  imgR.air(:,:,channel) = AIR.Xsol;
-  timeTotal.air{channel} = AIR.time;
-  Objective.air{channel} = AIR.f;
-  iterRank.air{channel} = AIR.rank;
-end
-disp("---------------------------------- AIRNN")
-%% EPIRNN
-for channel=1:3
-  Xm = XM(:,:,channel); 
-  lambda = norm(Xm,"fro")*scale_lambda;
-  EPIR = MC_EPIRNN(X_WS(:,:,channel),Xm,sp, lambda, mask, tol, optionsEP);
-  imgR.epir(:,:,channel) = EPIR.Xsol;
-  timeTotal.epir{channel} = EPIR.time;
-  Objective.epir{channel} = EPIR.f;
-  iterRank.epir{channel} = EPIR.rank;
-end
-disp("---------------------------------- EPIRNN")
+    %% PIRNN
+    for channel=1:3
+      Xm = XM(:,:,channel); 
+      lambda = norm(Xm,"fro")*scale_lambda;
+      PIR = MC_PIRNN(X_WS(:,:,channel),Xm,sp, lambda, mask, tol, optionsP);
+      imgR.pir(:,:,channel) = PIR.Xsol;
+      timeTotal.pir{channel} = PIR.time;
+      Objective.pir{channel} = PIR.f;
+      iterRank.pir{channel} = PIR.rank;
+    end
+    disp("---------------------------------- PIRNN")
+    %% AIRNN
+    optionsA = options; 
+    optionsA.eps=1e-3;
+    optionsA.mu = mu; 
+    for channel=1:3
+      Xm = XM(:,:,channel); 
+      lambda = norm(Xm,"fro")*scale_lambda;
+      AIR = MC_AIRNN(X_WS(:,:,channel),Xm,sp, lambda, mask, tol, optionsA);
+      imgR.air(:,:,channel) = AIR.Xsol;
+      timeTotal.air{channel} = AIR.time;
+      Objective.air{channel} = AIR.f;
+      iterRank.air{channel} = AIR.rank;
+    end
+    disp("---------------------------------- AIRNN")
+    %% EPIRNN
+    for channel=1:3
+      Xm = XM(:,:,channel); 
+      lambda = norm(Xm,"fro")*scale_lambda;
+      EPIR = MC_EPIRNN(X_WS(:,:,channel),Xm,sp, lambda, mask, tol, optionsEP);
+      imgR.epir(:,:,channel) = EPIR.Xsol;
+      timeTotal.epir{channel} = EPIR.time;
+      Objective.epir{channel} = EPIR.f;
+      iterRank.epir{channel} = EPIR.rank;
+    end
+    disp("---------------------------------- EPIRNN")
 %% Comparative with SCP ADMM 
-  %% search lambda for SCP
+optionsSCP.max_iter = 200;
+optionsSCP.tau = 30;
+% optionsSCP.max_iter = maxIter; %200;
+  %% search lambda for SCP 
+  % ???????????????????????????????????? lambda 没找到?
   clear scale_lambda lambda_psnr
   Lambda_SCP = (1:1:9).*10.^(-3);
   Xm = XM(:,:,1);
@@ -122,23 +127,20 @@ disp("---------------------------------- EPIRNN")
     SCP = MC_SCpADMM(Xm, sp, lambda, mask, tol, optionsSCP);
     lambda_psnr(lambda_iter) = psnr(Xt(:,:,1),SCP.Xsol); 
   end
-  [lambda_best,lambda_ldx] = max(lambda_psnr);
-  scale_lambda = Lambda_SCP(lambda_ldx)
-%% SCP ADMM
-optionsSCP.max_iter = 200;
-% optionsSCP.max_iter = maxIter; %200;
-optionsSCP.tau = 30;
-lambda_scp = 1; 
-for channel=1:3
-  Xm = XM(:,:,channel); 
-%   lambda = norm(Xm,"fro")*scale_lambda*10;
-  SCP = MC_SCpADMM(Xm, sp, lambda_scp, mask, tol, optionsSCP);
-  imgR.scp(:,:,channel) = SCP.Xsol;
-  timeTotal.scp{channel} = SCP.time;
-  Objective.scp{channel} = SCP.f;
-  iterRank.scp{channel} = SCP.rank;
-end
-disp("---------------------------------- SCPADMM")
+  [~,lambda_ldx] = max(lambda_psnr);
+  scale_lambda = Lambda_SCP(lambda_ldx);
+  %% SCP ADMM
+  lambda_scp = 1; 
+  for channel=1:3
+    Xm = XM(:,:,channel); 
+    lambda = norm(Xm,"fro")*scale_lambda;
+    SCP = MC_SCpADMM(Xm, sp, lambda_scp, mask, tol, optionsSCP);
+    imgR.scp(:,:,channel) = SCP.Xsol;
+    timeTotal.scp{channel} = SCP.time;
+    Objective.scp{channel} = SCP.f;
+    iterRank.scp{channel} = SCP.rank;
+  end
+  disp("---------------------------------- SCPADMM")
 %% IRNN_Lu 2014
 % % % % ??? 啥玩意儿啊, 热启动也不行???
 % fun_irnn = 'lp'; 
@@ -167,45 +169,68 @@ disp("---------------------------------- SCPADMM")
 % %% 
 % Sol_IRNN = IRNN(fun_irnn,y,M,m,n,0.5,optionsIRNN.lambda_Init,0.98,tol);
 
-%% search lambda for FGSR
-clear scale_lambda lambda_psnr 
-Lambda_FGSR = (1:1:9).*10.^(-1);
-Xm = XM(:,:,1); 
-for lmabda_iter = 1:length(Lambda_FGSR)
-  optionsFGSR.lambda = norm(Xm,"fro")*Lambda_FGSR(lmabda_iter);
-  Sol_FGSRP = MC_FGSRp_PALM(Xm,mask,optionsFGSR);
-  lambda_psnr(lmabda_iter) = psnr(Xt(:,:,1),Sol_FGSRP.Xsol);
-end
-  [lambda_best,lambda_ldx] = max(lambda_psnr);
+%% Comparative with FGSR
+  %% search lambda for FGSR
+  optionsFGSR.tol=1e-5;
+  optionsFGSR.p = sp;
+  optionsFGSR.maxiter = maxIter*1e1;
+  
+  clear scale_lambda lambda_psnr 
+  Lambda_FGSR = (1:1:9).*10.^(-1);
+  Xm = XM(:,:,1); 
+  for lambda_iter = 1:length(Lambda_FGSR)
+    optionsFGSR.lambda = norm(Xm,"fro")*Lambda_FGSR(lambda_iter);
+    Sol_FGSRP = MC_FGSRp_PALM(Xm,mask,optionsFGSR);
+    lambda_psnr(lambda_iter) = psnr(Xt(:,:,1),Sol_FGSRP.Xsol);
+  end
+  [~,lambda_ldx] = max(lambda_psnr);
   scale_lambda = Lambda_FGSR(lambda_ldx);
-%% FGSR
-
-% optionsFGSR.tol=1e-5;
-% optionsFGSR.p = sp;
-optionsFGSR.maxiter = maxIter*1e1;
-
-for channel=1:3
-  Xm = XM(:,:,channel); 
-  optionsFGSR.lambda = norm(Xm,"fro")*scale_lambda;
-  Sol_FGSRP = MC_FGSRp_PALM(Xm,mask,optionsFGSR);
-  imgR.fgsrp(:,:,channel) = Sol_FGSRP.Xsol;
-  timeTotal.fgsrp{channel} = Sol_FGSRP.time; 
-  iterRank.fgsrp{channel} = Sol_FGSRP.rank; 
-end
-disp("---------------------------------- FGSR")
-%% niAPG
-optionsFGSR.tol=1e-4;
-optionsFGSR.maxiter = maxIter*1e1;
-optionsFGSR.p = sp;
-for channel=1:3
-  Xm = XM(:,:,channel); 
-  optionsFGSR.lambda = norm(Xm,"fro")*5e-1;
-  Sol_FGSRP = APGncext(Xm,mask,optionsFGSR);
-  imgR.fgsrp(:,:,channel) = Sol_FGSRP.Xsol;
-  timeTotal.fgsrp{channel} = Sol_FGSRP.time; 
-  iterRank.fgsrp{channel} = Sol_FGSRP.rank; 
-end
-disp("---------------------------------- FGSR")
+  %% FGSR
+  for channel=1:3
+    Xm = XM(:,:,channel); 
+    optionsFGSR.lambda = norm(Xm,"fro")*scale_lambda;
+    Sol_FGSRP = MC_FGSRp_PALM(Xm,mask,optionsFGSR);
+    imgR.fgsrp(:,:,channel) = Sol_FGSRP.Xsol;
+    timeTotal.fgsrp{channel} = Sol_FGSRP.time; 
+    iterRank.fgsrp{channel} = Sol_FGSRP.rank; 
+  end
+  disp("---------------------------------- FGSR")
+%% Comparative with niAPG
+  %% search lambda for niAPG
+  
+    %% niAPG
+    optionsAPG.tol=1e-4;
+    optionsAPG.maxIter = maxIter;
+    optionsAPG.regType = 2;
+    
+    clear scale_lambda lambda_psnr 
+    Lambda_APG = (1:1:5).*10^(-5);
+    Xm = XM(:,:,1); 
+    for lambda_iter =1:length(Lambda_APG)
+      lambda = norm(Xm,"fro")*Lambda_APG(lambda_iter);
+      theta = sqrt(lambda);
+      [u,s,v,~] = APGnc(Xm,lambda,theta,optionsAPG);
+      lambda_psnr(lambda_iter) = psnr(Xt(:,:,1),u*s*v');
+    end
+    [~,lambda_ldx] = max(lambda_psnr);
+    scale_lambda = Lambda_APG(lambda_ldx);
+    %% 
+    for channel=1:3
+      Xm = XM(:,:,channel); 
+      lambda = norm(Xm,"fro")*scale_lambda;
+      theta = sp;
+      
+      [u_ext,s_ext,v_ext,sol_ext]=APGncext(Xm,lambda,theta,optionsAPG);
+      imgR.apgext(:,:,channel) = u_ext*s_ext*v_ext';
+      timeTotal.apgext{channel} = sol_ext.Time; 
+      iterRank.apgext{channel} = sol_ext.Rank; 
+      
+      [u,s,v,sol] = APGnc(Xm,lambda,theta,optionsAPG);
+      imgR.apg(:,:,channel) = u*s*v';
+      timeTotal.apg{channel} = sol.Time; 
+      iterRank.apg{channel} = sol.Rank; 
+    end
+    disp("---------------------------------- APG")
 
 end
 %% 

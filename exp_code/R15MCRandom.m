@@ -173,14 +173,13 @@ options.KLopt = 1e-9;
 %     AIReps{1} = MC_AIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
 %     EPIReps{1} = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
   %%
-  
   clear F R T
   
-   for i = 1:6
-F(i,1:3) = [PIReps{i}.f(end), AIReps{i}.f(end),EPIReps{i}.f(end)];
-R(i,1:3) = [PIReps{i}.rank(end), AIReps{i}.rank(end),EPIReps{i}.rank(end)];
-T(i,1:3) = [PIReps{i}.time(end), AIReps{i}.time(end),EPIReps{i}.time(end)];
-   end
+  for i = 1:6
+    F(i,1:3) = [PIReps{i}.f(end), AIReps{i}.f(end),EPIReps{i}.f(end)];
+    R(i,1:3) = [PIReps{i}.rank(end), AIReps{i}.rank(end),EPIReps{i}.rank(end)];
+    T(i,1:3) = [PIReps{i}.time(end), AIReps{i}.time(end),EPIReps{i}.time(end)];
+  end
 format short g
   
     %% polt sensitive of eps for PIRNN and robust for AIRNN/EPIRNN
