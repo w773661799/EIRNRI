@@ -1,9 +1,9 @@
 %% the different method for solving the matric recovery
 clear;clc
 rng(22);format short 
-cwd = fileparts(pwd) ;
-path_lena = strcat(cwd,'\img_image\lena.png');
-path_re1 = strcat(cwd,'\img_image\re1.jpg');
+% cwd = fileparts(pwd) ;
+path_lena = strcat(pwd,'\img_image\lena.png');
+path_re1 = strcat(pwd,'\img_image\re1.jpg');
 
 img_ori = double(imread(path_lena))/255 ; 
 % img_ori = double(imread(path_lena))/255;

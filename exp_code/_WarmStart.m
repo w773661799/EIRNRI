@@ -12,9 +12,9 @@ while start==1
 start=0;
 
 rng(22);format long
-cwd = fileparts(pwd) ;
-path_lena = strcat(cwd,'\img_image\lena.png');
-path_re1 = strcat(cwd,'\img_image\re1.jpg');
+% cwd = fileparts(pwd) ;
+path_lena = strcat(pwd,'\img_image\lena.png');
+path_re1 = strcat(pwd,'\img_image\re1.jpg');
 img_ori = double(imread(path_lena))/255 ; 
 % img_ori = double(imread(path_lena))/255;
 img_size = size(img_ori);
@@ -50,6 +50,7 @@ options.max_iter = maxIter;
 options.beta = proxbeta;
 options.KLopt = tol;
 sp = 0.5; 
+
 % PIRNN
 optionsP = options; optionsP.eps = 1e-5;
 
@@ -58,10 +59,9 @@ optionsEP.eps=1e-3;
 optionsEP.mu = mu; 
 optionsEP.alpha = 0.75; 
 
-
   %% search best parameters for PIRNN IRNN EPIRNN
   % search lambda 
-  Lambda_search = (2:0.1:3).*10^(-4);
+  Lambda_search = (1.5:0.1:2.1).*10^(-4);
   Xm = XM(:,:,1);
   for lambda_iter = 1:length(Lambda_search)
     lambda = Lambda_search(lambda_iter)*norm(Xm,"fro");
@@ -71,11 +71,11 @@ optionsEP.alpha = 0.75;
 
   [~,lambda_ldx] = max(lambda_psnr);
   scale_lambda = Lambda_search(lambda_ldx);
-  %%
+  %% find the warmstart pointers with best search lambda 
   for channel=1:3
     Xm = XM(:,:,channel);
     EPIR_XWS = MC_EPIRNN(Xm,Xm,sp, norm(Xm,"fro")*scale_lambda*1e1, mask, tol, optionsEP);
-    X_WS(:,:,channel) = EPIR_XWS.Xsol;
+    X_WS(:,:,channel) = EPIR_XWS.Xsol; 
   end
     %% PIRNN
     for channel=1:3
@@ -113,13 +113,13 @@ optionsEP.alpha = 0.75;
       iterRank.epir{channel} = EPIR.rank;
     end
     disp("---------------------------------- EPIRNN")
+    clear scale_lambda lambda_psnr
 %% Comparative with SCP ADMM 
 optionsSCP.max_iter = 200;
 optionsSCP.tau = 30;
 % optionsSCP.max_iter = maxIter; %200;
   %% search lambda for SCP 
   % ???????????????????????????????????? lambda 没找到?
-  clear scale_lambda lambda_psnr
   Lambda_SCP = (1:1:9).*10.^(-3);
   Xm = XM(:,:,1);
   for lambda_iter = 1:length(Lambda_SCP)
