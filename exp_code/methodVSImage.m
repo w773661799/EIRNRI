@@ -1,6 +1,9 @@
 %% the different method for solving the matric recovery
-clear;clc
-rng(22);format short 
+% step-1 search best lambda with same p for different method
+% step-2 compare different restore pic with PSNR 
+
+clear;clc; format long; 
+rng(22);
 % cwd = fileparts(pwd) ;
 path_lena = strcat(pwd,'\img_image\lena.png');
 path_re1 = strcat(pwd,'\img_image\re1.jpg');
