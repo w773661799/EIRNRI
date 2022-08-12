@@ -61,26 +61,26 @@ optionsEP.alpha = 0.75;
 
   %% search best parameters for PIRNN IRNN EPIRNN
   % search lambda 
-  Lambda_search = (1.5:0.1:2.1).*10^(-4);
+  Lambda_PIR = (1.5:0.1:2.1).*10^(-4);
   Xm = XM(:,:,1);
-  for lambda_iter = 1:length(Lambda_search)
-    lambda = Lambda_search(lambda_iter)*norm(Xm,"fro");
+  for lambda_iter = 1:length(Lambda_PIR)
+    lambda = Lambda_PIR(lambda_iter)*norm(Xm,"fro");
     EPIR_Lambda = MC_EPIRNN(X0+Xm,Xm,sp, lambda, mask, tol, optionsEP);
     lambda_psnr(lambda_iter) = psnr(Xt(:,:,1),EPIR_Lambda.Xsol); 
   end
 
   [~,lambda_ldx] = max(lambda_psnr);
-  scale_lambda = Lambda_search(lambda_ldx);
+  pir_lambda = Lambda_PIR(lambda_ldx);
   %% find the warmstart pointers with best search lambda 
   for channel=1:3
     Xm = XM(:,:,channel);
-    EPIR_XWS = MC_EPIRNN(Xm,Xm,sp, norm(Xm,"fro")*scale_lambda*1e1, mask, tol, optionsEP);
+    EPIR_XWS = MC_EPIRNN(Xm,Xm,sp, norm(Xm,"fro")*pir_lambda*1e1, mask, tol, optionsEP);
     X_WS(:,:,channel) = EPIR_XWS.Xsol; 
   end
     %% PIRNN
     for channel=1:3
       Xm = XM(:,:,channel); 
-      lambda = norm(Xm,"fro")*scale_lambda;
+      lambda = norm(Xm,"fro")*pir_lambda;
       PIR = MC_PIRNN(X_WS(:,:,channel),Xm,sp, lambda, mask, tol, optionsP);
       imgR.pir(:,:,channel) = PIR.Xsol;
       timeTotal.pir{channel} = PIR.time;
@@ -94,7 +94,7 @@ optionsEP.alpha = 0.75;
     optionsA.mu = mu; 
     for channel=1:3
       Xm = XM(:,:,channel); 
-      lambda = norm(Xm,"fro")*scale_lambda;
+      lambda = norm(Xm,"fro")*pir_lambda;
       AIR = MC_AIRNN(X_WS(:,:,channel),Xm,sp, lambda, mask, tol, optionsA);
       imgR.air(:,:,channel) = AIR.Xsol;
       timeTotal.air{channel} = AIR.time;
@@ -105,7 +105,7 @@ optionsEP.alpha = 0.75;
     %% EPIRNN
     for channel=1:3
       Xm = XM(:,:,channel); 
-      lambda = norm(Xm,"fro")*scale_lambda;
+      lambda = norm(Xm,"fro")*pir_lambda;
       EPIR = MC_EPIRNN(X_WS(:,:,channel),Xm,sp, lambda, mask, tol, optionsEP);
       imgR.epir(:,:,channel) = EPIR.Xsol;
       timeTotal.epir{channel} = EPIR.time;
@@ -113,27 +113,57 @@ optionsEP.alpha = 0.75;
       iterRank.epir{channel} = EPIR.rank;
     end
     disp("---------------------------------- EPIRNN")
-    clear scale_lambda lambda_psnr
+
+%% Comparative with FGSR
+  %% search lambda for FGSR
+  clear lambda_psnr
+  optionsFGSR.tol=1e-5;
+  optionsFGSR.p = sp;
+  optionsFGSR.maxiter = maxIter*1e1;
+  
+  Lambda_FGSR = (34:1:39).*10.^(-1);
+  Xm = XM(:,:,1); 
+  for lambda_iter = 1:length(Lambda_FGSR)
+    optionsFGSR.lambda = norm(Xm,"fro")*Lambda_FGSR(lambda_iter);
+    Sol_FGSRP = MC_FGSRp_PALM(Xm,mask,optionsFGSR);
+    lambda_psnr(lambda_iter) = psnr(Xt(:,:,1),Sol_FGSRP.Xsol);
+  end
+  [~,lambda_ldx] = max(lambda_psnr);
+  fgsr_lambda = Lambda_FGSR(lambda_ldx);
+  
+  %% FGSR
+  optionsFGSR.d = 41;
+  for channel=1:3
+    Xm = XM(:,:,channel); 
+    optionsFGSR.lambda = norm(Xm,"fro")*fgsr_lambda;
+    Sol_FGSRP = MC_FGSRp_PALM(Xm,mask,optionsFGSR);
+    imgR.fgsrp(:,:,channel) = Sol_FGSRP.Xsol;
+    timeTotal.fgsrp{channel} = Sol_FGSRP.time; 
+    iterRank.fgsrp{channel} = Sol_FGSRP.rank; 
+  end
+  disp("---------------------------------- FGSR")
+
 %% Comparative with SCP ADMM 
-optionsSCP.max_iter = 200;
+% SCP ADMM 源码从 0 启动? 可以改吗?
+optionsSCP.max_iter = 500;
 optionsSCP.tau = 30;
 % optionsSCP.max_iter = maxIter; %200;
   %% search lambda for SCP 
   % ???????????????????????????????????? lambda 没找到?
-  Lambda_SCP = (1:1:9).*10.^(-3);
+  Lambda_PIR = 5*10.^(-5:1:1);
   Xm = XM(:,:,1);
-  for lambda_iter = 1:length(Lambda_SCP)
-    lambda = norm(Xm,"fro")*Lambda_SCP(lambda_iter);
+  for lambda_iter = 1:length(Lambda_PIR)
+    lambda = norm(Xm,"fro")*Lambda_PIR(lambda_iter);
     SCP = MC_SCpADMM(Xm, sp, lambda, mask, tol, optionsSCP);
     lambda_psnr(lambda_iter) = psnr(Xt(:,:,1),SCP.Xsol); 
   end
   [~,lambda_ldx] = max(lambda_psnr);
-  scale_lambda = Lambda_SCP(lambda_ldx);
+  pir_lambda = Lambda_PIR(lambda_ldx);
   %% SCP ADMM
   lambda_scp = 1; 
   for channel=1:3
     Xm = XM(:,:,channel); 
-    lambda = norm(Xm,"fro")*scale_lambda;
+    lambda = norm(Xm,"fro")*pir_lambda;
     SCP = MC_SCpADMM(Xm, sp, lambda_scp, mask, tol, optionsSCP);
     imgR.scp(:,:,channel) = SCP.Xsol;
     timeTotal.scp{channel} = SCP.time;
@@ -169,32 +199,7 @@ optionsSCP.tau = 30;
 % %% 
 % Sol_IRNN = IRNN(fun_irnn,y,M,m,n,0.5,optionsIRNN.lambda_Init,0.98,tol);
 
-%% Comparative with FGSR
-  %% search lambda for FGSR
-  optionsFGSR.tol=1e-5;
-  optionsFGSR.p = sp;
-  optionsFGSR.maxiter = maxIter*1e1;
-  
-  clear scale_lambda lambda_psnr 
-  Lambda_FGSR = (1:1:9).*10.^(-1);
-  Xm = XM(:,:,1); 
-  for lambda_iter = 1:length(Lambda_FGSR)
-    optionsFGSR.lambda = norm(Xm,"fro")*Lambda_FGSR(lambda_iter);
-    Sol_FGSRP = MC_FGSRp_PALM(Xm,mask,optionsFGSR);
-    lambda_psnr(lambda_iter) = psnr(Xt(:,:,1),Sol_FGSRP.Xsol);
-  end
-  [~,lambda_ldx] = max(lambda_psnr);
-  scale_lambda = Lambda_FGSR(lambda_ldx);
-  %% FGSR
-  for channel=1:3
-    Xm = XM(:,:,channel); 
-    optionsFGSR.lambda = norm(Xm,"fro")*scale_lambda;
-    Sol_FGSRP = MC_FGSRp_PALM(Xm,mask,optionsFGSR);
-    imgR.fgsrp(:,:,channel) = Sol_FGSRP.Xsol;
-    timeTotal.fgsrp{channel} = Sol_FGSRP.time; 
-    iterRank.fgsrp{channel} = Sol_FGSRP.rank; 
-  end
-  disp("---------------------------------- FGSR")
+
 %% Comparative with niAPG
   %% search lambda for niAPG
   
@@ -213,11 +218,11 @@ optionsSCP.tau = 30;
       lambda_psnr(lambda_iter) = psnr(Xt(:,:,1),u*s*v');
     end
     [~,lambda_ldx] = max(lambda_psnr);
-    scale_lambda = Lambda_APG(lambda_ldx);
+    pir_lambda = Lambda_APG(lambda_ldx);
     %% 
     for channel=1:3
       Xm = XM(:,:,channel); 
-      lambda = norm(Xm,"fro")*scale_lambda;
+      lambda = norm(Xm,"fro")*pir_lambda;
       theta = sp;
       
       [u_ext,s_ext,v_ext,sol_ext]=APGncext(Xm,lambda,theta,optionsAPG);
@@ -261,4 +266,4 @@ figure("units","normalized","position",[0.1, 0.1, 0.8, 0.2])
   xlabel("(e)");  hold off
 
 %%
-timeTotal
+% timeTotal
