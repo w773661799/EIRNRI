@@ -8,7 +8,7 @@ The funciton PIRNN / AIRNN / PEIRNN are the different methods for solve the Scha
 - SCP ADMM 带阈值的 spnorm + ADMM , 关键在  ADMM 的子问题, 结果不是 low rank 的 ? 
   - 初始点在 0 不能 warm start ?
 
-- FGSR 在 p=0.5 的效果非常好? 但是是满rank的!! 
+- FGSR 在 p=0.5 的效果非常好? 但是不是满rank的!! 
   - 不需要warm start
 
 - 
