@@ -2,6 +2,13 @@
 experiments for EPIRNN and AIRNN
 The funciton PIRNN / AIRNN / PEIRNN are the different methods for solve the Schatten-p regularization problem.  
 
+C-1. 能表明 EPIRNN 有改进的地方
+EPIRNN 比 AIRNN 快一些, AIRNN 在 $\epsilon$ 较大时候更稳定? 
+
+!! 一个关键的问题, $\epsilon$ for PIRNN 选取多少合适? 
+!! 有没有相关文献说这个事儿?
+!! 有没有做过关于 $\epsilon$ 的扰动分析的?
+
 ## 修改步骤
 ### 在 Warmstart 情况下的比较
 

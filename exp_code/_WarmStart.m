@@ -59,7 +59,7 @@ optionsEP.eps=1e-3;
 optionsEP.mu = mu; 
 optionsEP.alpha = 0.75; 
 
-  %% search best parameters for PIRNN IRNN EPIRNN
+  %% search best parameters for PIRNN / AIRNN / EPIRNN
   % search lambda 
   Lambda_PIR = (1.5:0.1:2.1).*10^(-4);
   Xm = XM(:,:,1);
@@ -87,7 +87,7 @@ optionsEP.alpha = 0.75;
       Objective.pir{channel} = PIR.f;
       iterRank.pir{channel} = PIR.rank;
     end
-    disp("---------------------------------- PIRNN")
+    disp("---------------------------------- PIRNN END")
     %% AIRNN
     optionsA = options; 
     optionsA.eps=1e-3;
@@ -101,7 +101,7 @@ optionsEP.alpha = 0.75;
       Objective.air{channel} = AIR.f;
       iterRank.air{channel} = AIR.rank;
     end
-    disp("---------------------------------- AIRNN")
+    disp("---------------------------------- AIRNN END")
     %% EPIRNN
     for channel=1:3
       Xm = XM(:,:,channel); 
@@ -112,7 +112,7 @@ optionsEP.alpha = 0.75;
       Objective.epir{channel} = EPIR.f;
       iterRank.epir{channel} = EPIR.rank;
     end
-    disp("---------------------------------- EPIRNN")
+    disp("---------------------------------- EPIRNN END")
 
 %% Comparative with FGSR
   %% search lambda for FGSR
@@ -141,7 +141,7 @@ optionsEP.alpha = 0.75;
     timeTotal.fgsrp{channel} = Sol_FGSRP.time; 
     iterRank.fgsrp{channel} = Sol_FGSRP.rank; 
   end
-  disp("---------------------------------- FGSR")
+  disp("---------------------------------- FGSR END")
 
 %% Comparative with SCP ADMM 
 % SCP ADMM 源码从 0 启动? 可以改吗?
@@ -170,7 +170,7 @@ optionsSCP.tau = 30;
     Objective.scp{channel} = SCP.f;
     iterRank.scp{channel} = SCP.rank;
   end
-  disp("---------------------------------- SCPADMM")
+  disp("---------------------------------- SCPADMM END")
 %% IRNN_Lu 2014
 % % % % ??? 啥玩意儿啊, 热启动也不行???
 % fun_irnn = 'lp'; 
@@ -235,7 +235,7 @@ optionsSCP.tau = 30;
       timeTotal.apg{channel} = sol.Time; 
       iterRank.apg{channel} = sol.Rank; 
     end
-    disp("---------------------------------- APG")
+    disp("---------------------------------- niAPG END")
 
 end
 %% 
