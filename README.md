@@ -34,3 +34,8 @@ EPIRNN 比 AIRNN 快一些, AIRNN 在 $\epsilon$ 较大时候更稳定?
 - 在特殊初始值的比较
 
 主要是为了说明 Reweighted 方法在初始化中光滑化因子 $\epsilon$ 的重要作用.
+
+
+$$
+k_{2}^{\top}J^{-1} W J^{-1}(\alpha k_{1})
+$$

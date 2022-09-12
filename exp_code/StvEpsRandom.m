@@ -1,30 +1,31 @@
 %% sensitive of PIRNN / AIRNN /EPIRNN with eps 
 clc,clear,format long 
 rng(22)
-nr = 150; nc = 150; r = 15 ;
+nr = 150; nc = 150; r = 15;
 % --------------- Synthetic data ---------------
-xb = 1+randn(nr,r); xc = 2+randn(r,nc) ;
-Y = xb*xc ; 
+xb = 1+randn(nr,r); xc = 2+randn(r,nc);
+Y = xb*xc ;
 % --------------- random mask ---------------
-M_org = zeros(nr,nc); 
+M_org = zeros(nr,nc); % SR = 1 - missrate 
 missrate = 0.5; 
-for i=1:nc  
-    idx = 1:1:nr;
-    randidx=randperm(nr,nr); % random sequence
-    M_org(randidx(1:ceil(nr*missrate)),i)=1; 
+for i = 1:nc  
+    randidx = randperm(nr,nr); % random sequence
+    M_org(randidx(1:ceil(nr*missrate)),i) = 1; % miss from randidx
 end
-mask = ~M_org; 
-Xm=Y.*mask; 
+mask = ~M_org; % mask: sampling with percentage 1-missrate  
+Xm = Y.*mask;
 % --------------- parameters ---------------
-orieps_spl = [1,1e-2,1e-4,1e-6] ;
+orieps_spl = [1,1e-2,1e-4,1e-6];
 lambda = 1e-3*norm(Y,inf);
-tol_spl = [1e-6; 1e-7; 1e-8]; 
-itmax = 5e3; 
+tol_spl = [1e-6; 1e-7; 1e-8];
+itmax = 5e3;
   %% basic algorithm for sp=0.1 ,SR=0.5
   % Initial point 
-  rcSen = 10; X0 = (randn(nr,rcSen))*randn(rcSen,nc); 
-  sp = 0.5; 
-  optionsP.Rel = Y; 
+  rcSen = 10;
+  X0 = (randn(nr,rcSen))*randn(rcSen,nc);
+  
+  sp = 0.5;
+  optionsP.Rel = Y;
   optionsP.max_iter = itmax;
   optionsP.Scalar = 0.3; 
   optionsP.alpha = 0.7; 
@@ -37,7 +38,7 @@ itmax = 5e3;
     EPIReps{i} = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
   end
 
-  %%
+  %
   Titor = []; Trank = []; Tobj=[];
   for i = 1:length(orieps_spl)
     Titor(i,1:3) = [PIReps{i}.iterTol, AIReps{i}.iterTol, EPIReps{i}.iterTol];
