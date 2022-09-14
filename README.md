@@ -10,6 +10,30 @@ EPIRNN 比 AIRNN 快一些, AIRNN 在 $\epsilon$ 较大时候更稳定?
 !! 有没有做过关于 $\epsilon$ 的扰动分析的?
 
 ## 修改步骤
+### 在随机初始点的情况下
+- 为了说明 AIRNN 比 PIRNN 更 robust ? 计算得到的结果更小, rank 更低!, 多次试验取均值
+> 怎么取均值?
+
+#### reweighted 方法类
+
+1. IRNN\_Ncvx\_2016: 无 $\epsilon$, 直接用 subgradient  
+
+2. \_NuclearIRWA\_2017\_IEEETIP: 固定 $\epsilon$ 不变化 $\color{red}{没给具体值}$, weights 可以直接求得
+   - [4] `Iterative Reweighted Algorithms for Matrix Rank Minimization`[论文地址](https://www.jmlr.org/papers/volume13/mohan12a/mohan12a.pdf) 使用了 $\gamma_{0}/\eta^{k}$ 的更新方式, 有数据支撑
+     > 针对 rank 约束, 转化为 IRLS-p 约束问题. 对于约束项做成投影问题. 
+     > ${\rm Trace}(WXX^{\top})$, 讨论了 $0\le p \le 1$ 的情况, 提出了 IRLS-GP 投影算法
+
+   - [5] `Improved Iteratively Reweighted Least Squares For Unconstrained Smoothed Minimization_XuYangyang, YinWotao`[论文地址](https://web.archive.org/web/20190302145613id_/http://pdfs.semanticscholar.org/9d9b/c32be385490596bb8d630383df19b5e97573.pdf)
+     > 针对rank 约束, 提出了 iteratively 算法, 对于矩阵的情况反复求解一个向量形式的线性方程组 IRucLq-M, 给出了一个可以加速的版本?
+     > 缺点: !! 需要先验信息, 知道 rank 的值 $K$, 不然算法就是瞎跑? 文中有提到不知道先验的处理方式,
+     > 有 $\epsilon_{k}$ 更新方式, 更新依赖于先验条件 $K$ 
+
+   - [6] `A reweighted nuclear norm minimization algorithm for low rank matrix recovery` 'RNNM\_2014\_form\_2017' $\color{red}{找数值实验, 代码}$ 
+     > 给出了 fixed $\epsilon$ 的方法? 证明用fixed $\epsilon$, 实验更新了 $\epsilon_{k}$ 原问题是带线性算子的, 线性算子可以转换为投影
+   - 
+对比固定 $\epsilon$ 情况下的结果
+
+
 ### 在 Warmstart 情况下的比较
 
 - SCP ADMM 带阈值的 spnorm + ADMM , 关键在  ADMM 的子问题, 结果不是 low rank 的 ? 
