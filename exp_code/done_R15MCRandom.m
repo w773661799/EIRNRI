@@ -5,12 +5,19 @@ clc,clear,format long
 rng(22)
 nr = 150; nc = 150; r = 15 ;
 % --------------- Synthetic data ---------------
-xb = randn(nr,r); xc = randn(r,nc) ;
-Y = xb*xc ; 
+% Y = randn(nr,r) * (randn(r,r)+eye(r,r)) * randn(r,nc);
+% Y = rand(nr,r) * rand(r,nc);
+Y = rand(nr,nc);
+[uY,sY,vY] = svd(Y);
+Y = uY* diag([svds(sY,r)/(sY(r,r));zeros(nr-r,1)])*vY';
+% Y = Y(:,randperm(nc)); 
+clear uY sY vY
+% xb = (randn(nr,r) ); xc = randn(r,nc) ;
+% Y = xb*xc ; 
 % --------------- random mask ---------------
 M_org = zeros(nr,nc); 
 missrate = 0.5; 
-for i=1:nc
+for i=1:nc 
   idx = 1:1:nr;
   randidx=randperm(nr,nr); % random sequence
   M_org(randidx(1:ceil(nr*missrate)),i)=1; 
@@ -18,38 +25,41 @@ end
 mask = ~M_org; Xm=Y.*mask; 
 % --------------- parameters ---------------
 lambda = 1e-4*norm(Xm,inf);
-itmax = 5e3; 
-sp = 0.5; 
-tol = 1e-5; 
+itmax = 1e5; 
+sp = 0.9; 
+tol = 1e-9; 
 % basic algorithm for sp=0.5 ,SR=0.5
   % Initial point
   % with default eps = eps(1)
-  rcSen = 15; 
-%   X0 = zeros(size(Y));
-  X0 = (randn(nr,rcSen))*(randn(rcSen,nc));  
-%%
+  X0 = zeros(size(Y));
+%   X0 = randn(nr,nc);  
+% %%
   options.Rel = Y; 
   options.max_iter = itmax; 
-  options.eps = eps(1);  
+  options.KLopt = tol;
+  options.eps = 1e-2;  
   options.beta = 1.1; 
   
   optionsP= options;
   PIR = MC_PIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
 
   optionsA = options;
-%   optionsA.eps = 1e0;
+  optionsA.eps = 1e1; 
+%   optionsA.eps = 1e0; 
   optionsA.mu = 0.1; 
   AIR = MC_AIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
   
   optionsEP = optionsA; 
   optionsEP.alpha = 5e-1; 
   EPIR = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsEP); 
+  %%
+  reerr = norm(Y-EPIR.Xsol,"fro") / norm(Y,"fro")
   
     %% plot
     pPIR = min(itmax,PIR.iterTol); pAIR = min(itmax,AIR.iterTol);
     pEPI = min(itmax,EPIR.iterTol); 
     PIRx = (1:1:pPIR); AIRx = (1:1:pAIR); EPIRx = (1:1:pEPI); 
-    %% plot subplot 
+    %%% plot subplot 
 % ------------ RelErr plot 
 h = figure(1);
 %     set (gca,'position',[0.1,0.1,0.9,0.9] );
@@ -143,8 +153,9 @@ end
 %% robust of the initial points and eps for AIRNN
 % Initial point 
 clc
-rcSen = 10; 
-X0 = (randn(nr,rcSen))*randn(rcSen,nc); 
+rcSen = 15; 
+X0 = randn(nr,nc); 
+% X0 = (randn(nr,rcSen) + 1)*randn(rcSen,nc); 
 lambda = 1e-3*norm(Y,inf);
 itmax = 5e3; 
 sp = 0.5; 
@@ -153,22 +164,21 @@ options.beta = 1.3;
 options.max_iter = itmax;
 options.mu = 0.1; 
 options.alpha = 0.7; 
-options.KLopt = 1e-9;
+options.KLopt = 1e-5;
 %
   orieps_spl = 10.^(0:-1:-5);
   optionsA = options;
-  optionsA.eps = 1e-4;
+  optionsA.eps = 1e0;
 %     optionsA.zero = 1e-4;
   tol = 1e-6; 
   for i = 1:length(orieps_spl)
     optionsP = options;
     optionsP.eps = orieps_spl(i);  
     PIReps{i} = MC_PIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
-    optionsA.eps = orieps_spl(i);
-    AIReps{i} = MC_AIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
-    EPIReps{i} = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
+%     optionsA.eps = orieps_spl(i);
   end
-
+    AIReps{1} = MC_AIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
+    EPIReps{1} = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
 %     optionsA.eps = orieps_spl(1);
 %     AIReps{1} = MC_AIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
 %     EPIReps{1} = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 

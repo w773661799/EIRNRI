@@ -25,6 +25,7 @@ $\color{blue}{Lu Zhaosong} $ 有两篇没发出去的(两篇结果类似): 局�
    - [4] `Iterative Reweighted Algorithms for Matrix Rank Minimization`[论文地址](https://www.jmlr.org/papers/volume13/mohan12a/mohan12a.pdf) 使用了 $\gamma_{0}/\eta^{k}$ 的更新方式, 有数据支撑
      > 针对 rank 约束, 转化为 IRLS-p 约束问题. 对于约束项做成投影问题. 
      > ${\rm Trace}(WXX^{\top})$, 讨论了 $0\le p \le 1$ 的情况, 提出了 IRLS-GP 投影算法
+     > 给了一个 $\epsilon$ 的讨论范围, 实验选取 $\epsilon=1e^{-2}$ works well, 
 
    - [5] `Improved Iteratively Reweighted Least Squares For Unconstrained Smoothed Minimization_XuYangyang, YinWotao`[论文地址](https://web.archive.org/web/20190302145613id_/http://pdfs.semanticscholar.org/9d9b/c32be385490596bb8d630383df19b5e97573.pdf)
      > 针对rank 约束, 提出了 iteratively 算法, 对于矩阵的情况反复求解一个向量形式的线性方程组 IRucLq-M, 给出了一个可以加速的版本?
@@ -34,7 +35,7 @@ $\color{blue}{Lu Zhaosong} $ 有两篇没发出去的(两篇结果类似): 局�
    - [6] `A reweighted nuclear norm minimization algorithm for low rank matrix recovery` 'RNNM\_2014\_form\_2017' $\color{red}{找数值实验, 代码}$ 
      > 给出了 fixed $\epsilon$ 的方法? 证明用fixed $\epsilon$, 实验更新了 $\epsilon_{k}$ 原问题是带线性算子的, 线性算子可以转换为投影
    - [8] `Generalized Nonconvex Nonsmooth_LRMM_2014_LuCaiyi`说 KL 有局部线性收敛的结果? ?? 原文没找到
-     > LuCanyi 的算法部分会一直更新 $\lambda$ ?  有源码
+     > LuCanyi 的算法部分会一直更新 $\lambda$ ?  有源码[github](https://github.com/canyilu/Iteratively-Reweighted-Nuclear-Norm-Minimization)
      > 更新 $\lambda$ 的方法 LuZhaosong 好像用过
 
 对比固定 $\epsilon$ 情况下的结果
@@ -120,3 +121,49 @@ $$
 
 主要是为了说明 Reweighted 方法在初始化中光滑化因子 $\epsilon$ 的重要作用.
 
+
+## 光滑因子的选择
+根据model identification 的性质, 可以识别的 feature 应该满足
+
+$$
+\sigma(X) \ge (\frac{\lambda p}{\beta C_{1}})^\frac{1}{1-p} 
+$$
+
+其中 $\lambda >0$ 是罚因子, $p\in(0,1)$是约束形式参数, $\beta \ge L_{f} >1$ 是与 Lipschitz 有关的常数, $C_{1}$ 是可识别的最大 feature 的上界
+
+则对于可识别的 feature 当其某一步 $\sigma=0$ 时, 光滑因子的选择应当满足:
+
+$$
+p(\sigma+\epsilon)^{p-1} < \frac{\beta C_{1}}{\lambda}
+$$
+
+即
+
+$$
+\epsilon_{0} > (\frac{\lambda p}{\beta C_{1}})^{\frac{1}{1-p}} 
+$$
+
+1. 讨论 $\epsilon$ 关于 $p$ 的性质
+  $$
+  f(x) = [c(1-\frac{1}{x})]^{x},
+  $$
+  其中 $\frac{1}{1-p} = x\in(1,+\infty), c = \frac{\lambda}{\beta C_{1}}\in(0,+\infty)$
+  则:
+  $$
+  f^{'}(x) = e^{x\ln[c(1-\frac{1}{x})]}(\ln[c(1-\frac{1}{x})] + \frac{1}{x-1})
+  $$
+  记: 
+  $$
+  \hat{g}(x) =\ln[c(1-\frac{1}{x})] + \frac{1}{x-1} = g(y) = \ln[\frac{c}{y+1}] + y
+  $$ 
+  其中 $y=\frac{1}{x-1} = \frac{1}{p}-1\in(0,+\infty)$, 
+  得:
+   - $c\ge 1$ 时, $g(y) > 0$ 故, $f(x)$ 在$(1,+\infty)$ 严格单调增, 即 $\epsilon$ 关于 $p$ 在 $(0,1)$ 上严格单调增  
+   - 当 $c\le 1$ 是存在 $y_{m}$ 满足 $c e^{y_{m}} = y_{m}+1$, 且 $y_{m} = \frac{1}{p_{m}}-1$ 所以:
+     -  $y<y_{m}$ 时, 即 $p>p_{m}$, $g(y)<0$, $\epsilon$ 关于 $p$单调减
+     -  $y>y_{m}$ 时, 即 $p<p_{m}$, $g(y)>0$, $\epsilon$ 关于 $p$单调增
+    
+    注意到 $c=\frac{\lambda}{\beta C_{1}}$
+
+2. $\epsilon$ 关于 $\lambda$ 单调增加
+3. $\epsilon$ 关于 $\beta$ 单调减少

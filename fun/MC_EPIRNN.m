@@ -89,10 +89,10 @@ spf(iter) = Objf(X1);
 %% ---------------------- Optimal Condition ----------------------
     if exist('ReX','var')
       Rtol = norm(Xc-ReX,'fro')/norm(ReX,'fro');
-      Rate(iter) = norm(mask.*(Xc-ReX),'fro')/norm(mask.*(X1-ReX),'fro');
+      Rate(iter) = norm(mask.*(Xc-ReX),'fro')/norm(mask.*(ReX),'fro');
       spRelErr(iter) = Rtol; 
       if Rtol<tol
-        disp('Satisfying the optimality condition:Relative error'); 
+        disp('EPIRNN: Satisfying the optimality condition:Relative error'); 
         fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
           iter, RelErr, rank(Xc),Objf(Xc))
         break;
@@ -103,7 +103,7 @@ spf(iter) = Objf(X1);
       lambda*sp*spdiags((weps(idx)+NewS(idx)).^(sp-1),0,Rk,Rk),'fro')/norm(M,'fro');
     spRelDist(iter) = RelDist; 
     if RelDist<tol
-      disp('Satisfying the optimality condition:Relative Distance'); 
+      disp('EPIRNN: Satisfying the optimality condition:Relative Distance'); 
       fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
         iter, RelDist, rank(Xc),Objf(Xc))
       break
@@ -112,7 +112,7 @@ spf(iter) = Objf(X1);
 %     KLdist = norm(Xc-X1,"fro");
     KLdist = norm(Xc-X1,"fro")+(1-mu)*norm(weps(1:Rk),1)/mu;
     if KLdist<KLopt
-      disp("Satisfying  the KL optimality condition"); 
+      disp("EPIRNN: Satisfying  the KL optimality condition"); 
       fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
         iter, KLdist, rank(Xc),Objf(Xc))
       break
@@ -126,7 +126,7 @@ spf(iter) = Objf(X1);
 %     end
     
     if iter==max_iter
-      disp("Reach the MAX_ITERATION");
+      disp("EPIRNN: Reach the MAX_ITERATION");
       fprintf( 'iter:%04d\t rank(X):%d\t Obj(F):%d\n', ...
         iter, rank(Xc),Objf(Xc) );
       break
@@ -152,7 +152,7 @@ spf(iter) = Objf(X1);
   Par.Xsol = Xc; 
   Par.iterTol = iter ;
 
-  Par.weps = weps(1:Rk);
+  Par.weps = weps(1:end);
 %   Par.S = Ssim; Par.R = Rsim;
 %   Par.GMinf = GMinf;
 %   Par.KLdist = KLdist;

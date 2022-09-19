@@ -48,7 +48,7 @@ function Par = MC_PIRNN(X0,M,sp, lambda, mask, tol, options)
   tic;
   while iter <= max_iter  
     iter = iter + 1; 
-spf(iter) = Objf(X0);
+    spf(iter) = Objf(X0);
     [U,S,V] = svd(X0 - Gradf(X0)/beta,'econ') ;
     NewS = diag(S) - lambda*sp*(sigma+weps).^(sp-1)/beta ;
     idx = NewS>zero; 
@@ -68,10 +68,10 @@ spf(iter) = Objf(X0);
 %% ---------------------- Optimal Condition ---------------------- 
     if exist('ReX','var')
       Rtol = norm(X1-ReX,'fro')/norm(ReX,'fro');
-      Rate(iter) = norm(mask.*(X1-ReX),'fro')/norm(mask.*(X0-ReX),'fro');
+      Rate(iter) = norm(mask.*(X1-ReX),'fro')/norm(mask.*ReX,'fro');
       spRelErr(iter) = Rtol; 
       if Rtol<tol
-        disp('Satisfying the optimality condition:Relative error'); 
+        disp('PIRNN: Satisfying the optimality condition:Relative error'); 
         fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
           iter, RelErr, rank(X1),Objf(X1));
         break;  
@@ -83,7 +83,7 @@ spf(iter) = Objf(X0);
       lambda*sp*spdiags((weps(idx)+NewS(idx)).^(sp-1),0,Rk,Rk),'fro')/norm(M,'fro'); 
     spRelDist(iter) = RelDist;
     if RelDist<tol
-      disp('Satisfying the optimality condition:Relative Distance'); 
+      disp('PIRNN: Satisfying the optimality condition:Relative Distance'); 
       fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
         iter, RelDist, rank(X1),Objf(X1));
       break
@@ -91,7 +91,7 @@ spf(iter) = Objf(X0);
 
     KLdist = norm(X1-X0,"fro");
     if KLdist<KLopt
-      disp("Satisfying  the KL optimality condition"); 
+      disp("PIRNN: Satisfying  the KL optimality condition"); 
       fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
         iter, KLdist, rank(X1),Objf(X1))
       break
@@ -104,7 +104,7 @@ spf(iter) = Objf(X0);
 %     end
 
     if iter==max_iter
-      disp("Reach the MAX_ITERATION");
+      disp("PIRNN: Reach the MAX_ITERATION");
       fprintf( 'iter:%04d\t rank(X):%d\t Obj(F):%d\n', ...
         iter, rank(X1),Objf(X1) );
       break
