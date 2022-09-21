@@ -1,8 +1,10 @@
-function Par = IRNN_MCLu(X0,fun,y,M,m,n,options)
+function Par = IRNN_Lu(X0,fun,y,M,m,n,options)
 
 % Modified by Ye Wang 2022/05 
 % X0: is the Initial point, should be a vector with m*n 
-%
+% fun: the regularization function
+% y: 
+
 % Written by Canyi Lu (canyilu@gmail.com)
 % References: 
 % Canyi Lu, Jinhui Tang, Shuicheng Yan and Zhouchen Lin,
@@ -48,14 +50,12 @@ function Par = IRNN_MCLu(X0,fun,y,M,m,n,options)
 
   hfun_sg = str2func([fun '_sg']);
   
-  
-  insweep = 2e2; % warm  start step
-
-  x = zeros(m*n,1);
+%   x = zeros(m*n,1);
 % Initial point 
-%   x = X0;   
+  x = X0(:);
   X = reshape(x,[m,n]);
   %% with warm start  
+% insweep = 2e2; % warm  start step
 %   iter = 0;
 %   tic;  
 %   f_current = norm(y-M(x,1)) + lambda*norm(x,1);
@@ -124,14 +124,14 @@ function Par = IRNN_MCLu(X0,fun,y,M,m,n,options)
     
 % Termination condition
     if norm(y-M(x1,1)) < tol || norm(x1-x0,2)<tol
-      disp("Satisfying the optimal condition")
+      disp("IRNN_Lu: Satisfying the optimal condition")
       fprintf( 'iter:%04d\t err%06f\t  rank(X):%d\t Obj(F):%d\n', ...
         iter,norm(x1-x0,2), rank(X),Objf(x,X) );
       break;
     end
     
     if iter==max_iter
-      disp("Reach the MAX_ITERATION");
+      disp("IRNN_Lu: Reach the MAX_ITERATION");
       fprintf( 'iter:%04d\t  rank(X):%d\t Obj(F):%d\n', ...
         iter, rank(X),Objf(x,X) );
       break

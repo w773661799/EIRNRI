@@ -41,7 +41,7 @@ tol = 1e-9;
   options.beta = 1.1; 
   
   optionsP= options;
-  PIR = MC_PIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
+  
 
   optionsA = options;
   optionsA.eps = 1e1; 

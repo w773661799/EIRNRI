@@ -79,8 +79,7 @@ function Par = MC_PIRNN(X0,M,sp, lambda, mask, tol, options)
     end
     
     Rk = sum(idx);
-    RelDist = norm(U(:,idx)'*Gradf(X1)*V(:,idx)+...
-      lambda*sp*spdiags((weps(idx)+NewS(idx)).^(sp-1),0,Rk,Rk),'fro')/norm(M,'fro'); 
+    RelDist = norm(U'*Gradf(X1)*V + lambda*sp*spdiags((weps(idx)+NewS(idx)).^(sp-1),0,Rk,Rk),'fro')/norm(M,'fro'); 
     spRelDist(iter) = RelDist;
     if RelDist<tol
       disp('PIRNN: Satisfying the optimality condition:Relative Distance'); 

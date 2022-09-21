@@ -32,7 +32,7 @@ function Par = MC_AIRNN(X0,M,sp, lambda, mask, tol, options)
     spRelErr = []; 
   end
   
-  if isfield(options,'zero')==0,zero = 0;
+  if isfield(options,'zero')==0,zero = 1e-2;
   else,zero = options.zero;   % thresholding
   end
 
