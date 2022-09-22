@@ -43,32 +43,43 @@ function Par = MC_AIRNN(X0,M,sp, lambda, mask, tol, options)
   weps = ones(rc,1)*epsre; 
   
   Gradf = @(X)(mask.*(X-M)); 
-  Objf = @(x)(norm(mask.*(x-M),'fro')^2/2 + lambda*norm(svds(x,rank(x)),sp)^(sp)); 
-  ALF = @(x,y)(norm(mask.*(x-M),'fro')/2 + lambda*norm(svd(x)+y,sp)^(sp));
-  
+%   Objf = @(x)(norm(mask.*(x-M),'fro')^2/2 + lambda*norm(svds(x,rank(x)),sp)^(sp)); 
+%   ALF = @(x,y)(norm(mask.*(x-M),'fro')/2 + lambda*norm(svd(x)+y,sp)^(sp));
+
   iter = 0; %Par.f = Objf(X0);
   sigma = svd(X0); % ch1
-  
+
   tic ;
-  while iter <= max_iter
-    iter = iter + 1; 
-    [U,S,V] = svd(X0 - Gradf(X0)/beta,'econ') ;
+  lambda_Target = lambda;
+  lambda = 1e4 * lambda;
+  lambda_rho = 0.8;
+  iter = 0;
+  sweepTimes = floor(ceil(log(1e-4)/(log(lambda_rho))));
+  insweep = max(ceil(max_iter/sweepTimes),200); 
+
+  while lambda > lambda_Target && iter < max_iter
+    Objf = @(x)(norm(mask.*(x-M),'fro')^2/2 + lambda*norm(svds(x,rank(x)),sp)^(sp));
+    ALF = @(x,y)(norm(mask.*(x-M),'fro')/2 + lambda*norm(svd(x)+y,sp)^(sp));
+%     weps = ones(rc,1)*epsre;
+    for ins = 1:1:insweep
+      iter = iter + 1;
+      spf(iter) = Objf(X0);
+      [U,S,V] = svd(X0 - Gradf(X0)/beta,'econ');
 % restart the eps
 %     if ~isempty(find(and(diag(S)>zero,(sigma+weps)<zero),1)) && (iter<=1e2)
 %       weps(and(diag(S)>zero,(sigma+weps)<zero)) = epsre;
 %     end 
-spf(iter) = Objf(X0);
-    NewS = diag(S) - lambda*sp*(sigma+weps).^(sp-1)/beta;
-    NewS(isinf(NewS))=0; 
-    idx = NewS>zero; Rk = sum(idx);  
-    X1 = U*spdiags(NewS.*idx,0,rc,rc)*V'; 
-    weps(weps(1:Rk)>zero) = weps(weps(1:Rk)>zero)*mu ;
-    sigma = sort(NewS.*idx,'descend'); % update the sigma 
+      
+      NewS = diag(S) - lambda*sp*(sigma+weps).^(sp-1)/beta;
+      NewS(isinf(NewS)) = 0; 
+      idx = NewS>zero; Rk = sum(idx);  
+      X1 = U*spdiags(NewS.*idx,0,rc,rc)*V'; 
+      weps(weps(1:Rk)>zero) = weps(weps(1:Rk)>zero)*mu ;
+      sigma = sort(NewS.*idx,'descend'); % update the sigma 
 % save for plot    
-    sprank(iter) = rank(X1);
-%     spf(iter) = Objf(X1);
-    Stime(iter) = toc; % recored the computing time 
-    
+      sprank(iter) = rank(X1);
+      Stime(iter) = toc; % recored the computing time 
+
 % optional information for the iteration 
 %     Rsim(iter) = (Objf(X1)-Objf(X0))/(norm(X1-X0,'fro')^2); 
 %     Ssim(iter) = norm(U(:,idx)'*Gradf(X1)*V(:,idx)+...
@@ -81,37 +92,66 @@ spf(iter) = Objf(X0);
 %               iter, RelDist, rank(X1),Objf(X1) );
 %     end
 
-%% ---------------------- Optimal Condition ----------------------
+      if exist('ReX','var')
+        Rtol = norm(X1-ReX,'fro')/norm(ReX,'fro');
+        Rate(iter) = norm(mask.*(X1-ReX),'fro')/norm(mask.*(ReX),'fro');
+        spRelErr(iter) = Rtol;
+        if Rtol<=tol
+          break;  
+        end
+      end
+
+      RelDist = norm(U(:,idx)'*Gradf(X1)*V(:,idx)+...
+        lambda*sp*spdiags((weps(idx)+NewS(idx)).^(sp-1),0,Rk,Rk),'fro')/norm(M,'fro'); 
+      spRelDist(iter) = RelDist; 
+
+      if RelDist < tol
+        break
+      end
+
+      KLdist = norm(X1-X0,"fro");
+  %     KLdist = norm(X1-X0,"fro")+(1-mu)*norm(weps(1:Rk),1)/mu;
+      if KLdist<KLopt
+        break
+      end
+
+      X0 = X1 ; % update the iteration
+    end %^ end for sweep
+    lambda = lambda*lambda_rho; 
+  end % end while -- lambda & iter    
+    %% ---------------------- Optimal Condition ----------------------
     if exist('ReX','var')
-      Rtol = norm(X1-ReX,'fro')/norm(ReX,'fro');
-      Rate(iter) = norm(mask.*(X1-ReX),'fro')/norm(mask.*(ReX),'fro');
-      spRelErr(iter) = Rtol;
-      if Rtol<=tol
+%       Rtol = norm(X1-ReX,'fro')/norm(ReX,'fro');
+%       Rate(iter) = norm(mask.*(X1-ReX),'fro')/norm(mask.*(ReX),'fro');
+%       spRelErr(iter) = Rtol;
+      if Rtol <= tol
         disp('AdaIRNN: Satisfying the optimality condition:Relative error'); 
         fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
           iter, RelErr, rank(X1),Objf(X1));
-        break;  
+%         break;  
       end
     end
     
-    RelDist = norm(U(:,idx)'*Gradf(X1)*V(:,idx)+...
-      lambda*sp*spdiags((weps(idx)+NewS(idx)).^(sp-1),0,Rk,Rk),'fro')/norm(M,'fro'); 
-    spRelDist(iter) = RelDist; 
+%     RelDist = norm(U(:,idx)'*Gradf(X1)*V(:,idx)+...
+%       lambda*sp*spdiags((weps(idx)+NewS(idx)).^(sp-1),0,Rk,Rk),'fro')/norm(M,'fro'); 
+%     spRelDist(iter) = RelDist; 
     if RelDist<tol
       disp('AdaIRNN: Satisfying the optimality condition:Relative Distance'); 
       fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
         iter, RelDist, rank(X1),Objf(X1));
-      break
+%       break
     end
-KLdist = norm(X1-X0,"fro");
+    
+%     KLdist = norm(X1-X0,"fro");
 %     KLdist = norm(X1-X0,"fro")+(1-mu)*norm(weps(1:Rk),1)/mu;
-    if KLdist<KLopt
+
+    if KLdist < KLopt
       disp("AdaIRNN: Satisfying  the KL optimality condition"); 
       fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
         iter, KLdist, rank(X1),Objf(X1))
-      break
+%       break
     end
-    
+
 %     if norm(mask.*(X1-M),inf)<tol
 %       disp("Iteration terminates");
 %       fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
@@ -122,7 +162,7 @@ KLdist = norm(X1-X0,"fro");
       disp("AdaIRNN: Reach the MAX_ITERATION");
       fprintf( 'iter:%04d\t rank(X):%d\t Obj(F):%d\n', ...
         iter, rank(X1),Objf(X1) );
-      break
+%       break
     end
     
 %     if mod(iter,1000)==0
@@ -130,10 +170,11 @@ KLdist = norm(X1-X0,"fro");
 %           iter, rank(X1),Objf(X1) );
 %     end
 % update the iteration 
-    X0 = X1 ;   
-  end % end while 
+%     X0 = X1 ;   
+%   end % end while 
   estime = toc;
 
+%% return the best-lambda, time, iterations, rank, objective,and solution
   if exist('ReX','var')
     Par.RelErr = spRelErr(1:iter); 
     Par.Rate = Rate;
@@ -152,5 +193,5 @@ KLdist = norm(X1-X0,"fro");
   Par.weps = weps(1:Rk);
 %   Par.S = Ssim; Par.R = Rsim;
 %   Par.GMinf = GMinf;
-%   Par.KLdist = KLdist;
+  Par.KLdist = KLdist;
 end

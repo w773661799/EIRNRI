@@ -55,98 +55,91 @@ function Par = IRNN_Lu(X0,fun,y,M,m,n,options)
   x = X0(:);
   X = reshape(x,[m,n]);
   %% with warm start  
-% insweep = 2e2; % warm  start step
-%   iter = 0;
-%   tic;  
-%   f_current = norm(y-M(x,1)) + lambda*norm(x,1);
-%   while lambda > lambda_Target
-%     ftol = @(x)(norm(y-M(x,1)) + lambda*norm(x,1));
-%     f_current = ftol(x) ; 
-%     ins = 0;
-%     while ins < insweep && iter<=max_iter     
-%       iter = iter+1; 
-%       ins = ins+1;
-% % save for plot and table       
-%       Stime(iter) = toc;
-%       sprank(iter) = rank(X);
-%       spf(iter) = Objf(x,X);
-%       
-%       f_previous = f_current;
-%       x = x + (1/mu)*M(y - M(x,1),2);
-%       [U,S,V] = svd(reshape(x,[m,n]),'econ');
-%       sigma = diag(S);
-%       w = hfun_sg(sigma,gamma,lambda);
-%       sigma = sigma - w/mu;
-%       svp = length(find(sigma>0));
-%       sigma = sigma(1:svp);
-%       X = U(:,1:svp)*diag(sigma)*V(:,1:svp)';
-%       x = X(:);
-%       f_current = norm(y-M(x,1)) + lambda*norm(x,1);
-% %       f_current = ftol(x);
-%       if norm(f_current-f_previous)/norm(f_current + f_previous) < tol
-%         break;
-%       end
-%     end
-%     if norm(y-M(x,1)) < tol
-%       disp("Satisfying the optimal condition");
-%       break
-%     end
-%     
-%     if iter==max_iter
-%       disp("Reach the MAX_ITERATION");
-%       fprintf( 'iter:%04d\t rank(X):%d\t Obj(F):%d\n', ...
-%         iter, rank(X),Objf(X) );
-%       break
-%     end
-%     lambda = lambda*lambda_rho; 
-%   end
-%% without warm start
-% % % skip to optimal lambda to solve
-  iter = 0; lambda = lambda_Target; 
-  x0 = x;
+  insweep = 2e2; % warm  start step
+  iter = 0;
   tic;
-  while iter<max_iter
-    iter = iter + 1;
+  while lambda > lambda_Target && iter < max_iter
+    ftol = @(x)(norm(y-M(x,1)) + lambda*norm(x,1));
+    f_current = ftol(x) ; 
+%     ins = 0;
+    for ins = 1:1: insweep
+      iter = iter+1; 
+%       ins = ins+1;
+      % save for plot and table       
+      Stime(iter) = toc;
+      sprank(iter) = rank(X);
+      spf(iter) = Objf(x,X);
+      
+      f_previous = f_current;
+      x = x + (1/mu)*M(y - M(x,1),2);
+      [U,S,V] = svd(reshape(x,[m,n]),'econ');
+      sigma = diag(S);
+      w = hfun_sg(sigma,gamma,lambda);
+      sigma = sigma - w/mu;
+      svp = length(find(sigma>0));
+      sigma = sigma(1:svp);
+      X = U(:,1:svp)*diag(sigma)*V(:,1:svp)';
+      x = X(:);
+      f_current = norm(y-M(x,1)) + lambda*norm(x,1);
+      if norm(f_current-f_previous)/norm(f_current + f_previous) < tol
+        break;
+      end
+    end
     
-    Stime(iter) = toc;
-    sprank(iter) = rank(X);
-    spf(iter) = Objf(x,X);
-    
-    x = x + (1/mu)*M(y - M(x,1),2);
-    [U,S,V] = svd(reshape(x,[m,n]),'econ');
-    sigma = diag(S);
-    w = hfun_sg(sigma,gamma,lambda);
-    sigma = sigma - w/mu;
-    svp = length(find(sigma>0));
-    sigma = sigma(1:svp);
-    X = U(:,1:svp)*diag(sigma)*V(:,1:svp)';
-    x1 = X(:);
-    
-% Termination condition
-    if norm(y-M(x1,1)) < tol || norm(x1-x0,2)<tol
-      disp("IRNN_Lu: Satisfying the optimal condition")
-      fprintf( 'iter:%04d\t err%06f\t  rank(X):%d\t Obj(F):%d\n', ...
-        iter,norm(x1-x0,2), rank(X),Objf(x,X) );
-      break;
+    if norm(y-M(x,1)) < tol
+      disp("Satisfying the optimal condition"); break; 
     end
     
     if iter==max_iter
-      disp("IRNN_Lu: Reach the MAX_ITERATION");
-      fprintf( 'iter:%04d\t  rank(X):%d\t Obj(F):%d\n', ...
-        iter, rank(X),Objf(x,X) );
+      disp("Reach the MAX_ITERATION");
+      fprintf( 'iter:%04d\t rank(X):%d\t Obj(F):%d\n',iter, rank(X),Objf(X) );
       break
     end
-    x = x1; x0=x1;% update the ieration
-  end% end while
-
+    lambda = lambda*lambda_rho; 
+  end
+%% without warm start
+% % % % skip to optimal lambda to solve
+%   iter = 0; lambda = lambda_Target; 
+%   x0 = x;
+%   tic;
+%   while iter<max_iter
+%     iter = iter + 1;
+%     
+%     Stime(iter) = toc;
+%     sprank(iter) = rank(X);
+%     spf(iter) = Objf(x,X);
+%     
+%     x = x + (1/mu)*M(y - M(x,1),2);
+%     [U,S,V] = svd(reshape(x,[m,n]),'econ');
+%     sigma = diag(S);
+%     w = hfun_sg(sigma,gamma,lambda);
+%     sigma = sigma - w/mu;
+%     svp = length(find(sigma>0));
+%     sigma = sigma(1:svp);
+%     X = U(:,1:svp)*diag(sigma)*V(:,1:svp)';
+%     x1 = X(:);
+%     
+% % Termination condition
+%     if norm(y-M(x1,1)) < tol || norm(x1-x0,2)<tol
+%       disp("IRNN_Lu: Satisfying the optimal condition")
+%       fprintf( 'iter:%04d\t err%06f\t  rank(X):%d\t Obj(F):%d\n', ...
+%         iter,norm(x1-x0,2), rank(X),Objf(x,X) );
+%       break;
+%     end
+%     
+%     if iter==max_iter
+%       disp("IRNN_Lu: Reach the MAX_ITERATION");
+%       fprintf( 'iter:%04d\t  rank(X):%d\t Obj(F):%d\n', ...
+%         iter, rank(X),Objf(x,X) );
+%       break
+%     end
+%     x = x1; x0=x1;% update the ieration
+%   end% end while
+%% return the best-lambda, time, iterations, rank, objective,and solution
   Par.lambda_best = lambda;
   Par.time = Stime;
   Par.iterTol = iter;
-  
   Par.rank = sprank;
   Par.f = spf;
-  
-  
   Par.Xsol = reshape(x,[m,n]);
-
 end
