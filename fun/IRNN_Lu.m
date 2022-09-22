@@ -3,7 +3,7 @@ function Par = IRNN_Lu(X0,fun,y,M,m,n,options)
 % Modified by Ye Wang 2022/05 
 % X0: is the Initial point, should be a vector with m*n 
 % fun: the regularization function
-% y: 
+% y: the observation matrix with linear operator
 
 % Written by Canyi Lu (canyilu@gmail.com)
 % References: 
@@ -14,7 +14,7 @@ function Par = IRNN_Lu(X0,fun,y,M,m,n,options)
 % Generalized Nonconvex Nonsmooth Low-Rank Minimization,
 % International Conference on Computer Vision and Pattern Recognition (CVPR), 2014
 
-
+%% 
   if isfield(options,"max_iter"), max_iter = options.max_iter;
   else, max_iter = 5e3;
   end
@@ -44,6 +44,7 @@ function Par = IRNN_Lu(X0,fun,y,M,m,n,options)
   else, mu = 1.1;
   end
 
+%%
   Objf = @(x,X)(norm(y-M(x,1),2)^2/2 +...
     lambda_Target*norm(svds(X,rank(X)),gamma)^(gamma));
    
