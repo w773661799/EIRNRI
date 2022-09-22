@@ -1,4 +1,4 @@
-function Par = ws_PIRNN(X0,M,sp, lambda, mask, tol, options)
+function Par = ws_ProxIRNN(X0,M,sp, lambda, mask, tol, options)
   % - M is the observation matrix
   % - lambda - regularization parameter, default = 1/sqrt(max(N,M))
   % - beta - the augmented lagrangian parameter, default = 10*lambda

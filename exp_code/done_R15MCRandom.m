@@ -1,6 +1,7 @@
-%% test the PIRNN / AIRNN / EPIRNN with random data  
-% this experiment shows the EPIRNN will convergence faster than PIRNN
-% the AIRNN has the similar convergence rate with PIRNN
+%% test the ds_ProxIRNN / AIRNN / EPIRNN with random data  
+% this experiment shows the EPIRNN will convergence faster than ds_ProxIRNN
+% the AIRNN has the similar convergence rate with ds_ProxIRNN
+%% --------------- generate data ---------------
 clc,clear,format long 
 rng(22)
 nr = 150; nc = 150; r = 15 ;
@@ -22,9 +23,10 @@ for i=1:nc
   randidx=randperm(nr,nr); % random sequence
   M_org(randidx(1:ceil(nr*missrate)),i)=1; 
 end
-mask = ~M_org; Xm=Y.*mask; 
-% --------------- parameters ---------------
-lambda = 1e-4*norm(Xm,inf);
+mask = ~M_org; Xm = Y.*mask; 
+
+% %% --------------- parameters ---------------
+lambda = 5e-4*norm(Xm,inf);
 itmax = 1e5; 
 sp = 0.9; 
 tol = 1e-9; 
@@ -41,17 +43,17 @@ tol = 1e-9;
   options.beta = 1.1; 
   
   optionsP= options;
-  
+  PIR = ds_ProxIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
 
   optionsA = options;
-  optionsA.eps = 1e1; 
+  optionsA.eps = 1e0; 
 %   optionsA.eps = 1e0; 
   optionsA.mu = 0.1; 
-  AIR = MC_AIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
+  AIR = ds_AdaIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
   
   optionsEP = optionsA; 
   optionsEP.alpha = 5e-1; 
-  EPIR = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsEP); 
+  EPIR = ds_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsEP); 
   %%
   reerr = norm(Y-EPIR.Xsol,"fro") / norm(Y,"fro")
   
@@ -114,7 +116,7 @@ optionsP= options;
 Lalpha = [0 0.1 0.3 0.5 0.7 0.9];
 for i = 1:length(Lalpha)
   optionsP.alpha = Lalpha(i) ;
-  LEPIR{i} = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
+  LEPIR{i} = ds_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
 end
   %% plot 
   figure(1) % RelErr
@@ -174,14 +176,14 @@ options.KLopt = 1e-5;
   for i = 1:length(orieps_spl)
     optionsP = options;
     optionsP.eps = orieps_spl(i);  
-    PIReps{i} = MC_PIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
+    PIReps{i} = ds_ProxIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
 %     optionsA.eps = orieps_spl(i);
   end
-    AIReps{1} = MC_AIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
-    EPIReps{1} = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
+    AIReps{1} = ds_AdaIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
+    EPIReps{1} = ds_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
 %     optionsA.eps = orieps_spl(1);
-%     AIReps{1} = MC_AIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
-%     EPIReps{1} = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
+%     AIReps{1} = ds_AdaIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
+%     EPIReps{1} = ds_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
   %%
   clear F R T
   
@@ -192,7 +194,7 @@ options.KLopt = 1e-5;
   end
 format short g
   
-    %% polt sensitive of eps for PIRNN and robust for AIRNN/EPIRNN
+    %% polt sensitive of eps for ds_ProxIRNN and robust for AIRNN/EPIRNN
 %     timeStveps 
 % time VS f
 figure(1)
@@ -230,7 +232,7 @@ figure(1)
 %   legend("PIR-\epsilon = 1","PIR-\epsilon  = 10^{-1}","PIR-\epsilon  = 10^{-2}",...
 %     "PIR-\epsilon = 10^{-3}","PIR-\epsilon = 10^{-4}",...
 %     "AIR-\epsilon_{0}=1","EPIR-\epsilon_{0}=1")
-    %% polt sensitive of eps for PIRNN and robust for AIRNN/EPIRNN
+    %% polt sensitive of eps for ds_ProxIRNN and robust for AIRNN/EPIRNN
 % iteration VS f
 figure(1)
     pbeg = 10;
@@ -252,11 +254,11 @@ rcSen = 15; X0 = (1+randn(nr,rcSen))*(randn(rcSen,nc));
 optionsP.Rel = Y; 
 optionsP.eps = 5e-1;
 optionsP.max_iter = itmax; 
-PIR = MC_PIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
+PIR = ds_ProxIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
 optionsP.mu = 0.8; 
-AIR = MC_AIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
+AIR = ds_AdaIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
 optionsP.alpha = 0.7; 
-EPIR = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
+EPIR = ds_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
 
 %%
   plot(PIRx,PIR.f(1:pPIR),':.r','linewidth',1);hold on; 
@@ -291,7 +293,7 @@ EPIR = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
   % ------------  time plot
 %%
 optionsP.alpha = 1e-1; 
-EPIR = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
+EPIR = ds_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
 %% plot the Relative error and Objective 
 PIRx = (1:1:PIR.iterTol); 
 AIRx = (1:1:AIR.iterTol); 
@@ -358,12 +360,12 @@ for stm =1:length(mu)
   upalpha = sqrt(mu(stm)/(mu(stm)+2)); 
   adalpha = 5e-2:0.05:upalpha ;
   stay(stm) = length(adalpha); 
-  AIR = MC_AIRNN(X0,Y,sp, lambda, mask, tol, optionsP);
+  AIR = ds_AdaIRNN(X0,Y,sp, lambda, mask, tol, optionsP);
   AIRtime = [AIRtime,AIR]; 
   optionsP.mu = mu(stm);
   for i = 1:length(adalpha)
     optionsP.alpha = adalpha(i);  
-    sol = MC_EPIRNN(X0,Y,sp, lambda, mask, tol, optionsP); 
+    sol = ds_EPIRNN(X0,Y,sp, lambda, mask, tol, optionsP); 
     EPIR = [EPIR,sol];
   end
 %   EPIRtime = [EPIRtime;EPIR];
