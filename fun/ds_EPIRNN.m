@@ -81,7 +81,7 @@ function Par = ds_EPIRNN(X0,M,sp, lambda, mask, tol, options)
 %% ---------------------- Optimal Condition ----------------------
     if exist('ReX','var')
       Rtol = norm(Xc-ReX,'fro')/norm(ReX,'fro');
-      Rate(iter) = norm(mask.*(Xc-ReX),'fro')/norm(mask.*(ReX),'fro');
+      Rate(iter) = norm((Xc-ReX),'fro')/norm((ReX),'fro');
       spRelErr(iter) = Rtol; 
       if Rtol < tol
         disp('EPIRNN: Satisfying the optimality condition:Relative error'); 

@@ -86,7 +86,7 @@ function Par = ds_AdaIRNN(X0,M,sp, lambda, mask, tol, options)
 %% ---------------------- Optimal Condition ----------------------
     if exist('ReX','var')
       Rtol = norm(X1-ReX,'fro')/norm(ReX,'fro');
-      Rate(iter) = norm(mask.*(X1-ReX),'fro')/norm(mask.*(ReX),'fro');
+      Rate(iter) = norm((X1-ReX),'fro')/norm((ReX),'fro');
       spRelErr(iter) = Rtol;
       if Rtol <= tol
         disp('AdaIRNN: Satisfying the optimality condition:Relative error'); 

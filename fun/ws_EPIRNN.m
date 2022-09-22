@@ -89,7 +89,7 @@ function Par = ws_EPIRNN(X0,M,sp, lambda, mask, tol, options)
 %     GMinf(iter) = norm(Gradf(Xc),inf);
       if exist('ReX','var')
         Rtol = norm(Xc-ReX,'fro')/norm(ReX,'fro');
-        Rate(iter) = norm(mask.*(Xc-ReX),'fro')/norm(mask.*(ReX),'fro');
+        Rate(iter) = norm((Xc-ReX),'fro')/norm((ReX),'fro');
         spRelErr(iter) = Rtol; 
         if Rtol<tol
           break;

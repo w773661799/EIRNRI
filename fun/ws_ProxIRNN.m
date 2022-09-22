@@ -77,7 +77,7 @@ function Par = ws_ProxIRNN(X0,M,sp, lambda, mask, tol, options)
       %     GMinf(iter) = norm(Gradf(X1),inf);
       if exist('ReX','var')
         Rtol = norm(X1-ReX,'fro')/norm(ReX,'fro');
-        Rate(iter) = norm(mask.*(X1-ReX),'fro')/norm(mask.*ReX,'fro');
+        Rate(iter) = norm(X1-ReX,'fro')/norm(ReX,'fro');
         spRelErr(iter) = Rtol; 
         if Rtol<tol
           break;  
