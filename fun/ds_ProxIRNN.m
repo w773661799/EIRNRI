@@ -28,7 +28,7 @@ function Par = ds_ProxIRNN(X0,M,sp, lambda, mask, tol, options)
     spRelErr = [];
   end
   
-  if isfield(options,'zero')==0,zero = 0;
+  if isfield(options,'zero')==0,zero = 1e-16;
   else,zero = options.zero;   % thresholding
   end
 %%  

@@ -10,7 +10,7 @@ nr = 150; nc = 150; r = 15 ;
 % Y = rand(nr,r) * rand(r,nc);
 Y = rand(nr,nc);
 [uY,sY,vY] = svd(Y);
-Y = uY* diag([svds(sY,r)/(sY(r,r));zeros(nr-r,1)])*vY';
+Y = uY* diag([svds(sY,r)/(sY(1,1));zeros(nr-r,1)])*vY';
 % Y = Y(:,randperm(nc)); 
 clear uY sY vY
 % xb = (randn(nr,r) ); xc = randn(r,nc) ;
@@ -26,10 +26,10 @@ end
 mask = ~M_org; Xm = Y.*mask; 
 
 % %% --------------- parameters ---------------
-lambda = 5e-4*norm(Xm,inf);
+lambda = 1e-5*norm(Xm,inf);
 itmax = 1e5; 
-sp = 0.9; 
-tol = 1e-9; 
+sp = 0.5; 
+tol = 1e-7; 
 % basic algorithm for sp=0.5 ,SR=0.5
   % Initial point
   % with default eps = eps(1)
@@ -38,7 +38,7 @@ tol = 1e-9;
 % %%
   options.Rel = Y; 
   options.max_iter = itmax; 
-  options.KLopt = tol;
+  options.KLopt = tol; 
   options.eps = 1e-2;  
   options.beta = 1.1; 
   
@@ -56,7 +56,11 @@ tol = 1e-9;
   EPIR = ds_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsEP); 
   %%
   reerr = norm(Y-EPIR.Xsol,"fro") / norm(Y,"fro")
-  
+  %% 
+  plot(PIR.rank); hold on
+  plot(AIR.rank)
+  plot(EPIR.rank);hold off
+  legend("PIR","AIR","EP")
     %% plot
     pPIR = min(itmax,PIR.iterTol); pAIR = min(itmax,AIR.iterTol);
     pEPI = min(itmax,EPIR.iterTol); 
@@ -68,16 +72,16 @@ h = figure(1);
     set(h,'Position',[500 500 1500 500]);
 %     subplot(1,3,1)
 subplot('Position',[0.05,0.1,0.28,0.85])
-    plot(PIRx,log(PIR.RelErr(1:pPIR)),':k','linewidth',2);hold on
-    plot(AIRx,log(AIR.RelErr(1:pAIR)),'--b','linewidth',2);
-    plot(EPIRx,log(EPIR.RelErr(1:pEPI)),'-.r','linewidth',2); hold off
+    plot(PIRx,log10(PIR.RelErr(1:pPIR)),':k','linewidth',2);hold on
+    plot(AIRx,log10(AIR.RelErr(1:pAIR)),'--b','linewidth',2);
+    plot(EPIRx,log10(EPIR.RelErr(1:pEPI)),'-.r','linewidth',2); hold off
     xlabel("iteration"); ylabel("log(RelErr)")
     legend("PIRNN","AIRNN","EPIRNN")
 subplot('Position',[0.38,0.1,0.28,0.85])
 %     subplot(1,3,2,'position',[0.35,0,0.3,1])
-    plot(PIRx,log(PIR.RelDist(1:pPIR)),':k','linewidth',2);hold on
-    plot(AIRx,log(AIR.RelDist(1:pAIR)),'--b','linewidth',2);
-    plot(EPIRx,log(EPIR.RelDist(1:pEPI)),'-r','linewidth',2);hold off
+    plot(PIRx,log10(PIR.RelDist(1:pPIR)),':k','linewidth',2);hold on
+    plot(AIRx,log10(AIR.RelDist(1:pAIR)),'--b','linewidth',2);
+    plot(EPIRx,log10(EPIR.RelDist(1:pEPI)),'-r','linewidth',2);hold off
     xlabel("iteration"); ylabel("log(RelDist)")
     legend("PIRNN","AIRNN","EPIRNN")
 subplot('Position',[0.71,0.1,0.28,0.85])
