@@ -4,13 +4,14 @@
 %% --------------- generate data ---------------
 clc,clear,format long 
 rng(22)
-nr = 150; nc = 150; r = 15 ;
+nr = 150; nc = 250; r = 15 ;
 % --------------- Synthetic data ---------------
 % Y = randn(nr,r) * (randn(r,r)+eye(r,r)) * randn(r,nc);
-% Y = rand(nr,r) * rand(r,nc);
-Y = rand(nr,nc);
-[uY,sY,vY] = svd(Y);
-Y = uY* diag([svds(sY,r)/(sY(1,1));zeros(nr-r,1)])*vY';
+Y = rand(nr,r) * rand(r,nc);
+Y = Y./svds(Y,1);
+% Y = randn(nr,r);
+% [uY,sY,vY] = svd(Y);
+% Y = uY(:,1:r) * sY(1:r,1:r) * vY(:,1:r)';
 % Y = Y(:,randperm(nc)); 
 clear uY sY vY
 % xb = (randn(nr,r) ); xc = randn(r,nc) ;
@@ -23,36 +24,38 @@ for i=1:nc
   randidx=randperm(nr,nr); % random sequence
   M_org(randidx(1:ceil(nr*missrate)),i)=1; 
 end
-mask = ~M_org; Xm = Y.*mask; 
+mask = ~M_org; Xm = Y.*mask;
 
-% %% --------------- parameters ---------------
+%% --------------- parameters ---------------
 lambda = 1e-5*norm(Xm,inf);
-itmax = 1e5; 
-sp = 0.5; 
-tol = 1e-7; 
+% lambda = 1e-2;
+itmax = 5e3;
+sp = 0.5;
+tol = 1e-8;
 % basic algorithm for sp=0.5 ,SR=0.5
   % Initial point
   % with default eps = eps(1)
-  X0 = zeros(size(Y));
+%   X0 = zeros(size(Y));
 %   X0 = randn(nr,nc);  
+  X0 = Xm;
 % %%
-  options.Rel = Y; 
-  options.max_iter = itmax; 
-  options.KLopt = tol; 
-  options.eps = 1e-2;  
-  options.beta = 1.1; 
-  
+  options.Rel = Y;
+  options.max_iter = itmax;
+  options.KLopt = tol;
+  options.eps = 1e-2;
+  options.beta = 1.1;
+
   optionsP= options;
-  PIR = ds_ProxIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
+  PIR = ds_ProxIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
 
   optionsA = options;
   optionsA.eps = 1e0; 
 %   optionsA.eps = 1e0; 
   optionsA.mu = 0.1; 
   AIR = ds_AdaIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
-  
+
   optionsEP = optionsA; 
-  optionsEP.alpha = 5e-1; 
+  optionsEP.alpha = 7e-1; 
   EPIR = ds_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsEP); 
   %%
   reerr = norm(Y-EPIR.Xsol,"fro") / norm(Y,"fro")
