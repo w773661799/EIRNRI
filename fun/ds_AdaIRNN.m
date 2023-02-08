@@ -33,7 +33,11 @@ function Par = ds_AdaIRNN(X0,M,sp, lambda, mask, tol, options)
   end
   
   if isfield(options,'zero')==0,zero = 1e-16;
-  else,zero = options.zero;   % thresholding
+  else,zero = options.zero;   % thresholding for the minimum singular value
+  end
+
+  if isfield(options,'teps')==0,teps = 1e-16;
+  else,teps = options.teps;   % restrict the weighted epsilon for AdaIRNN 
   end
 
   spRelDist = []; spf = [];
@@ -56,10 +60,9 @@ function Par = ds_AdaIRNN(X0,M,sp, lambda, mask, tol, options)
       iter = iter + 1;
       spf(iter) = Objf(X0);
       [U,S,V] = svd(X0 - Gradf(X0)/beta,'econ');
-% restart the eps
-%     if ~isempty(find(and(diag(S)>zero,(sigma+weps)<zero),1)) && (iter<=1e2)
-%       weps(and(diag(S)>zero,(sigma+weps)<zero)) = epsre;
-%     end 
+
+% restrict the eps
+      weps = (weps<teps) .* teps + (weps>teps) .* weps;
       
       NewS = diag(S) - lambda*sp*(sigma+weps).^(sp-1)/beta;
       NewS(isinf(NewS)) = 0; 

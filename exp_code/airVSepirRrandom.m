@@ -40,13 +40,13 @@ for stm =1:length(mu)
 %   adalpha = 5e-2:0.1:upalpha ;
   adalpha = 5e-2:0.05:0.95; 
   stay(stm) = length(adalpha); 
-  AIR_sol = MC_AIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
+  AIR_sol = ws_AdaIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
   AIRtime{stm} = AIR_sol; 
   optionsP.mu = mu(stm);
   EPIR = {};
   for i = 1:length(adalpha)
     optionsP.alpha = adalpha(length(adalpha)-i+1);  
-    EPIR_sol = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
+    EPIR_sol = ws_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
     EPIR{i} = EPIR_sol;
   end
   EPIRtime{stm} = EPIR;

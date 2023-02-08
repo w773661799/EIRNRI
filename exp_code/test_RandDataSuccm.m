@@ -11,7 +11,7 @@ rng(22)
 nr = 150; nc = 150; lrk = 15;
 Y = randn(nr,nc);
 [uY,sY,vY] = svd(Y);
-Y = uY* diag([svds(sY,lrk);zeros(nr-r,1)])*vY';
+Y = uY * diag([svds(sY,lrk);zeros(nr-r,1)]) * vY';
 Y = Y(:,randperm(nc)); 
 clear uY sY vY
 
