@@ -98,10 +98,10 @@ for i = 1:length(Lalpha)
 end
   %% plot 
 %    set(h,'Position',[500 500 1500 500]);
-h = figure(1) % RelErr
-set (h,'position',[100 100 1600 900] );
-set(gcf,'unit','normalized','position',[0.1,0.1,0.32,0.32]);
-% set (gca,'position',[0.05,0.05,0.8,0.8] );
+figure(1) % RelErr
+set (gcf,'position',[0 0 1200 900] );
+% set(gcf,'unit','normalized','position',[0.1,0.1,0.32,0.32]);
+set (gca,'position',[0.05,0.05,0.9,0.9] );
     pltLEPx = min(itmax,LEPIR{i}.iterTol);
     plot(log(LEPIR{1}.RelErr),'-dg','linewidth',2);hold on
     plot(log(LEPIR{2}.RelErr),':sb','linewidth',2);
