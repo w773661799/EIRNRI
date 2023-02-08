@@ -103,7 +103,8 @@ function Par = ds_EPIRNN(X0,M,sp, lambda, mask, tol, options)
 %     subpartial = lambda*sp*[(weps(idx)+NewS(idx)).^(sp-1);zeros(min(nr,nc)-Rk,1)];
 %     RelDist = norm(U'*Gradf(Xc)*V + spdiags(subpartial,0,nr,nc), 'fro')/norm(M,'fro'); 
     RelDist = norm(U(:,idx)'*Gradf(Xc)*V(:,idx)+...
-      lambda*sp*spdiags((weps(idx)+NewS(idx)).^(sp-1),0,Rk,Rk),'fro')/norm(M,'fro');
+      lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk,Rk),'fro')/norm(X1,'fro'); 
+%       lambda*sp*spdiags((weps(idx)+NewS(idx)).^(sp-1),0,Rk,Rk),'fro')/norm(X1,'fro');
     spRelDist(iter) = RelDist; 
     if RelDist<tol
       disp('EPIRNN: Satisfying the optimality condition:Relative Distance'); 
@@ -112,7 +113,7 @@ function Par = ds_EPIRNN(X0,M,sp, lambda, mask, tol, options)
       break
     end
 
-    KLdist = norm(Xc-X1,"fro");
+    KLdist = norm(Xc-X1,inf);
 %     KLdist = norm(Xc-X1,"fro")+(1-mu)*norm(weps(1:Rk),1)/mu;
     if KLdist<KLopt
       disp("EPIRNN: Satisfying  the KL optimality condition"); 
@@ -130,7 +131,7 @@ function Par = ds_EPIRNN(X0,M,sp, lambda, mask, tol, options)
     X0 = X1; X1 = Xc; % update the iteration
   end  % end while 
   estime = toc; 
-
+KLdist
 %% return the best-lambda, time, iterations, rank, objective,and solution
   if exist('ReX','var')
     Par.RelErr = spRelErr(1:iter); 

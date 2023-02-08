@@ -102,7 +102,8 @@ function Par = ds_AdaIRNN(X0,M,sp, lambda, mask, tol, options)
     end
     
     RelDist = norm(U(:,idx)'*Gradf(X1)*V(:,idx)+...
-      lambda*sp*spdiags((weps(idx)+NewS(idx)).^(sp-1),0,Rk,Rk),'fro')/norm(M,'fro'); 
+      lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk,Rk),'fro')/norm(X1,'fro'); 
+%       lambda*sp*spdiags((weps(idx)+NewS(idx)).^(sp-1),0,Rk,Rk),'fro')/norm(X1,'fro'); 
     spRelDist(iter) = RelDist; 
     if RelDist<tol
       disp('AdaIRNN: Satisfying the optimality condition:Relative Distance'); 
@@ -111,7 +112,7 @@ function Par = ds_AdaIRNN(X0,M,sp, lambda, mask, tol, options)
       break
     end
     
-    KLdist = norm(X1-X0,"fro");
+    KLdist = norm(X1-X0,inf);
 %     KLdist = norm(X1-X0,"fro")+(1-mu)*norm(weps(1:Rk),1)/mu;
     if KLdist < KLopt
       disp("AdaIRNN: Satisfying  the KL optimality condition"); 
@@ -141,7 +142,7 @@ function Par = ds_AdaIRNN(X0,M,sp, lambda, mask, tol, options)
     X0 = X1 ; % update the iteration 
   end % end while 
   estime = toc;
-
+KLdist
 %% return the best-lambda, time, iterations, rank, objective,and solution
   if exist('ReX','var')
     Par.RelErr = spRelErr(1:iter); 
