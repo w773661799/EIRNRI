@@ -61,14 +61,16 @@ function Par = ds_AdaIRNN(X0,M,sp, lambda, mask, tol, options)
       spf(iter) = Objf(X0);
       [U,S,V] = svd(X0 - Gradf(X0)/beta,'econ');
 
-% restrict the eps
-      weps = (weps<teps) .* teps + (weps>teps) .* weps;
-      
       NewS = diag(S) - lambda*sp*(sigma+weps).^(sp-1)/beta;
       NewS(isinf(NewS)) = 0; 
       idx = NewS>zero; Rk = sum(idx);  
       X1 = U*spdiags(NewS.*idx,0,rc,rc)*V'; 
       weps(weps(1:Rk)>zero) = weps(weps(1:Rk)>zero)*mu ;
+% restrict the eps
+      if isfield(options,"teps")
+        weps = (weps<teps) .* teps + (weps>=teps) .* weps;
+      end
+
       sigma = sort(NewS.*idx,'descend'); % update the sigma 
 % save for plot    
       sprank(iter) = rank(X1);

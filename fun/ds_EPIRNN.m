@@ -39,6 +39,10 @@ function Par = ds_EPIRNN(X0,M,sp, lambda, mask, tol, options)
   if isfield(options,'zero')==0,zero = 1e-16;
   else,zero = options.zero;   % thresholding
   end
+
+  if isfield(options,'teps')==0,teps = 1e-16;
+  else,teps = options.teps;   % restrict the weighted epsilon for AdaIRNN 
+  end
 %%  
   spRelDist = []; spf = [];
 	sprank = [];
@@ -66,6 +70,11 @@ function Par = ds_EPIRNN(X0,M,sp, lambda, mask, tol, options)
       Xc = U*spdiags(NewS.*idx,0,rc,rc)*V';
 
       weps(weps(1:Rk)>zero) = weps(weps(1:Rk)>zero)*mu;
+% restrict the eps
+      if isfield(options,"teps")
+        weps = (weps<teps) .* teps + (weps>=teps) .* weps;
+      end
+
       sigma = sort(NewS.*idx,'descend') ;% update the sigma
 
 % save for plot    

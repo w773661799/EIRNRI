@@ -14,8 +14,8 @@ for i=1:nc
     randidx=randperm(nr,nr); % 随机[n] 中的 k 个 index
     M_org(randidx(1:ceil(nr*missrate)),i)=1; 
 end
-mask = ~M_org; 
-X0 = 10+randn(nr,nc); Xm=Y.*mask; 
+sample = ~M_org; 
+X0 = 10+randn(nr,nc); Xm=Y.*sample; 
 
 % --------------- parameters ---------------
 orieps = 10 ;
@@ -40,13 +40,13 @@ for stm =1:length(mu)
 %   adalpha = 5e-2:0.1:upalpha ;
   adalpha = 5e-2:0.05:0.95; 
   stay(stm) = length(adalpha); 
-  AIR_sol = ws_AdaIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
+  AIR_sol = ws_AdaIRNN(X0,Xm,sp, lambda, sample, tol, optionsP);
   AIRtime{stm} = AIR_sol; 
   optionsP.mu = mu(stm);
   EPIR = {};
   for i = 1:length(adalpha)
     optionsP.alpha = adalpha(length(adalpha)-i+1);  
-    EPIR_sol = ws_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
+    EPIR_sol = ws_EPIRNN(X0,Xm,sp, lambda, sample, tol, optionsP); 
     EPIR{i} = EPIR_sol;
   end
   EPIRtime{stm} = EPIR;
