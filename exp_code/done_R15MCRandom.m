@@ -163,11 +163,14 @@ sp = 0.5;
 tol = 1e-6;
 klopt = 1e-5;
 beta = 1.1;
+Robust.PIR = 0;
+Robust.AIR = 0;
+Robust.EPIR = 0;
 % ------------------------------------------------------------------------
 missrate = 0.2; 
 weps = 1e-4;
 
-%% -------------------------- 20 * 75 times --------------------------
+% -------------------------- 20 * 75 times --------------------------
 % with different initialization rank: 0--74
 % for each initialization rank we test 20 times
 Rank = [5,15,25];
@@ -177,7 +180,7 @@ for irank = 1:3
     r_iter= init_rank;
     for times = 1:1:20
       B = rand(nr,r); C = rand(r,nc); Y = B * C; Y = Y./max(max(Y));
-      %% --------------- random mask ---------------
+      % --------------- random mask ---------------
       M_org = zeros(nr,nc); 
       for i=1:nc 
         idx = 1:1:nr; randidx=randperm(nr,nr); % random sequence
@@ -205,13 +208,13 @@ for irank = 1:3
   optionsEP.alpha = 7e-1;
   EPIR = ds_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsEP); 
 % save the number of successful result
-  if (PIR.rank == r) && (PIR.RelErr(end) <= 5e-3) 
+  if (PIR.rank(end) == r) && (PIR.RelErr(end) <= 5e-3) 
     Robust.PIR = Robust.PIR+1;
   end
-  if (AIR.rank == r) && (PIR.RelErr(end) <= 5e-3) 
+  if (AIR.rank(end) == r) && (AIR.RelErr(end) <= 5e-3) 
     Robust.APIR = Robust.PIR+1;
   end
-  if (EPIR.rank == r) && (PIR.RelErr(end) <= 5e-3) 
+  if (EPIR.rank(end) == r) && (EPIR.RelErr(end) <= 5e-3) 
     Robust.EPIR = Robust.PIR+1;
   end
     end
