@@ -108,7 +108,7 @@ function Par = ds_ProxIRNN(X0,M,sp, lambda, mask, tol, options)
     X0 = X1;  % update the iteration
   end % end while   
   estime = toc;
-KLdist
+% KLdist
 %% return the best-lambda, time, iterations, rank, objective,and solution
   if exist('ReX','var')
     Par.RelErr = spRelErr(1:iter);
