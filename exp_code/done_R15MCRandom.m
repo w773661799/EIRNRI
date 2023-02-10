@@ -157,28 +157,34 @@ clc,clear,format long; rng(23)
 nr = 150; nc = 150; 
 
 % %% --------------- parameters ---------------
-lambda = 1e-1;
+lambda = 5e-2;
 itmax = 5e3;
 sp = 0.5;
-tol = 1e-6;
+tol = 1e-7;
 klopt = 1e-5;
 beta = 1.1;
-Robust.PIR = 0;
-Robust.AIR = 0;
-Robust.EPIR = 0;
+
+success = 1e-2;
 % ------------------------------------------------------------------------
-missrate = 0.2; 
+missrate = 0.5; 
 weps = 1e-4;
+
+
+WEPS = [1e-1, 1e-3, 1e-4, 5e-5];
 
 % -------------------------- 20 * 75 times --------------------------
 % with different initialization rank: 0--74
 % for each initialization rank we test 20 times
 Rank = [5,15,25];
-for irank = 1:3
+
+Robust.PIR = zeros(length(WEPS),length(Rank));
+Robust.AIR = zeros(size(Rank));
+Robust.EPIR = zeros(size(Rank));
+for irank = 1:1:3 %3
   r = Rank(irank);
-  for init_rank = 0:1:74
-    r_iter= init_rank;
-    for times = 1:1:20
+
+  for r_iter = 1:1: 75 % 74 
+    for times = 1:1:20 % 
       B = rand(nr,r); C = rand(r,nc); Y = B * C; Y = Y./max(max(Y));
       % --------------- random mask ---------------
       M_org = zeros(nr,nc); 
@@ -193,30 +199,33 @@ for irank = 1:3
       options.Rel = Y;
       options.max_iter = itmax;
       options.KLopt = klopt;
-      options.eps = weps;
-      options.beta = beta;
+%       options.eps = weps;
+    options.beta = beta;
 
-  optionsP= options;
-  PIR = ds_ProxIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
+    optionsP= options;
+    for iter_eps = 1:1:4      
+      optionsP.eps = WEPS(iter_eps);
+      PIR = ds_ProxIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
+      if (PIR.rank(end) == r) && (PIR.RelErr(end) <= success) 
+        Robust.PIR(iter_eps,irank) = Robust.PIR(iter_eps,irank) + 1;
+      end
+    end
 
-  optionsA = options;
-  optionsA.eps = 1e0;
-  optionsA.mu = 0.9;
-  AIR = ds_AdaIRNN(X0,Xm,sp, lambda, mask, tol, optionsA);
+    optionsA = options;
+    optionsA.eps = 1e0;
+    optionsA.mu = 0.75;
+    AIR = ds_AdaIRNN(X0,Xm,sp, lambda, mask, tol, optionsA);
+    if (AIR.rank(end) == r) && (AIR.RelErr(end) <= success) 
+      Robust.AIR(irank) = Robust.AIR(irank) + 1;
+    end
 
-  optionsEP = optionsA;
-  optionsEP.alpha = 7e-1;
-  EPIR = ds_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsEP); 
-% save the number of successful result
-  if (PIR.rank(end) == r) && (PIR.RelErr(end) <= 5e-3) 
-    Robust.PIR = Robust.PIR+1;
-  end
-  if (AIR.rank(end) == r) && (AIR.RelErr(end) <= 5e-3) 
-    Robust.APIR = Robust.PIR+1;
-  end
-  if (EPIR.rank(end) == r) && (EPIR.RelErr(end) <= 5e-3) 
-    Robust.EPIR = Robust.PIR+1;
-  end
+    optionsEP = optionsA;
+    optionsEP.alpha = 7e-1;
+    EPIR = ds_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsEP); 
+    if (EPIR.rank(end) == r) && (EPIR.RelErr(end) <= success) 
+      Robust.EPIR(irank) = Robust.EPIR(irank) + 1;
+    end
+% -------------------------------------
     end
   end
 end
@@ -227,7 +236,7 @@ end
   PIR.RelErr(end)
   AIR.RelErr(end)
   EPIR.RelErr(end)
-  reerr = norm(Y-EPIR.Xsol,"fro") / norm(Y,"fro")
+%   reerr = norm(Y-EPIR.Xsol,"fro") / norm(Y,"fro")
 %   reerr = norm(mask.*(Y-EPIR.Xsol),"fro") / norm(mask.*(Y),"fro")
   %% 
   plot(PIR.rank); hold on
