@@ -91,7 +91,7 @@ subplot('Position',[0.71,0.1,0.28,0.85])
   plot(EPIRx,EPIR.f(1:pEPI),'-r','linewidth',2);hold off
   xlabel("iteration"); ylabel("F(x)")
   legend("PIRNN","AIRNN","EPIRNN")
-%% ------------------------- sensitive of alpha ------------------------- 
+%% -------------------- sensitive of alpha --------------------
 % sensitive of alpha for extrapolation parameter 
 clc; clear optionsEP
 optionsEP = options;
@@ -146,16 +146,16 @@ set (gcf,'position',[100 10 600 400] );
   "\alpha = 0.7","\alpha = 0.9")
 % set (gca,'fontsize',18);
 % -/end -------------------------------------------------------------------
-%% ------------------------------------------------------------------------
-%% --------------- Robust Experiment: percentage of success ---------------
+%% --------------------------------------------------------------
+%% ---------- Robust Experiment: percentage of success ----------
 % AdaIRNN V.S. ProxIRNN with random data 
 % this experiment shows the AdaIRNN are more robust than ProxIRNN
 % the AdaIRNN has the similar convergence rate with ProxIRNN if the 
 % initialization eps are similar
 % --------------- generate data ---------------
-clc,clear,format long; rng(23)
+clc,clear,format long; rng(23); 
+p = parpool(6); 
 nr = 150; nc = 150; 
-
 % %% --------------- parameters ---------------
 lambda = 5e-2;
 itmax = 5e3;
@@ -169,67 +169,45 @@ success = 1e-2;
 missrate = 0.5; 
 weps = 1e-4;
 
+times = 20;
+init_rank_max = 75;
 
 WEPS = [1e-1, 1e-3, 1e-4, 5e-5];
+options.max_iter = itmax;
+options.KLopt = klopt;
+%   options.eps = weps;
+options.beta = beta;
 
-% -------------------------- 20 * 75 times --------------------------
+% -------------------------- 75 *20 times --------------------------
 % with different initialization rank: 0--74
 % for each initialization rank we test 20 times
 Rank = [5,15,25];
 
-Robust.PIR = zeros(length(WEPS),length(Rank));
+Robust.PIR = zeros(length(Rank),length(WEPS));
 Robust.AIR = zeros(size(Rank));
 Robust.EPIR = zeros(size(Rank));
-for irank = 1:1:3 %3
+
+options.max_iter = itmax;
+options.KLopt = klopt;
+%       options.eps = weps;
+options.beta = beta;
+
+for irank = 1:2 %3
   r = Rank(irank);
 
-  for r_iter = 1:1: 75 % 74 
-    for times = 1:1:20 % 
-      B = rand(nr,r); C = rand(r,nc); Y = B * C; Y = Y./max(max(Y));
-      % --------------- random mask ---------------
-      M_org = zeros(nr,nc); 
-      for i=1:nc 
-        idx = 1:1:nr; randidx=randperm(nr,nr); % random sequence
-        M_org(randidx(1:ceil(nr*missrate)),i)=1; 
-      end
-      mask = ~M_org; Xm = Y.*mask;
-      X0 = rand(nr,nc); [uY,sY,vY] = svd(X0);
-      X0 = uY(:,1:r_iter) * sY(1:r_iter,1:r_iter) * vY(:,1:r_iter)';
-
-      options.Rel = Y;
-      options.max_iter = itmax;
-      options.KLopt = klopt;
-%       options.eps = weps;
-    options.beta = beta;
-
-    optionsP= options;
-    for iter_eps = 1:1:4      
-      optionsP.eps = WEPS(iter_eps);
-      PIR = ds_ProxIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
-      if (PIR.rank(end) == r) && (PIR.RelErr(end) <= success) 
-        Robust.PIR(iter_eps,irank) = Robust.PIR(iter_eps,irank) + 1;
-      end
-    end
-
-    optionsA = options;
-    optionsA.eps = 1e0;
-    optionsA.mu = 0.75;
-    AIR = ds_AdaIRNN(X0,Xm,sp, lambda, mask, tol, optionsA);
-    if (AIR.rank(end) == r) && (AIR.RelErr(end) <= success) 
-      Robust.AIR(irank) = Robust.AIR(irank) + 1;
-    end
-
-    optionsEP = optionsA;
-    optionsEP.alpha = 7e-1;
-    EPIR = ds_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsEP); 
-    if (EPIR.rank(end) == r) && (EPIR.RelErr(end) <= success) 
-      Robust.EPIR(irank) = Robust.EPIR(irank) + 1;
-    end
+  parfor r_iter = 1:init_rank_max % 74 
+    par{r_iter } = VsRobustEps(nr,nc,r,r_iter,lambda,sp,missrate,tol,options,WEPS,success,times);
 % -------------------------------------
-    end
+  end
+  for iter = 1:init_rank_max
+    Robust.PIR(irank,:) = Robust.PIR(irank,:) + par{iter}.PIR;
+    Robust.AIR = par{iter}.AIR;
+    Robust.EPIR = par{iter}.EPIR;
   end
 end
 
+%%
+delete(p);
 
   %%
   clc;
