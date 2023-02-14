@@ -172,7 +172,7 @@ weps = 1e-4;
 times = 20;
 init_rank_max = 5;
 
-WEPS = [1e-2, 1e-3, 5e-4, 1e-4];
+WEPS = [1e-1, 1e-3, 1e-4, 5e-5];
 options.max_iter = itmax;
 options.KLopt = klopt;
 %   options.eps = weps;
@@ -204,14 +204,6 @@ for irank = 1:length(Rank) %3
     Robust.EPIR(irank) = Robust.EPIR(irank) + par{iter}.EPIR;
   end
 end
-
-%%
-% save(Robust_Eps.mat,Robust,'-mat')
-save("..\exp_cache\Robust_Eps.mat","Robust",'-mat')
-%%
-delete(p);
-
-
 %% Test the unsuceeful tol %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clc,clear,format long; rng(29); 
 % p = parpool(16); 
@@ -238,7 +230,7 @@ options.beta = beta;
 % -------------------------- 75 *20 times --------------------------
 % with different initialization rank: 0--74
 % for each initialization rank we test 20 times
-Rank = [5,15,25];
+Rank = [10,20,30,40];
 
 Robust.PIR = zeros(length(Rank),length(WEPS));
 Robust.AIR = zeros(size(Rank));
@@ -250,8 +242,8 @@ options.KLopt = klopt;
 options.beta = beta;
 
 irank = 1; %3
-r = Rank(3);
-sr = 1;% 74
+r = Rank(4);
+sr = 1;% 74 
 leps = length(WEPS);
 Robust.PIR = zeros(1,leps);
 Robust.AIR = 0;
@@ -301,7 +293,11 @@ Robust.PIR(irank,:) = Robust.PIR(irank,:) + par{iter}.PIR;
 Robust.AIR(irank) = Robust.AIR(irank) + par{iter}.AIR;
 Robust.EPIR(irank) = Robust.EPIR(irank) + par{iter}.EPIR;
 
-
+%%
+% save(Robust_Eps.mat,Robust,'-mat')
+save("..\exp_cache\Robust_Eps.mat","Robust",'-mat')
+%%
+delete(p);
 
   %%
   clc;
