@@ -170,7 +170,7 @@ missrate = 0.5;
 weps = 1e-4;
 
 times = 20;
-init_rank_max = 5;
+init_rank_max = 50;
 
 WEPS = [1e-2, 1e-3, 5e-4, 1e-4];
 options.max_iter = itmax;
@@ -181,7 +181,7 @@ options.beta = beta;
 % -------------------------- 75 *20 times --------------------------
 % with different initialization rank: 0--74
 % for each initialization rank we test 20 times
-Rank = [5,20,35,];
+Rank = [5,15,25,30];
 
 Robust.PIR = zeros(length(Rank),length(WEPS));
 Robust.AIR = zeros(size(Rank));
@@ -195,7 +195,7 @@ options.beta = beta;
 for irank = 1:length(Rank) %3
   r = Rank(irank);
   parfor r_iter = 1:init_rank_max % 74 
-    par{r_iter} = VsRobustEps(nr,nc,r,r_iter,lambda,sp,missrate,tol,options,WEPS,success,1);
+    par{r_iter} = VsRobustEps(nr,nc,r,r_iter,lambda,sp,missrate,tol,options,WEPS,success,5);
 % -------------------------------------
   end
   for iter = 1:init_rank_max
