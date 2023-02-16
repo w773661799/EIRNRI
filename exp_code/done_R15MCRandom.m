@@ -169,7 +169,7 @@ success = 1e-2;
 missrate = 0.5; 
 weps = 1e-4;
 
-times = 20;
+times = 10;
 init_rank_max = 50;
 
 WEPS = [1e-2, 1e-3, 5e-4, 1e-4];
@@ -181,7 +181,7 @@ options.beta = beta;
 % -------------------------- 75 *20 times --------------------------
 % with different initialization rank: 0--74
 % for each initialization rank we test 20 times
-Rank = [5,15,25,30];
+Rank = [5,10,15,20,25,30];
 
 Robust.PIR = zeros(length(Rank),length(WEPS));
 Robust.AIR = zeros(size(Rank));
@@ -195,7 +195,7 @@ options.beta = beta;
 for irank = 1:length(Rank) %3
   r = Rank(irank);
   parfor r_iter = 1:init_rank_max % 74 
-    par{r_iter} = VsRobustEps(nr,nc,r,r_iter,lambda,sp,missrate,tol,options,WEPS,success,5);
+    par{r_iter} = VsRobustEps(nr,nc,r,r_iter,lambda,sp,missrate,tol,options,WEPS,success,times);
 % -------------------------------------
   end
   for iter = 1:init_rank_max
@@ -207,7 +207,7 @@ end
 
 %%
 % save(Robust_Eps.mat,Robust,'-mat')
-save("..\exp_cache\Robust_Eps.mat","Robust",'-mat')
+save("..\exp_cache\Robust_Eps_mu95_r535.mat","Robust",'-mat')
 %%
 delete(p);
 
@@ -229,7 +229,7 @@ missrate = 0.5;
 weps = 1e-4;
 times = 20;
 init_rank_max = 5;
-WEPS = [1e-1, 1e-3, 1e-4, 5e-5];
+WEPS = [1e-2, 1e-3, 5e-4, 1e-4];
 options.max_iter = itmax;
 options.KLopt = klopt;
 %   options.eps = weps;
@@ -281,7 +281,7 @@ for itimes = 1:1 %
 
   optionsA = options;
   optionsA.eps = 1e0;
-  optionsA.mu = 0.75;
+  optionsA.mu = 0.95;
   AIR = ds_AdaIRNN(X0,Xm,sp, lambda, mask, tol, optionsA);
   if (AIR.rank(end) == r) && (AIR.RelErr(end) <= success) 
     Robust.AIR = Robust.AIR + 1;

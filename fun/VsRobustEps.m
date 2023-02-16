@@ -38,7 +38,7 @@ for itimes = 1:times %
 
   optionsA = options;
   optionsA.eps = 1e0;
-  optionsA.mu = 0.75;
+  optionsA.mu = 0.95;
   AIR = ds_AdaIRNN(X0,Xm,sp, lambda, mask, tol, optionsA);
   if (AIR.rank(end) == r) && (AIR.RelErr(end) <= success) 
     Robust.AIR = Robust.AIR + 1;
