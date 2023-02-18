@@ -9,7 +9,6 @@ Y = randn(nr,r) * randn(r,nc);
 % --------------- random mask ---------------
 M_org = zeros(nr,nc); missrate = 0.5; 
 for i=1:nc 
-  idx = 1:1:nr;
   randidx=randperm(nr,nr); % random sequence
   M_org(randidx(1:ceil(nr*missrate)),i)=1; 
 end
@@ -207,17 +206,17 @@ end
 
 %%
 % save(Robust_Eps.mat,Robust,'-mat')
-save("..\exp_cache\Robust_Eps_mu95_r535.mat","Robust",'-mat')
+save("..\exp_cache\Robust_Eps_mu95_r535_0217done.mat","Robust",'-mat')
 %%
 delete(p);
 
 
 %% Test the unsuceeful tol %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-clc,clear,format long; rng(29); 
+clc,clear,format long; rng(23); 
 % p = parpool(16); 
 nr = 150; nc = 150; 
 % %% --------------- parameters ---------------
-lambda = 5e-2;
+lambda = 1e-2;
 itmax = 5e3;
 sp = 0.5;
 tol = 1e-7;
@@ -238,7 +237,7 @@ options.beta = beta;
 % -------------------------- 75 *20 times --------------------------
 % with different initialization rank: 0--74
 % for each initialization rank we test 20 times
-Rank = [5,15,25];
+Rank = [25,30];
 
 Robust.PIR = zeros(length(Rank),length(WEPS));
 Robust.AIR = zeros(size(Rank));
@@ -250,14 +249,14 @@ options.KLopt = klopt;
 options.beta = beta;
 
 irank = 1; %3
-r = Rank(3);
-sr = 1;% 74
+r = Rank(2);
+sr = 50;% 74
 leps = length(WEPS);
 Robust.PIR = zeros(1,leps);
 Robust.AIR = 0;
 Robust.EPIR = 0;
-
-for itimes = 1:1 % 
+%%
+for itimes = 1:100 % 
   B = rand(nr,r); C = rand(r,nc); Y = B * C; Y = Y./max(max(Y));
   % --------------- random mask ---------------
   M_org = zeros(nr,nc); 
@@ -271,13 +270,13 @@ for itimes = 1:1 %
 
   options.Rel = Y;
   optionsP= options;
-  for iter_eps = 1:1:leps      
-    optionsP.eps = WEPS(iter_eps);
-    PIR = ds_ProxIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
-    if (PIR.rank(end) == r) && (PIR.RelErr(end) <= success) 
-      Robust.PIR(iter_eps) = Robust.PIR(iter_eps) + 1;
-    end
-  end
+%   for iter_eps = 1:1:leps      
+%     optionsP.eps = WEPS(iter_eps);
+%     PIR = ds_ProxIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
+%     if (PIR.rank(end) == r) && (PIR.RelErr(end) <= success) 
+%       Robust.PIR(iter_eps) = Robust.PIR(iter_eps) + 1;
+%     end
+%   end
 
   optionsA = options;
   optionsA.eps = 1e0;
