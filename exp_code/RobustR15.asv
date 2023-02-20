@@ -55,9 +55,12 @@ end
 % save(Robust_Eps.mat,Robust,'-mat')
 save("..\exp_cache\Rank_Robust.mat","Rank_RC",'-mat')
 %%
-X = categorical({'EPIRNN','PIRNN'});
+irankplt = 1;
+X = categorical({'EPIRNN','AdaIRNN', '\epsilon=10^{-1}', '\epsilon=10^{-2}','\epsilon=10^{-3}' });
 % X = reordercats(X,{'Medium','Extra Large'});
-bar([],[Rank_RC.EPIR(1), Rank_RC.AIR(1),0 , Rank_RC.PIR(1,:)])
+X_num = [1,2,4,5,6];
+bar(X,[Rank_RC.EPIR(irankplt), Rank_RC.AIR(irankplt) , Rank_RC.PIR(irankplt,:)])
+ylabel('# Number of Correct Rank')
 % xlabel(['EPIRNN',1,3,4,5])
 %%
 % for irank = 1:length(Rank) %3
@@ -73,7 +76,7 @@ bar([],[Rank_RC.EPIR(1), Rank_RC.AIR(1),0 , Rank_RC.PIR(1,:)])
 %   end
 % end
 % 
-
+% % -------------------------------------------------------------------% %
 %% ----------  percentage of success ----------
 % AdaIRNN V.S. ProxIRNN with random data 
 % this experiment shows the AdaIRNN are more robust than ProxIRNN
@@ -81,7 +84,7 @@ bar([],[Rank_RC.EPIR(1), Rank_RC.AIR(1),0 , Rank_RC.PIR(1,:)])
 % initialization eps are similar
 % --------------- generate data ---------------
 clc,clear,format long; rng(23); 
-% p = parpool(16); 
+p = parpool(16); 
 nr = 150; nc = 150; 
 % %% --------------- parameters ---------------
 lambda = 5e-2;
@@ -122,14 +125,13 @@ options.beta = beta;
 for irank = 1:length(Rank) %3
   r = Rank(irank);
   parfor r_iter = 1:init_rank_max % 74 
-      r_iter
     par{r_iter} = VsRobustEps(nr,nc,r,r_iter,lambda,sp,missrate,tol,options,WEPS,[1,success],1);
 % -------------------------------------
   end
   for iter = 1:init_rank_max
-    Robust.PIR(irank,:) = Robust.PIR(irank,:) + par{iter}.PIR;
-    Robust.AIR(irank) = Robust.AIR(irank) + par{iter}.AIR;
-    Robust.EPIR(irank) = Robust.EPIR(irank) + par{iter}.EPIR;
+    Robust.PIR(irank,:) = Robust.PIR(irank,:) + par{iter}.Robust.PIR;
+    Robust.AIR(irank) = Robust.AIR(irank) + par{iter}.Robust.AIR;
+    Robust.EPIR(irank) = Robust.EPIR(irank) + par{iter}.Robust.EPIR;
   end
 end
 

@@ -12,6 +12,10 @@ Robust.PIR = zeros(1,leps);
 Robust.AIR = 0;
 Robust.EPIR = 0;
 
+CrRank.PIR = zeros(1,leps);
+CrRank.AIR = 0;
+CrRank.EPIR = 0;
+
 if SUCC(1) == 1
     success = SUCC(2);
 else
@@ -27,7 +31,7 @@ for itimes = 1:times %
   % --------------- random mask ---------------
   M_org = zeros(nr,nc); 
   for i=1:nc 
-    idx = 1:1:nr; randidx=randperm(nr,nr); % random sequence
+    randidx=randperm(nr,nr); % random sequence
     M_org(randidx(1:ceil(nr*missrate)),i)=1; 
   end
   mask = ~M_org; Xm = Y.*mask;
@@ -35,9 +39,13 @@ for itimes = 1:times %
   X0 = uY(:,1:sr) * sY(1:sr,1:sr) * vY(:,1:sr)';
 
 
-%   lambda = 1e-3 * norm(Xm,"fro"); % succfully recovery
-  lambda = 1e-1 * norm(Xm,inf); % rank recognition
-  options.Rel = Y;
+if success==0
+    lambda = 1e-1 * norm(Xm,inf); % rank recognition
+else
+    lambda = 1e-3 * norm(Xm,"fro"); % succfully recovery
+end
+
+options.Rel = Y;
 
 
   optionsP= options;
@@ -47,11 +55,14 @@ for itimes = 1:times %
 %     if (PIR.rank(end) == r) && (PIR.RelErr(end) <= success) 
     if success == 0
       if PIR.rank(end) == r 
-        Robust.PIR(iter_eps) = Robust.PIR(iter_eps) + 1;
+        CrRank.PIR(iter_eps) = CrRank.PIR(iter_eps) + 1;
       end
     else
       if (PIR.RelErr(end) <= success) 
-        Robust.PIR(iter_eps) = Robust.PIR(iter_eps) + 1;
+        Robust.PIR(iter_eps) = Robust.PIR(iter_eps) + 1;  
+        if PIR.rank(end) == r 
+          CrRank.PIR(iter_eps) = CrRank.PIR(iter_eps) + 1;
+        end  
       end
     end
   end
@@ -63,11 +74,14 @@ for itimes = 1:times %
 %   if (AIR.rank(end) == r) && (AIR.RelErr(end) <= success) 
   if success == 0
     if AIR.rank(end) == r 
-      Robust.AIR = Robust.AIR + 1;
+      CrRank.AIR = CrRank.AIR + 1;
     end
   else
     if (PIR.RelErr(end) <= success) 
       Robust.AIR = Robust.AIR + 1;
+      if AIR.rank(end) == r
+        CrRank.AIR = CrRank.AIR + 1;
+      end
     end
   end
 
@@ -77,12 +91,16 @@ for itimes = 1:times %
 %   if (EPIR.rank(end) == r) && (EPIR.RelErr(end) <= success) 
   if success == 0
     if EPIR.rank(end) == r 
-      Robust.EPIR = Robust.EPIR + 1;
+      CrRank.EPIR = CrRank.EPIR + 1;
     end
   else
     if (EPIR.RelErr(end) <= success)     
       Robust.EPIR = Robust.EPIR + 1;
+      if EPIR.rank(end) == r 
+      CrRank.EPIR = CrRank.EPIR + 1;
+      end
     end
   end
-  Par = Robust;
+  Par.Robust = Robust;
+  Par.CrRank = CrRank;
 end

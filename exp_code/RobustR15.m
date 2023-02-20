@@ -1,7 +1,7 @@
 %% ---------- Robust Experiment ----------
 % Rank Robust
 % rank from 5 to 10, record the recognized success rank
-clc,clear,format long; rng(22)
+clc,clear,format long; rng(22); p = parpool(16);
 nr = 150; nc = 150; r = 10 ;
 % --------------- Synthetic data ---------------
 Y = randn(nr,r) * randn(r,nc);
@@ -46,16 +46,16 @@ for irank = 1:length(Rank) %3
 % -------------------------------------
   end
   for iter = 1:init_rank_max
-    Rank_RC.PIR(irank,:) = Rank_RC.PIR(irank,:) + par{iter}.PIR;
-    Rank_RC.AIR(irank) = Rank_RC.AIR(irank) + par{iter}.AIR;
-    Rank_RC.EPIR(irank) = Rank_RC.EPIR(irank) + par{iter}.EPIR;
+    Rank_RC.PIR(irank,:) = Rank_RC.PIR(irank,:) + par{iter}.CrRank.PIR;
+    Rank_RC.AIR(irank) = Rank_RC.AIR(irank) + par{iter}.CrRank.AIR;
+    Rank_RC.EPIR(irank) = Rank_RC.EPIR(irank) + par{iter}.CrRank.EPIR;
   end
 end
 %%
 % save(Robust_Eps.mat,Robust,'-mat')
 save("..\exp_cache\Rank_Robust.mat","Rank_RC",'-mat')
 %%
-irankplt = 1;
+irankplt = 2;
 X = categorical({'EPIRNN','AdaIRNN', '\epsilon=10^{-1}', '\epsilon=10^{-2}','\epsilon=10^{-3}' });
 % X = reordercats(X,{'Medium','Extra Large'});
 X_num = [1,2,4,5,6];
@@ -76,7 +76,7 @@ ylabel('# Number of Correct Rank')
 %   end
 % end
 % 
-
+% % -------------------------------------------------------------------% %
 %% ----------  percentage of success ----------
 % AdaIRNN V.S. ProxIRNN with random data 
 % this experiment shows the AdaIRNN are more robust than ProxIRNN
@@ -117,6 +117,12 @@ Robust.PIR = zeros(length(Rank),length(WEPS));
 Robust.AIR = zeros(size(Rank));
 Robust.EPIR = zeros(size(Rank));
 
+CrRank.PIR =zeros(length(Rank),length(WEPS));
+CrRank.AIR = 0;
+CrRank.EPIR = 0;
+
+
+
 options.max_iter = itmax;
 options.KLopt = klopt;
 %       options.eps = weps;
@@ -125,14 +131,17 @@ options.beta = beta;
 for irank = 1:length(Rank) %3
   r = Rank(irank);
   parfor r_iter = 1:init_rank_max % 74 
-      r_iter
     par{r_iter} = VsRobustEps(nr,nc,r,r_iter,lambda,sp,missrate,tol,options,WEPS,[1,success],1);
 % -------------------------------------
   end
   for iter = 1:init_rank_max
-    Robust.PIR(irank,:) = Robust.PIR(irank,:) + par{iter}.PIR;
-    Robust.AIR(irank) = Robust.AIR(irank) + par{iter}.AIR;
-    Robust.EPIR(irank) = Robust.EPIR(irank) + par{iter}.EPIR;
+    Robust.PIR(irank,:) = Robust.PIR(irank,:) + par{iter}.Robust.PIR;
+    Robust.AIR(irank) = Robust.AIR(irank) + par{iter}.Robust.AIR;
+    Robust.EPIR(irank) = Robust.EPIR(irank) + par{iter}.Robust.EPIR;
+
+    CrRank.PIR(irank,:) = CrRank.PIR(irank,:) + par{iter}.CrRank.PIR;
+    CrRank.AIR(irank) = CrRank.AIR(irank) + par{iter}.CrRank.AIR;
+    CrRank.EPIR(irank) = CrRank.EPIR(irank) + par{iter}.CrRank.EPIR;
   end
 end
 
