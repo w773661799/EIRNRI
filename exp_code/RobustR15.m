@@ -55,12 +55,12 @@ end
 % save(Robust_Eps.mat,Robust,'-mat')
 save("..\exp_cache\Rank_Robust.mat","Rank_RC",'-mat')
 %%
-irankplt = 2;
+irankplt = 1;
 X = categorical({'EPIRNN','AdaIRNN', '\epsilon=10^{-1}', '\epsilon=10^{-2}','\epsilon=10^{-3}' });
 % X = reordercats(X,{'Medium','Extra Large'});
 X_num = [1,2,4,5,6];
 bar(X,[Rank_RC.EPIR(irankplt), Rank_RC.AIR(irankplt) , Rank_RC.PIR(irankplt,:)])
-ylabel('# Number of success')
+ylabel('# Number of Correct Rank')
 % xlabel(['EPIRNN',1,3,4,5])
 %%
 % for irank = 1:length(Rank) %3
