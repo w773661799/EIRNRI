@@ -4,9 +4,9 @@
 
 clear;clc; format long; 
 rng(22);
-% cwd = fileparts(pwd) ;
-path_lena = strcat(pwd,'\img_image\lena.png');
-path_re1 = strcat(pwd,'\img_image\re1.jpg');
+cwd = fileparts(pwd);
+path_lena = strcat(cwd,'\img_image\lena.png');
+path_re1 = strcat(cwd,'..\img_image\re1.jpg');
 
 img_ori = double(imread(path_lena))/255 ; 
 % img_ori = double(imread(path_lena))/255;
@@ -50,7 +50,7 @@ img_size = size(img_ori);
 %   options.KLopt = 1e-5;   
     %% search p
     optionsEP = options; 
-    optionsEP.eps = 1 ; optionsEP.Scalar = 0.3 ;
+    optionsEP.eps = 1 ; 
     optionsEP.alpha = 0.7;
 %     optionsEP.KLopt = 1e-5;  
     lambda = 0.3;
@@ -60,14 +60,14 @@ img_size = size(img_ori);
       op = 0.01 + (pidx-1)*0.03;
       for channel = 1:3        
         Xm = XM(:,:,channel) ; 
-        EPIR = MC_EPIRNN(X0,Xm,op, lambda, mask, tol, optionsEP);
+        EPIR = ds_EPIRNN(Xm,Xm,op, lambda, mask, tol, optionsEP);
         img_Rsol{pidx}(:,:,channel) = EPIR.Xsol;
       end
       SOL_PSNR(pidx) = psnr(img_ori,img_Rsol{pidx});
     end
     % the best performance of p 
     [~,optSpidx] = max(SOL_PSNR) ; 
-    sp =0.3 ; 
+    sp = 0.3 ; 
     %% search lambda
     Lambda = [1e-5:3e-5:1e-4, 1e-4:3e-4:1e-3, ...
       1e-3:3e-3:1e-2, 1e-2:3e-3:1e-1, ...
@@ -77,7 +77,7 @@ img_size = size(img_ori);
     for idx_lambda = 1:size(Lambda,2)
        for channel = 1:3        
         Xm = XM(:,:,channel) ; 
-        EPIR = MC_EPIRNN(X0,Xm,sp, Lambda(idx_lambda), mask, tol, optionsEP);
+        EPIR = ds_EPIRNN(X0,Xm,sp, Lambda(idx_lambda), mask, tol, optionsEP);
         img_Rsol{idx_lambda}(:,:,channel) = EPIR.Xsol;
       end
       SOL_PSNR(idx_lambda) = psnr(img_ori,img_Rsol{idx_lambda});
@@ -97,19 +97,19 @@ img_size = size(img_ori);
       %% PIRNN 
   for i =1:3
     Xm = XM(:,:,i);
-    PIR = MC_PIRNN(X_INIT_RAND1,Xm,sp, lambda, mask, tol, optionsP);
+    PIR = ds_PIRNN(X_INIT_RAND1,Xm,sp, lambda, mask, tol, optionsP);
     X_PIR(:,:,i) = PIR.Xsol; Parsol{i,1} = PIR;
   end
 %       %% AIRNN
   for i=1:3
     Xm = XM(:,:,i);
-    AIR = MC_AIRNN(X_INIT_RAND1,Xm,sp, lambda, mask, tol, optionsA);
+    AIR = ds_AIRNN(X_INIT_RAND1,Xm,sp, lambda, mask, tol, optionsA);
     X_AIR(:,:,i) = AIR.Xsol; Parsol{i,2} = AIR;
   end
 %       %% EPIRNN
   for i=1:3
     Xm = XM(:,:,i);
-    EPIR = MC_EPIRNN(X_INIT_RAND1,Xm,sp, lambda, mask, 1e-5, optionsEP);
+    EPIR = ds_EPIRNN(X_INIT_RAND1,Xm,sp, lambda, mask, 1e-5, optionsEP);
     X_EPIR(:,:,i) = EPIR.Xsol; Parsol{i,3} = EPIR;
   end
       %% SCP ADMM 
