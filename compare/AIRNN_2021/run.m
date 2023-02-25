@@ -59,7 +59,7 @@ for j = 1:1
     para.maxIter = 10000;
     para.tol = 1e-5;
     [m, n] = size(traData);
-    R = randn(n, para.maxR);
+    R = randn(n, para.maxR); % 
     para.R = R;
     para.data = dataset{j};
     clear m n;

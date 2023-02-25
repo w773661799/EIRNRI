@@ -1,4 +1,4 @@
-function [U0, S, V, output ] = AIRNN( D, lambda, theta, para )
+function [U0, S, V, output ] = AccIRNN( D, lambda, theta, para )
 
 output.method = 'AIRNN';
 
@@ -60,13 +60,13 @@ for i = 1:maxIter
     part = sparse_inp(U', V', row, col);
     objVal_temp = computeobj(data,part,lambda,theta,sigma,regType);
 
-    if(i > 1 && objVal_temp > getMaxOverk(obj(1:i - 1), 0))
-        part0 = data - part1';
-        setSval(spa, part0, length(part0));    
-        [Q, pwIter] = powerMethodAccMatComp( U1, V1, U0, V0, spa, bi, V0, 2, 1e-4);
-        sigma = sigma1;
-        acceleration(i) = 0;
-    end 
+%     if(i > 1 && objVal_temp > getMaxOverk(obj(1:i - 1), 0))
+%         part0 = data - part1';
+%         setSval(spa, part0, length(part0));    
+%         [Q, pwIter] = powerMethodAccMatComp( U1, V1, U0, V0, spa, bi, V0, 2, 1e-4);
+%         sigma = sigma1;
+%         acceleration(i) = 0;
+%     end 
     
     w = computew(theta,sigma,regType);
     %w = theta*exp(-theta*sigma); % exponential
