@@ -16,7 +16,7 @@ mask = ~M_org; % mask: sampling with percentage 1-missrate
 Xm = Y.*mask;
 % --------------- parameters ---------------
 orieps_spl = [1,1e-2,1e-4,1e-6];
-lambda = 1e-3*norm(Y,inf);
+lambda = 1e-3*norm(Xm,inf);
 tol_spl = [1e-6; 1e-7; 1e-8];
 itmax = 5e3;
   %% basic algorithm for sp=0.1 ,SR=0.5
@@ -33,9 +33,9 @@ itmax = 5e3;
   tol = 5e-6; 
   for i = 1:length(orieps_spl)
     optionsP.eps = orieps_spl(i);  
-    PIReps{i} = MC_PIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
-    AIReps{i} = MC_AIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
-    EPIReps{i} = MC_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
+    PIReps{i} = ds_ProxIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
+    AIReps{i} = ds_AdaIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
+    EPIReps{i} = ds_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsP); 
   end
 
   %
@@ -47,7 +47,7 @@ itmax = 5e3;
   end
   
  %% plot 
- pit = 1;
+ pit = 3;
     pPIR = min(itmax,PIReps{pit}.iterTol); pAIR = min(itmax,AIReps{pit}.iterTol);
     pEPI = min(itmax,EPIReps{pit}.iterTol); 
     PIRx = (1:1:pPIR); AIRx = (1:1:pAIR); EPIRx = (1:1:pEPI); 

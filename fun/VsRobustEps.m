@@ -22,11 +22,13 @@ else
     success = 0;
 end
 
-for itimes = 1:times % 
+for itimes = 1:times %
     if success ==0
       Y = randn(nr,r) * randn(r,nc);
     else
-      B = rand(nr,r); C = rand(r,nc); Y = B * C; Y = Y./max(max(Y));
+      B = rand(nr,r); C = rand(r,nc); Y = B * C; 
+      Y = Y./(10*min(min(Y))); 
+%       Y = Y./(10*max(max(Y)));
     end
   % --------------- random mask ---------------
   M_org = zeros(nr,nc); 
@@ -42,65 +44,51 @@ for itimes = 1:times %
 if success==0
     lambda = 1e-1 * norm(Xm,inf); % rank recognition
 else
-    lambda = 1e-3 * norm(Xm,"fro"); % succfully recovery
+    lambda = 1e-3 * norm(Xm,inf); % succfully recovery
 end
 
-options.Rel = Y;
-
-
+  options.Rel = Y;
   optionsP= options;
   for iter_eps = 1:1:leps      
     optionsP.eps = WEPS(iter_eps);
     PIR = ds_ProxIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
-%     if (PIR.rank(end) == r) && (PIR.RelErr(end) <= success) 
-    if success == 0
-      if PIR.rank(end) == r 
-        CrRank.PIR(iter_eps) = CrRank.PIR(iter_eps) + 1;
-      end
-    else
-      if (PIR.RelErr(end) <= success) 
-        Robust.PIR(iter_eps) = Robust.PIR(iter_eps) + 1;  
-        if PIR.rank(end) == r 
-          CrRank.PIR(iter_eps) = CrRank.PIR(iter_eps) + 1;
-        end  
-      end
+%     if (PIR.rank(end) == r) && (PIR.RelErr(end) <= success)     
+    if PIR.rank(end) == r 
+      CrRank.PIR(iter_eps) = CrRank.PIR(iter_eps) + 1;
+    end
+    if (PIR.RelErr(end) <= success) && (PIR.rank(end) == r) 
+      Robust.PIR(iter_eps) = Robust.PIR(iter_eps) + 1;  
     end
   end
+ 
 
   optionsA = options;
   optionsA.eps = 1e0;
-  optionsA.mu = 0.95;
+  optionsA.mu = 0.5;
   AIR = ds_AdaIRNN(X0,Xm,sp, lambda, mask, tol, optionsA);
 %   if (AIR.rank(end) == r) && (AIR.RelErr(end) <= success) 
-  if success == 0
+
     if AIR.rank(end) == r 
       CrRank.AIR = CrRank.AIR + 1;
     end
-  else
-    if (PIR.RelErr(end) <= success) 
+
+    if (AIR.RelErr(end) <= success) && (AIR.rank(end) == r)
       Robust.AIR = Robust.AIR + 1;
-      if AIR.rank(end) == r
-        CrRank.AIR = CrRank.AIR + 1;
-      end
     end
-  end
+
 
   optionsEP = optionsA;
   optionsEP.alpha = 7e-1;
   EPIR = ds_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsEP); 
 %   if (EPIR.rank(end) == r) && (EPIR.RelErr(end) <= success) 
-  if success == 0
+
     if EPIR.rank(end) == r 
       CrRank.EPIR = CrRank.EPIR + 1;
     end
-  else
-    if (EPIR.RelErr(end) <= success)     
+    if (EPIR.RelErr(end) <= success) && (EPIR.rank(end) == r)    
       Robust.EPIR = Robust.EPIR + 1;
-      if EPIR.rank(end) == r 
-      CrRank.EPIR = CrRank.EPIR + 1;
-      end
     end
-  end
+
   Par.Robust = Robust;
   Par.CrRank = CrRank;
 end
