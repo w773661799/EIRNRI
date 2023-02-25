@@ -1,4 +1,4 @@
-function Par = MC_SCpADMM(M, sp, lambda, mask, tol, opt)
+function Par = MC_SCpADMM(X0,M, sp, lambda, mask, tol, opt)
 
   if isfield(opt,'max_iter')==0,max_iter = 100;
   else,max_iter = opt.max_iter ;

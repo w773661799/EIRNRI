@@ -45,8 +45,8 @@ img_size = size(img_ori);
   X_INIT_RAND1 = (1+randn(img_size(1),rt))*(randn(rt,img_size(2)));
   tol = 1e-5 ;
   options.max_iter = 5e3; 
-  options.eps = 1e-10; 
-  options.mu = 1.3;
+  options.eps = 1e-2; 
+  options.mu = 1.1;
 %   options.KLopt = 1e-5;   
     %% search p
     optionsEP = options; 
@@ -89,30 +89,33 @@ img_size = size(img_ori);
     %%
   % PIRNN
   optionsP = options; 
+
   % AIRNN
-  optionsA = options; optionsA.Scalar = 0.1; optionsA.eps = 1;
+  optionsA = optionsP; 
+  optionsA.mu = 0.1; 
+  optionsA.eps = 1;
   % EPIRNN
   optionsEP = optionsA; optionsEP.alpha = 0.7;
   Parsol = {}; 
-      %% PIRNN 
+      %% PIRNN
   for i =1:3
     Xm = XM(:,:,i);
-    PIR = ds_PIRNN(X_INIT_RAND1,Xm,sp, lambda, mask, tol, optionsP);
+    PIR = ds_ProxIRNN(Xm,Xm,sp, lambda, mask, tol, optionsP);
     X_PIR(:,:,i) = PIR.Xsol; Parsol{i,1} = PIR;
   end
 %       %% AIRNN
   for i=1:3
     Xm = XM(:,:,i);
-    AIR = ds_AIRNN(X_INIT_RAND1,Xm,sp, lambda, mask, tol, optionsA);
+    AIR = ds_AdaIRNN(Xm,Xm,sp, lambda, mask, tol, optionsA);
     X_AIR(:,:,i) = AIR.Xsol; Parsol{i,2} = AIR;
   end
 %       %% EPIRNN
   for i=1:3
     Xm = XM(:,:,i);
-    EPIR = ds_EPIRNN(X_INIT_RAND1,Xm,sp, lambda, mask, 1e-5, optionsEP);
+    EPIR = ds_EPIRNN(Xm,Xm,sp, lambda, mask, tol, optionsEP);
     X_EPIR(:,:,i) = EPIR.Xsol; Parsol{i,3} = EPIR;
   end
-      %% SCP ADMM 
+      % SCP ADMM 
   for i=1:3
     Xm = XM(:,:,i);
     labmda = 1 ;
@@ -121,16 +124,16 @@ img_size = size(img_ori);
     SCP = MC_SCpADMM(Xm,Xm,sp, lambda, mask, tol, optionsEP);     
     X_SCP(:,:,i) = SCP.Xsol; Parsol{i,4} = SCP;
   end
-      %% FGSRp 
+      % FGSRp 
   optionsFGSR.p = sp ; 
   optionsFGSR.d = ceil(1.5*rt);
   optionsFGSR.regul_B = "L2";
   optionsFGSR.tol = 1e-4;
-  optionsFGSR.lambda = 0.09;
+  optionsFGSR.lambda = 1;
   for i = 1:3
     Xm = XM(:,:,i);
     Xr = MC_FGSRp_PALM(Xm,mask,optionsFGSR);
-    X_FGSR(:,:,i) = Xr;
+    X_FGSR(:,:,i) = Xr.Xsol; Parsol{i,4} = X_FGSR;
   end
   %% imshow show 
 imshow(X_EPIR)
