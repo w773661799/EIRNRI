@@ -17,7 +17,7 @@ function Par = ds_AdaIRNN(X0,M,sp, lambda, mask, tol, options)
   else,beta = options.beta ;
   end
   
-  if isfield(options,'KLopt')==0,KLopt = 1e-5*min(size(M));
+  if isfield(options,'KLopt')==0,KLopt = 1e-5;
   else,KLopt = options.KLopt ;
   end
   
