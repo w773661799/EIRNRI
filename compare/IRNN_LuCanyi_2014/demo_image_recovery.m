@@ -39,7 +39,8 @@ for i = 1 : 3
     y = M(x,1) ;   
     options.lambda_Init = 0.1 ;
 %     lambda_Init = max(abs(M(y,2)))*1000;
-    SOL_IRNN = IRNN(M(y,2),fun,y,M,m,n,options);
+    SOL_IRNN = IRNN(fun,y,M,m,n,options);
+%     IRNN(fun,y,M,m,n,gamma,lambda_Init,lambda_rho,tol)
 end
 %%
 Xhat = max(Xhat,0);
