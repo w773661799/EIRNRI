@@ -41,7 +41,7 @@ for j = 1:1
     theta = sqrt(lambda);
     if j == 1
         para.maxR = 5;
-        para.maxtime = 20;
+        para.maxtime = 200;
     end
     if j == 2
         para.maxR = 8;

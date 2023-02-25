@@ -58,11 +58,12 @@ for i = 1:maxIter
 
     part1 = partXY(Ui', Vi', row, col, length(data));
     
-    objVal = (1/2)*sum((data - part1').^2);
-    objVal = objVal + lambda*sum(1-exp(-theta*sigma)); % exponential
-    
+%     objVal = (1/2)*sum((data - part1').^2);
+%     objVal = objVal + lambda*sum(1-exp(-theta*sigma)); % exponential
+%     objVal = objVal + lambda*norm(sigma,theta)^(theta); % Scp-norm
+    objVal = computeobj(data,part1,lambda,theta,sigma,regType);
       
-    
+%     computeobj(data,part1,lambda,theta,sigma,regType)
     
     
     c = c + 1;
@@ -88,14 +89,16 @@ for i = 1:maxIter
         else
             RMSE(i) = MatCompRMSE(U1, V1, tempS, para.test.row, para.test.col, para.test.data);
         end
-        fprintf('method: %s data: %s  RMSE %.2d \n', output.method, para.data, RMSE(i));
+%         fprintf('method: %s data: %s  RMSE %.2d \n', output.method, para.data, RMSE(i));
     end
     
     if(i > 1 && abs(delta) < tol)
+        fprintf('IRNN_lsvd obj value get opt\n');
         break;
     end
     
     if(sum(Time) > para.maxtime)
+      fprintf('IRNN_lsvd get the Maximum time\n');
         break;
     end
 end
@@ -120,19 +123,16 @@ function[Ui, S, Vi, spa] = proxOperator_IRNN(sigma, U1, V1, U0, V0, spa, bi, par
     end
     setSval(spa, part0, length(part0));
     
-     
-    
-    
-    w = theta*exp(-theta*sigma); % exponential
+%     w = theta*exp(-theta*sigma); % exponential
+%     w = theta.*sigma.^(theta-1); % Scp-norm
+    w = computew(theta,sigma,regType);
     
     [Ui, S, Vi] = accExactSVD_APGnc( U1, V1, U0, V0, spa, bi, maxR);
     sigma = diag(S);
     sigma = max(sigma-lambda*w,0);
     S = diag(sigma);
     %[ Ui, S, Vi ] = GSVT(hZ, lambda, theta, regType);
-    Ui = (Ui*S);   
-    
-    
+    Ui = (Ui*S);       
 end
 
 function [U, S, V] = accExactSVD_IRNN( U1, V1, U0, V0, bi, k)

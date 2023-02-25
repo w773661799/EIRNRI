@@ -92,7 +92,6 @@ for i = 1:maxIter
     
     objVal = computeobj(data,part1,lambda,theta,sigma1,regType);
     
-
     if(i > 1)
         delta = (obj(i - 1)- objVal)/objVal;
     else
@@ -117,12 +116,12 @@ for i = 1:maxIter
     end
     
     if(i > 1 && abs(delta) < tol)
-        fprintf('obj value get opt\n');
+        fprintf('AccIRNN obj value get opt\n');
         break;
     end
     
     if(sum(Time) > para.maxtime)
-        fprintf('get the Maximum time\n');
+        fprintf('AccIRNN get the Maximum time\n');
         break;
     end
     % add to save the rank 
@@ -143,7 +142,7 @@ Time = cumsum(Time);
 output.Time = Time(1:i);
 output.data = para.data;
 output;
-
+output.V = V;
 
 
 end
