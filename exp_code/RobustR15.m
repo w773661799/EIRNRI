@@ -27,7 +27,7 @@ options.KLopt = klopt;
 options.beta = 1.1; 
 options.teps = weps;
 
-Rank = [5,10];
+Rank = [5,10,15];
 WEPS = [1e-1,5e-2,1e-2];
 times = 100;
 init_rank_max = 20;
@@ -53,7 +53,7 @@ end
 % save(Robust_Eps.mat,Robust,'-mat')
 save("..\exp_cache\Rank_Robust.mat","Rank_RC",'-mat')
 %%
-irankplt = 2;
+irankplt = 3;
 X = categorical({'EPIRNN','AdaIRNN', '\epsilon=10^{-1}', '\epsilon=10^{-2}','\epsilon=10^{-3}' });
 % X = reordercats(X,{'Medium','Extra Large'});
 X_num = [1,2,4,5,6];
