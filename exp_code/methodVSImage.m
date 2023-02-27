@@ -95,7 +95,7 @@ for iter_rt = 1:1
   else
     lambda_ir = 1;
     lambda_scp = 1;
-    lambda_fgsr = 1; 
+    lambda_fgsr = 1e-2; 
   end
   %% ------------------% search p----------------------------- 
   if exist('scan','var') && isfield(scan,'p') && scan.p == 1
@@ -184,7 +184,7 @@ for iter_rt = 1:1
     X_SCP(:,:,i) = SCP.Xsol;
   end
   Parsol{4} = X_SCP;
-      %% FGSRp 
+      %% FGSRp 0.5 
   optionsFGSR.d = ceil(1.5*rt);
   optionsFGSR.regul_B = "L2";
   optionsFGSR.tol = tol;
@@ -192,7 +192,8 @@ for iter_rt = 1:1
   sp_fgsr = 0.5; 
   for i = 1:3
     Xm = XM(:,:,i);
-    Xr = MC_FGSRp_PALM(Xm,mask,sp_fgsr,lambda_fgsr,optionsFGSR);
+    Xr = MC_FGSR_PALM(Xm,mask,optionsFGSR); % for p=0.5 only
+%     Xr = MC_FGSR_PALM(Xm,mask,sp_fgsr,lambda_fgsr,optionsFGSR);
     X_FGSR(:,:,i) = Xr.Xsol; 
   end
   Parsol{5} = X_FGSR;

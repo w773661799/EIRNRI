@@ -21,7 +21,7 @@ else
     maxiter=options.maxiter;
 end
 if isfield(options,'tol')==0
-    tol=1e-4;
+    tol=1e-5;
 else
     tol=options.tol;
 end
