@@ -1,4 +1,4 @@
-function Par=MC_FGSRp_PALM(X0,M,options)
+function Par=MC_FGSRp_PALM(X0,M,sp,lambda,options)
 
 % modified by Ye Wang 03/2022 E-mail: wangye@shanghaitech.edu.cn
 % -X0 is the sampling matrix
@@ -16,7 +16,7 @@ function Par=MC_FGSRp_PALM(X0,M,options)
 [m,n]=size(X0);
 X=X0;
 %
-p = options.p;
+p = sp;
 if isfield(options,'d')==0
     d=ceil(mean(M(:))*min(m,n)/2);
     disp(['The estimated initial rank is ' num2str(d)])
@@ -28,14 +28,14 @@ else,alpha=options.alpha;
 end
 
 if isfield(options,'lambda')==0,lambda=0.01;
-else,lambda=options.lambda;
+else,lambda=lambda;
 end
 
 if isfield(options,'regul_B')==0,regul_B='L2';
 else,regul_B=options.regul_B;
 end
 
-if isfield(options,'tol')==0,tol=1e-4;
+if isfield(options,'tol')==0,tol=1e-9;
 else,tol=options.tol;
 end
 
@@ -43,8 +43,8 @@ if isfield(options,'zeta')==0,zeta=1e-2;
 else,zeta=options.zeta;
 end
 
-if isfield(options,'maxiter')==0,maxiter=1000;
-else,maxiter=options.maxiter;
+if isfield(options,'max_iter')==0,max_iter= 5e3;
+else,max_iter=options.max_iter;
 end
 
 % disp(['alpha=' num2str(alpha)])
@@ -70,7 +70,7 @@ end
 
 iter=0;
   tic;
-  while iter<maxiter
+  while iter<max_iter
     iter=iter+1;
     W=diag((sum(A.^2).^0.5+zeta).^(p-2));
     A_new=lambda*X*B'*inv(lambda*B*B'+W);
@@ -90,17 +90,17 @@ iter=0;
     X_new=X_new.*(1-M)+X0.*M;
 
     et=[norm(B_new-B,'fro')/norm(B,'fro') norm(A_new-A,'fro')/norm(A,'fro') norm(X_new-X,'fro')/norm(X,'fro')];
-    stopC=max(et);
+    stopC = max(et);
     %
-    isstopC=stopC<tol;
+    isstopC = stopC<tol;
 %     if mod(iter,1000)==0||isstopC
-%         disp(['iteration=' num2str(iter) '/' num2str(maxiter) '  stopC=' num2str(stopC) ...
+%         disp(['iteration=' num2str(iter) '/' num2str(max_iter) '  stopC=' num2str(stopC) ...
 %             '  e_X=' num2str(et(3)) ' d=' num2str(d) ])
 %     end
     if isstopC
       disp('converged'),break;
     end
-    if iter == maxiter
+    if iter == max_iter
       disp("Reach the MAX_ITERATION");
     end
     B=B_new;

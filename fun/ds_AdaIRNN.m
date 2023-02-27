@@ -89,6 +89,11 @@ function Par = ds_AdaIRNN(X0,M,sp, lambda, mask, tol, options)
 %     end
 
 %% ---------------------- Optimal Condition ----------------------
+    RelDist = norm(U(:,idx)'*Gradf(X1)*V(:,idx)+...
+      lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk,Rk),'fro')/norm(X1,'fro'); 
+%       lambda*sp*spdiags((weps(idx)+NewS(idx)).^(sp-1),0,Rk,Rk),'fro')/norm(X1,'fro'); 
+    spRelDist(iter) = RelDist; 
+    KLdist = norm(X1-X0,inf);
     if exist('ReX','var')
       Rtol = norm(X1-ReX,'fro')/norm(ReX,'fro');
       Rate(iter) = norm((X1-ReX),'fro')/norm((ReX),'fro');
@@ -101,10 +106,7 @@ function Par = ds_AdaIRNN(X0,M,sp, lambda, mask, tol, options)
       end
     end
     
-    RelDist = norm(U(:,idx)'*Gradf(X1)*V(:,idx)+...
-      lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk,Rk),'fro')/norm(X1,'fro'); 
-%       lambda*sp*spdiags((weps(idx)+NewS(idx)).^(sp-1),0,Rk,Rk),'fro')/norm(X1,'fro'); 
-    spRelDist(iter) = RelDist; 
+
     if RelDist<tol
       disp('AdaIRNN: Satisfying the optimality condition:Relative Distance'); 
       fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
@@ -112,7 +114,7 @@ function Par = ds_AdaIRNN(X0,M,sp, lambda, mask, tol, options)
       break
     end
     
-    KLdist = norm(X1-X0,inf);
+
 %     KLdist = norm(X1-X0,"fro")+(1-mu)*norm(weps(1:Rk),1)/mu;
     if KLdist < KLopt
       disp("AdaIRNN: Satisfying  the KL optimality condition"); 

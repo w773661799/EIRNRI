@@ -64,6 +64,11 @@ function Par = ds_ProxIRNN(X0,M,sp, lambda, mask, tol, options)
       %       lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk,Rk),'fro')/norm(X1-X0,'fro'); 
       %     GMinf(iter) = norm(Gradf(X1),inf);
 %% ---------------------- Optimal Condition ---------------------- 
+    RelDist = norm(U(:,idx)'*Gradf(X1)*V(:,idx)+...
+      lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk,Rk),'fro')/norm(X1,'fro'); 
+%       lambda*sp*spdiags((weps(idx)+NewS(idx)).^(sp-1),0,Rk,Rk),'fro')/norm(X1,'fro'); 
+    spRelDist(iter) = RelDist;
+    KLdist = norm(X1-X0,inf);
     if exist('ReX','var')
       Rtol = norm(X1-ReX,'fro')/norm(ReX,'fro');
       Rate(iter) = norm((X1-ReX),'fro')/norm(ReX,'fro');
@@ -79,10 +84,7 @@ function Par = ds_ProxIRNN(X0,M,sp, lambda, mask, tol, options)
 %     subpartial = lambda*sp*[(weps(idx)+NewS(idx)).^(sp-1);zeros(min(nr,nc)-Rk,1)];
 %     RelDist = norm(U'*Gradf(X1)*V + spdiags(subpartial,0,Rk,Rk), 'fro')/norm(M,'fro'); 
 
-    RelDist = norm(U(:,idx)'*Gradf(X1)*V(:,idx)+...
-      lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk,Rk),'fro')/norm(X1,'fro'); 
-%       lambda*sp*spdiags((weps(idx)+NewS(idx)).^(sp-1),0,Rk,Rk),'fro')/norm(X1,'fro'); 
-    spRelDist(iter) = RelDist;
+
     if RelDist<tol
       disp('PIRNN: Satisfying the optimality condition:Relative Distance'); 
       fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
@@ -90,7 +92,7 @@ function Par = ds_ProxIRNN(X0,M,sp, lambda, mask, tol, options)
       break
     end
 
-    KLdist = norm(X1-X0,inf);
+
     if KLdist<KLopt
       disp("PIRNN: Satisfying the KL optimality condition"); 
       fprintf('iter:%04d\t err:%06f\t rank(X):%d\t Obj(F):%d\n', ...
