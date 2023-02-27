@@ -53,7 +53,9 @@ for iter_rt = 1:length(RT)
   X_INIT_0 = zeros(img_size(1:2)) ; 
   X_INIT_RAND1 = (1+randn(img_size(1),rt))*(randn(rt,img_size(2)));
   tol = 1e-5 ;
-  options.max_iter = 5e3; 
+  max_iter = 5e3;
+  Klopt = 1e-7;
+  options.max_iter = max_iter; 
   options.eps = 1e-2; 
   options.mu = 1.1;
   
@@ -78,7 +80,7 @@ for iter_rt = 1:length(RT)
     % the best performance of p 
     [~,optSpidx] = max(SOL_PSNR) ; 
     sp = 0.3 ; 
-    %% search lambda
+    %% ------------------% search lambda -----------------------------
     Lambda = [1e-5:3e-5:1e-4, 1e-4:3e-4:1e-3, ...
       1e-3:3e-3:1e-2, 1e-2:3e-3:1e-1, ...
       1e-1:3e-1:1, 1:3:10];
@@ -134,21 +136,22 @@ for iter_rt = 1:length(RT)
     EPIR = ds_EPIRNN(Xm,Xm,sp, lambda, mask, tol, optionsEP);
     X_EPIR(:,:,i) = EPIR.Xsol; Parsol{i,3} = EPIR;
   end
-      % SCP ADMM 
+      %% SCP ADMM 
   for i=1:3
     Xm = XM(:,:,i);
-    labmda = 1 ;
-    optionsEP.max_iter = 1e2 ;  
+    Scp_labmda = 1;
+    Scp_tau = 10;
+    optionsScp.max_iter = max_iter ;  
 %     lambda = norm(Xm,"fro")*1;
-    SCP = MC_SCpADMM(Xm,Xm,sp, lambda, mask, tol, optionsEP);     
-    X_SCP(:,:,i) = SCP.Xsol; Parsol{i,4} = SCP;
+    SCP = MC_SCpADMM(Xm,Xm,sp, Scp_labmda, mask, tol, optionsScp);
+    X_SCP(:,:,i) = SCP.Xsol; Parsol{i,4} = X_SCP;
   end
-      % FGSRp 
+      %% FGSRp 
   optionsFGSR.p = sp ; 
   optionsFGSR.d = ceil(1.5*rt);
   optionsFGSR.regul_B = "L2";
-  optionsFGSR.tol = 1e-4;
-  optionsFGSR.lambda = 1;
+  optionsFGSR.tol = tol;
+  optionsFGSR.lambda = 1e-3;
   for i = 1:3
     Xm = XM(:,:,i);
     Xr = MC_FGSRp_PALM(Xm,mask,optionsFGSR);

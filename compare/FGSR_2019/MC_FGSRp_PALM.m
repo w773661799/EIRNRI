@@ -16,7 +16,7 @@ function Par=MC_FGSRp_PALM(X0,M,options)
 [m,n]=size(X0);
 X=X0;
 %
-p=options.p;
+p = options.p;
 if isfield(options,'d')==0
     d=ceil(mean(M(:))*min(m,n)/2);
     disp(['The estimated initial rank is ' num2str(d)])
