@@ -102,7 +102,7 @@ init_rank_max = max(nr,nc);
 ITRANK = [1:1:20,131:150];
 % WEPS = [1e-1, 7e-2, 4e-2, 1e-2];
 % WEPS = [5e-1];
-WEPS = [7e-1,4e-1,1e-1,7e-2,4e-2,1e-2,7e-3,1e-3,1e-1];
+WEPS = [7e-1,4e-1,1e-1,7e-2,4e-2,1e-2,7e-3,4e-3,1e-3];
 times = 5;
 
 options.max_iter = itmax;
@@ -141,5 +141,13 @@ end
 R_CROBIST.Robust = Robust;
 R_CROBIST.CrRank = CrRank;    
 save("..\exp_cache\R_CROBIST_plot.mat","R_CROBIST",'-mat')
+%% 
+rck = R_CROBIST.CrRank;
+rcs = R_CROBIST.Robust;
+plot([5:1:10],rck.PIR(:,1)./200); hold on;
+plot([5:1:10],rck.PIR(:,3)./200); 
+plot([5:1:10],rck.AIR./200)
+plot([5:1:10],rck.EPIR./200)
+
 %%
 delete(p);
