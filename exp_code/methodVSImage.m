@@ -13,13 +13,19 @@ img_ori = double(imread(path_lena))/255 ;
 img_size = size(img_ori);
 
   %% strictly low rank
-  rt = ceil(min(size(img_ori(:,:,1)))/5); 
+%   rt = ceil(min(size(img_ori(:,:,1)))/5);
+RT = [20,25,30,35,40,45];
+for iter_rt = 1:length(RT) 
+
+  
+  
   for i=1:3
     [U,S,V]=svd(img_ori(:,:,i));
     Xt(:,:,i)=U(:,1:rt)*S(1:rt,1:rt)*V(:,1:rt)';
   end
-  %% mask
-    %% random mask
+  %%%%%%%%%%%%%%%%%%%%%%%%%% mask %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %% random mask
+  if it_mask == 1
     missrate = 0.3; % sampleRate = 1 - missRate
     mask = zeros(img_size(1:2));
     for i=1:img_size(2)  
@@ -28,16 +34,19 @@ img_size = size(img_ori);
         mask(randidx(1:ceil(img_size(1)*missrate)),i)=1; 
     end
     mask = ~mask;
+  elseif it_mask == 2
     %% block_column mask 
     mask_path = strcat(cwd,'\img_mask\block_column.bmp');
     omega = double(imread(mask_path))/255.0;
     omega = imresize(omega,img_size(1:2));
     mask = omega(:,:,1);
+  elseif it_mask == 3
     %% EN mask 
     mask_path = strcat(cwd,'\img_mask\block_square.bmp');
     omega = double(imread(mask_path))/255.0;
     omega = imresize(omega,img_size(1:2));
     mask = omega(:,:,1);
+  end
   %% ------------------------ RECOVERY ------------------------
   % 初始矩阵 + 线性参数 + 正则参数
   XM = mask.*Xt;
@@ -47,8 +56,9 @@ img_size = size(img_ori);
   options.max_iter = 5e3; 
   options.eps = 1e-2; 
   options.mu = 1.1;
+  
 %   options.KLopt = 1e-5;   
-    %% search p
+    %% ------------------% search p----------------------------- 
     optionsEP = options; 
     optionsEP.eps = 1 ; 
     optionsEP.alpha = 0.7;
@@ -83,10 +93,13 @@ img_size = size(img_ori);
       SOL_PSNR(idx_lambda) = psnr(img_ori,img_Rsol{idx_lambda});
     end
     [~,optLambdaIdx] = max(SOL_PSNR);
-    %% 
+    
+    %%  demo parameters
+
+    %%
     sp = 0.3 ; 
     lambda = 0.1 ; 
-    %%
+    %% Recovery 
   % PIRNN
   optionsP = options; 
 
@@ -95,8 +108,14 @@ img_size = size(img_ori);
   optionsA.mu = 0.1; 
   optionsA.eps = 1;
   % EPIRNN
-  optionsEP = optionsA; optionsEP.alpha = 0.7;
+  optionsEP = optionsA; 
+  optionsEP.alpha = 0.7;
+
+  img_show.ori_img = img_ori;
+  img_show.low_img = Xt;
+  img_show.mask_img = XM;
   Parsol = {}; 
+
       %% PIRNN
   for i =1:3
     Xm = XM(:,:,i);
@@ -135,6 +154,8 @@ img_size = size(img_ori);
     Xr = MC_FGSRp_PALM(Xm,mask,optionsFGSR);
     X_FGSR(:,:,i) = Xr.Xsol; Parsol{i,4} = X_FGSR;
   end
+  img_show.sol = Parsol;
+end
   %% imshow show 
 imshow(X_EPIR)
 
