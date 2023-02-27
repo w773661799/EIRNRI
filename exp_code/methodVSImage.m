@@ -8,8 +8,8 @@ cwd = fileparts(pwd);
 path_lena = strcat(cwd,'\img_image\lena.png');
 path_re1 = strcat(cwd,'..\img_image\re1.jpg');
 
-% img_ori = double(imread(path_lena))/255 ; 
-img_ori = double(imread(path_lena));
+img_ori = double(imread(path_lena))/255 ; 
+% img_ori = double(imread(path_lena));
 img_size = size(img_ori);
 
   %% strictly low rank
@@ -72,9 +72,10 @@ for iter_rt = 1:1
         EPIR = ds_EPIRNN(X0,Xm,sp, Lambda(idx_lambda), mask, tol, optionsEP);
         img_Rsol{idx_lambda,1}(:,:,channel) = EPIR.Xsol;
 
-        SCP = MC_SCpADMM(Xm,Xm,sp, Scp_labmda, mask, tol, optionsScp);
+        SCP = MC_SCpADMM(Xm,Xm,sp, Lambda(idx_lambda), mask, tol, optionsScp);
         img_Rsol{idx_lambda,2}(:,:,channel) = SCP.Xsol;
 
+        optionsFGSR.lambda = Lambda(idx_lambda);
         Xr = MC_FGSRp_PALM(Xm,mask,optionsFGSR);
         img_Rsol{idx_lambda,3}(:,:,channel) = Xr.Xsol;
       end
@@ -91,9 +92,9 @@ for iter_rt = 1:1
     [~,optLambdaIdx] = max(SOL_PSNR(:,3)); 
     lambda_fgsr = Lambda(optLambdaIdx); 
   else
-    lambda_ir = 1e-3;
-    lambda_scp = 1e-2;
-    lambda_fgsr = 1; 
+    lambda_ir = 1;
+    lambda_scp = 1;
+    optionsFGSR.lambda = 1; 
   end
   %% ------------------% search p----------------------------- 
   if isfield('scan','p') && scan.p == 1
@@ -109,6 +110,13 @@ for iter_rt = 1:1
         Xm = XM(:,:,channel) ; 
         EPIR = ds_EPIRNN(Xm,Xm,op, lambda, mask, tol, optionsEP);
         img_Rsol{pidx}(:,:,channel) = EPIR.Xsol;
+
+        SCP = MC_SCpADMM(Xm,Xm,op, Lambda(idx_lambda), mask, tol, optionsScp);
+        img_Rsol{idx_lambda,2}(:,:,channel) = SCP.Xsol;
+
+        optionsFGSR.p = sp;
+        Xr = MC_FGSRp_PALM(Xm,mask,optionsFGSR);
+        img_Rsol{idx_lambda,3}(:,:,channel) = Xr.Xsol;
       end
       SOL_PSNR(pidx) = psnr(img_ori,img_Rsol{pidx});
     end
@@ -117,6 +125,7 @@ for iter_rt = 1:1
     sp = 0.01 + (optSpidx-1)*0.03;
   else
     sp = 0.3;
+    optionsFGSR.p = sp;
   end
 
     %% Recovery 
@@ -142,51 +151,62 @@ for iter_rt = 1:1
     PIR = ds_ProxIRNN(Xm,Xm,sp, lambda_ir, mask, tol, optionsP);
     X_PIR(:,:,i) = PIR.Xsol; 
   end
-  Parsol{i,1} = PIR;
+  Parsol{1} = X_PIR;
 %       %% AIRNN
   for i=1:3
     Xm = XM(:,:,i);
     AIR = ds_AdaIRNN(Xm,Xm,sp, lambda_ir, mask, tol, optionsA);
     X_AIR(:,:,i) = AIR.Xsol; 
   end
-  Parsol{i,2} = AIR;
+  Parsol{2} = X_AIR;
 %       %% EPIRNN
   for i=1:3
     Xm = XM(:,:,i);
     EPIR = ds_EPIRNN(Xm,Xm,sp, lambda_ir, mask, tol, optionsEP);
     X_EPIR(:,:,i) = EPIR.Xsol;
   end
-  Parsol{i,3} = X_EPIR;
+  Parsol{3} = X_EPIR;
       %% SCP ADMM 
   for i=1:3
     Xm = XM(:,:,i);
     Scp_tau = 10;
-    optionsScp.max_iter = max_iter ;  
+    optionsScp.max_iter = 5e2 ;  
 %     lambda = norm(Xm,"fro")*1;
     SCP = MC_SCpADMM(Xm,Xm,sp, lambda_scp, mask, tol, optionsScp);
     X_SCP(:,:,i) = SCP.Xsol; 
   end
-  Parsol{i,4} = X_SCP;
+  Parsol{4} = X_SCP;
       %% FGSRp 
-  optionsFGSR.p = sp ; 
   optionsFGSR.d = ceil(1.5*rt);
   optionsFGSR.regul_B = "L2";
   optionsFGSR.tol = tol;
-  optionsFGSR.lambda = lambda_fgsr;
   for i = 1:3
     Xm = XM(:,:,i);
     Xr = MC_FGSRp_PALM(Xm,mask,optionsFGSR);
     X_FGSR(:,:,i) = Xr.Xsol; 
   end
-  Parsol{i,4} = X_FGSR;
+  Parsol{5} = X_FGSR;
   img_show.sol = Parsol;
 end
   %% imshow show 
+subplot(1,5,1)
+imshow(X_PIR)
+
+subplot(1,5,2)
+imshow(X_AIR)
+
+subplot(1,5,3)
 imshow(X_EPIR)
 
+subplot(1,5,4)
+imshow(X_SCP)
 
-
-
+subplot(1,5,5)
+imshow(X_FGSR)
+%%
+for i =1:5
+  PSNR_img(i) = psnr(Xt,Parsol{i})
+end
 
 
 

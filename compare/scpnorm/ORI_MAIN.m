@@ -31,7 +31,7 @@ for channel = 1:3
     img = img_ori(:,:,channel);
     [U,S,V] = svd(img);
     rank = 20; %strictly rank
-    for j = rank:min(m,n);
+    for j = rank:min(m,n)
         S(j,j) = 0;
     end
     img_ori(:,:,channel) = U*S*V';
@@ -111,12 +111,18 @@ for i = 1:100
     opt.p = 0.01+opt.p;
 end
 %% plot
-[~,index] = max(peak_snr);
+% [~,index] = max(peak_snr);
+opt.p = 0.2;
+opt.lambda = 1;
+opt.tau = 30;
+max_iter = 1e3;
+
+
 
 for channel = 1:3
-    opt.p = index/100.0;
-    opt.omega = omega(:,:,channel);
-    opt.D_omega = omega_img(:,:,channel);
+%     opt.p = index/100.0;
+    opt.omega = mask;
+    opt.D_omega = XM(:,:,channel);
     Y_omega = opt.D_omega;
     E_omega = opt.D_omega;
     W = opt.D_omega;
@@ -135,22 +141,22 @@ for channel = 1:3
     img_new(:,:,channel) = X;
 end
 
-fprintf('the best value of p is: %f, ', opt.p);
-
+% fprintf('the best value of p is: %f, ', opt.p);
+%%
 figure(1)
 subplot(131);
-imshow(img_data);
+imshow(img_ori);
 title('ori image');
 
 subplot(132);
-imshow(omega_img);
+imshow(XM);
 title('mask image');
 
 subplot(133);
 imshow(img_new);
 title('completed image');
 
-
+%%
 figure(2);
 [hAx,hline1,hline2] = plotyy(0.01:0.01:1,peak_snr,0.01:0.01:1,fro);%,1:100,mean_snr);
 xlabel('p');

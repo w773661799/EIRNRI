@@ -1,4 +1,4 @@
-function Par = MC_SCpADMM(X0,M, sp, lambda, mask, tol, opt)
+function Par = MC_SCpADMM(X0, M, sp, lambda, mask, tol, opt)
 
   if isfield(opt,'max_iter')==0,max_iter = 100;
   else,max_iter = opt.max_iter ;
@@ -10,6 +10,10 @@ function Par = MC_SCpADMM(X0,M, sp, lambda, mask, tol, opt)
   else,opt.tau = opt.tau;
   end
   
+  spf = []; sprank = [];
+
+
+  tic ;
   opt.lambda = lambda; % regularization parameter
   opt.p = sp; % Scp norm  
   opt.omega = mask; % observed set
@@ -17,48 +21,44 @@ function Par = MC_SCpADMM(X0,M, sp, lambda, mask, tol, opt)
   
   Objf = @(x)(norm(mask.*(x-M),'fro')^2/2 + lambda*norm(svds(x,rank(x)),sp)^(sp));
 
+  opt.omega = mask;
+  opt.D_omega = M;
 
   Y_omega = opt.D_omega;
-  E_omega = opt.D_omega; % E = X-D 
-  
+  E_omega = opt.D_omega;
   W = opt.D_omega;
   Z = Y_omega;
-  rou = 1.5; % 1.5 ???
-  mv = 1.5; % mv = rou ^ iterMax \mv_0 
-  iter = 0 ;
-  sprank = [];Stime =[]; 
-  X0 = zeros(size(E_omega));  
-%   X1 = X0 ;
-  tic;
-  while iter<=max_iter
-    iter = iter + 1;
-    X1 = opt_X(E_omega,Y_omega,W,Z,mv,opt);
-    E_omega = opt_E(X1,Y_omega,mv,opt);
-    W = opt_W(X1,Z,mv,opt);
-    tY_omega = Y_omega + mv*(E_omega - X1 .* opt.omega + opt.D_omega); 
-    Z = Z + mv*(X1 - W);
+  
+  rou = 1.5;
+  mv = 1.5;
+
+  for iter = 1:max_iter
+    X = opt_X(E_omega,Y_omega,W,Z,mv,opt);
+    E_omega = opt_E(X,Y_omega,mv,opt);
+    W = opt_W(X,Z,mv,opt);
+    Y_omega = Y_omega + mv*(E_omega - X .* opt.omega + opt.D_omega); 
+    Z = Z + mv*(X - W);
     mv = rou*mv;
-
     Stime(iter) = toc;
-    spf(iter) = Objf(X1); % objective
-% optimazation condition of Scp ADMM
-    sprank(iter) = rank(X1);
+    spf(iter) = Objf(X);
+    sprank(iter) = rank(X);
+  end
+  X1 = X;
 
-    if iter==max_iter
-      disp("Reach the MAX_ITERATION");
-      fprintf( 'iter:%04d\t  rank(X):%d\t Obj(F):%d\n', ...
-        iter, rank(X1),Objf(X1) );
-      break
-    end
-    
-    if norm(X1-X0,"fro")<tol || norm(mask.*(X1-M))<tol
-      disp("Satisfying the optimal condition");
-      fprintf( 'iter:%04d\t  rank(X):%d\t Obj(F):%d\n', ...
-        iter, rank(X1),Objf(X1) );
-      break
-    end
-    X0 = X1;
-  end % end while
+  if iter==max_iter
+    disp("SCP Reach the MAX_ITERATION");
+    fprintf( 'iter:%04d\t  rank(X):%d\t Obj(F):%d\n', ...
+      iter, rank(X1),Objf(X1) );
+  end
+  
+  if norm(X1-X0,"fro")<tol || norm(mask.*(X1-M))<tol
+    disp("SCP Satisfying the optimal condition");
+    fprintf( 'iter:%04d\t  rank(X):%d\t Obj(F):%d\n', ...
+      iter, rank(X1),Objf(X1) );
+  end
+
+  X0 = X1;
+  
   estime = toc; 
   
   Par.time = Stime(1:iter); 

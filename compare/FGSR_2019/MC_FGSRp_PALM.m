@@ -35,6 +35,14 @@ if isfield(options,'regul_B')==0,regul_B='L2';
 else,regul_B=options.regul_B;
 end
 
+if isfield(options,'tol')==0,tol=1e-4;
+else,tol=options.tol;
+end
+
+if isfield(options,'zeta')==0,zeta=1e-2;
+else,zeta=options.zeta;
+end
+
 if isfield(options,'maxiter')==0,maxiter=1000;
 else,maxiter=options.maxiter;
 end
@@ -59,14 +67,6 @@ else
     end
 end
 
-
-if isfield(options,'tol')==0,tol=1e-4;
-else,tol=options.tol;
-end
-
-if isfield(options,'zeta')==0,zeta=1e-2;
-else,zeta=options.zeta;
-end
 
 iter=0;
   tic;
