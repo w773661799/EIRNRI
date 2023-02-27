@@ -16,9 +16,6 @@ img_size = size(img_ori);
 %   rt = ceil(min(size(img_ori(:,:,1)))/5);
 RT = [20,25,30,35,40,45];
 for iter_rt = 1:length(RT) 
-
-  
-  
   for i=1:3
     [U,S,V]=svd(img_ori(:,:,i));
     Xt(:,:,i)=U(:,1:rt)*S(1:rt,1:rt)*V(:,1:rt)';
