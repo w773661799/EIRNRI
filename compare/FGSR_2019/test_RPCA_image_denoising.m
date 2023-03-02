@@ -18,7 +18,7 @@ end
 figure(2)
 X=Xt;
 imshow(X)
-Xn=imnoise(X,'salt & pepper',0.4); 
+Xn=imnoise(X,'salt & pepper',0.5); 
 figure(3)
 imshow(Xn)
 %%

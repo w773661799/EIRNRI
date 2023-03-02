@@ -9,7 +9,7 @@ function Par = ds_ProxIRNN(X0,M,sp, lambda, mask, tol, options)
   else,max_iter = options.max_iter ;
   end
   
-  if isfield(options,'eps')==0,epsre = 1e-3;
+  if isfield(options,'eps')==0,epsre = 1e-5;
   else,epsre = options.eps ;
   end
   

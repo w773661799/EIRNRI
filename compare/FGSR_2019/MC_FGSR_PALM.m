@@ -1,4 +1,4 @@
-function Par=MC_FGSR_PALM(X,M,options)
+function Par=MC_FGSR_PALM(X,M,lambda,options)
 % rewrited by wnagye
 % X : observed matrix 
 % M : observed item
@@ -24,7 +24,7 @@ end
 if isfield(options,'lambda')==0
     lambda=0.01;
 else
-    lambda=options.lambda;
+    lambda = lambda;
 end
 if isfield(options,'regul_B')==0
     regul_B='L2';

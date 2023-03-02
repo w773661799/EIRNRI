@@ -15,10 +15,10 @@ if isfield(options,'u')==0 % Lagrange parameter
 else
     u=options.u;
 end
-if isfield(options,'maxiter')==0
-    maxiter=1000;
+if isfield(options,'max_iter')==0
+    max_iter=1000;
 else
-    maxiter=options.maxiter;
+    max_iter=options.max_iter;
 end
 if isfield(options,'tol')==0
     tol=1e-5;
@@ -51,7 +51,7 @@ end
 E=zeros(m,n);
 Q=zeros(m,n);
 iter=0;
-while iter<maxiter
+while iter<max_iter
     iter=iter+1;
     % B_new
     switch regul_B
@@ -92,7 +92,7 @@ while iter<maxiter
     %
     isstopC=stopC<tol||et(3)<tol/10;
     if mod(iter,100)==0||isstopC||iter<=10
-        disp(['iteration=' num2str(iter) '/' num2str(maxiter) ': J=' num2str(J(iter)) ', d=' num2str(d)...
+        disp(['iteration=' num2str(iter) '/' num2str(max_iter) ': J=' num2str(J(iter)) ', d=' num2str(d)...
             ', stopC=' num2str(stopC) ...
             ', e_E=' num2str(et(3))])
     end
