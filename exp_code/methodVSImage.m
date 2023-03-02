@@ -5,7 +5,7 @@
 clear;clc;
 format long; 
 rng(22);
-% parpol = parpool(16);
+parpol = parpool(16);
 
 cwd = fileparts(pwd);
 
