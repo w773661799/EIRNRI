@@ -230,7 +230,10 @@ for iter_rt = 1:length(RT)
 %   save("..\exp_cache\Rank_Robust.mat","Rank_RC",'-mat')
 end
 %%
-%  save("..\exp_cache\ImgRe_RandMask_R30_R1.mat","img_show",'-mat')
+%  save("..\exp_cache\ImgRe_RandMask_R30_R1.mat","img_show",'-mat') 
+% save R1 to plot 
+save("..\exp_cache\ImgRe_RandMask_Table.mat","Tab_img",'-mat') 
+% save for tbale
   %% imshow show 
 subplot(1,5,1)
 imshow(X_PIR)
