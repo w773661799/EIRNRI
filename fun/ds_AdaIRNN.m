@@ -51,6 +51,7 @@ function Par = ds_AdaIRNN(X0,M,sp, lambda, mask, tol, options)
   ALF = @(x,y)(norm(mask.*(x-M),'fro')/2 + lambda*norm(svd(x)+y,sp)^(sp));
 
   iter = 0; %Par.f = Objf(X0);
+  Rk0 = rank(X0);
   sigma = svd(X0); % ch1
 
   tic ;
@@ -63,9 +64,14 @@ function Par = ds_AdaIRNN(X0,M,sp, lambda, mask, tol, options)
 
       NewS = diag(S) - lambda*sp*(sigma+weps).^(sp-1)/beta;
       NewS(isinf(NewS)) = 0; 
-      idx = NewS>zero; Rk = sum(idx);  
+      idx = NewS>zero; Rk1 = sum(idx);
+
+
+
+      weps = update_eps(weps,Rk0,Rk1,rc,NewS(Rk1),mu);
       X1 = U*spdiags(NewS.*idx,0,rc,rc)*V'; 
-      weps(weps(1:Rk)>zero) = weps(weps(1:Rk)>zero)*mu ;
+      
+      
 % restrict the eps
       if isfield(options,"teps")
         weps = (weps<teps) .* teps + (weps>=teps) .* weps;
@@ -90,7 +96,7 @@ function Par = ds_AdaIRNN(X0,M,sp, lambda, mask, tol, options)
 
 %% ---------------------- Optimal Condition ----------------------
     RelDist = norm(U(:,idx)'*Gradf(X1)*V(:,idx)+...
-      lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk,Rk),'fro')/norm(X1,'fro'); 
+      lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk1,Rk1),'fro')/norm(X1,'fro'); 
 %       lambda*sp*spdiags((weps(idx)+NewS(idx)).^(sp-1),0,Rk,Rk),'fro')/norm(X1,'fro'); 
     spRelDist(iter) = RelDist; 
     KLdist = norm(X1-X0,inf);
@@ -142,6 +148,7 @@ function Par = ds_AdaIRNN(X0,M,sp, lambda, mask, tol, options)
 %     end
 
     X0 = X1 ; % update the iteration 
+    Rk0 = Rk1;
   end % end while 
   estime = toc;
 % KLdist
@@ -161,7 +168,7 @@ function Par = ds_AdaIRNN(X0,M,sp, lambda, mask, tol, options)
   Par.Xsol = X1; 
   Par.iterTol = iter;
   
-  Par.weps = weps(1:Rk);
+  Par.weps = weps(1:Rk1);
 %   Par.S = Ssim; Par.R = Rsim;
 %   Par.GMinf = GMinf;
   Par.KLdist = KLdist;

@@ -54,8 +54,9 @@ function Par = ds_EPIRNN(X0,M,sp, lambda, mask, tol, options)
   Objf = @(x)(norm(mask.*(x-M),'fro')^2/2 + lambda*norm(svds(x,rank(x)),sp)^(sp));
   ALF = @(x,y)(norm(mask.*(x-M),'fro')/2 + lambda*norm(svd(x)+y,sp)^(sp));
 
-  iter = 0; %Par.f = Objf(X0);  
+  iter = 0; %Par.f = Objf(X0);
   X1 = X0; 
+  Rk0 = rank(X0);
   sigma = svd(X1); 
 
   tic;
@@ -66,10 +67,12 @@ function Par = ds_EPIRNN(X0,M,sp, lambda, mask, tol, options)
       [U,S,V] = svd(Xc - Gradf(Xc)/beta,'econ');
 
       NewS = diag(S) - lambda*sp*(sigma+weps).^(sp-1)/beta;
-      idx = NewS>zero; Rk = sum(idx);
+      idx = NewS>zero; Rk1 = sum(idx);
       Xc = U*spdiags(NewS.*idx,0,rc,rc)*V';
+      
 
-      weps(weps(1:Rk)>zero) = weps(weps(1:Rk)>zero)*mu;
+      weps = update_eps(weps,Rk0,Rk1,rc,NewS(Rk1),mu);
+%       weps(weps(1:Rk)>zero) = weps(weps(1:Rk)>zero)*mu;
 % restrict the eps
       if isfield(options,"teps")
         weps = (weps<teps) .* teps + (weps>=teps) .* weps;
@@ -91,7 +94,7 @@ function Par = ds_EPIRNN(X0,M,sp, lambda, mask, tol, options)
 %     subpartial = lambda*sp*[(weps(idx)+NewS(idx)).^(sp-1);zeros(min(nr,nc)-Rk,1)];
 %     RelDist = norm(U'*Gradf(Xc)*V + spdiags(subpartial,0,nr,nc), 'fro')/norm(M,'fro'); 
     RelDist = norm(U(:,idx)'*Gradf(Xc)*V(:,idx)+...
-      lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk,Rk),'fro')/norm(X1,'fro'); 
+      lambda*sp*spdiags(NewS(idx).^(sp-1),0,Rk1,Rk1),'fro')/norm(X1,'fro'); 
 %       lambda*sp*spdiags((weps(idx)+NewS(idx)).^(sp-1),0,Rk,Rk),'fro')/norm(X1,'fro');
     spRelDist(iter) = RelDist; 
     KLdist = norm(Xc-X1,inf);
@@ -132,6 +135,7 @@ function Par = ds_EPIRNN(X0,M,sp, lambda, mask, tol, options)
       break
     end
     X0 = X1; X1 = Xc; % update the iteration
+    Rk0 = Rk1;
   end  % end while 
   estime = toc; 
 % KLdist
