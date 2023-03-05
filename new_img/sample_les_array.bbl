@@ -1,0 +1,331 @@
+\begin{thebibliography}{49}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Amit et~al.(2007)Amit, Fink, Srebro, and Ullman]{LRMM_APP_ML_ICML2007}
+Yonatan Amit, Michael Fink, Nathan Srebro, and Shimon Ullman.
+\newblock Uncovering shared structures in multiclass classification.
+\newblock In \emph{Proceedings of the 24th international conference on Machine
+  learning}, pages 17--24, 2007.
+
+\bibitem[Attouch and Bolte(2009)]{attouch2009convergence}
+Hedy Attouch and J{\'e}r{\^o}me Bolte.
+\newblock On the convergence of the proximal algorithm for nonsmooth functions
+  involving analytic features.
+\newblock \emph{Mathematical Programming}, 116:\penalty0 5--16, 2009.
+
+\bibitem[Cai et~al.(2010)Cai, Cand{\`e}s, and Shen]{LRM_Rex2NNM_SVTAlg_2010}
+Jian-Feng Cai, Emmanuel~J Cand{\`e}s, and Zuowei Shen.
+\newblock A singular value thresholding algorithm for matrix completion.
+\newblock \emph{SIAM Journal on optimization}, 20\penalty0 (4):\penalty0
+  1956--1982, 2010.
+
+\bibitem[Chiang et~al.(2018)Chiang, Dhillon, and Hsieh]{chiang2018using}
+Kai-Yang Chiang, Inderjit~S Dhillon, and Cho-Jui Hsieh.
+\newblock Using side information to reliably learn low-rank matrices from
+  missing and corrupted observations.
+\newblock \emph{The Journal of Machine Learning Research}, 19\penalty0
+  (1):\penalty0 3005--3039, 2018.
+
+\bibitem[Fan et~al.(2019)Fan, Ding, Chen, and Udell]{LRMR_GroupSparse_2019}
+Jicong Fan, Lijun Ding, Yudong Chen, and Madeleine Udell.
+\newblock Factor group-sparse regularization for efficient low-rank matrix
+  recovery.
+\newblock \emph{Advances in Neural Information Processing Systems},
+  32:\penalty0 5104--5114, 2019.
+
+\bibitem[Fazel(2002)]{LRMMRex2NNM_Phd2002}
+Maryam Fazel.
+\newblock \emph{Matrix rank minimization with applications}.
+\newblock PhD thesis, PhD thesis, Stanford University, 2002.
+
+\bibitem[Garrigos(2015)]{KL_definition_Hilbert}
+Guillaume Garrigos.
+\newblock \emph{Descent dynamical systems and algorithms for tame optimization,
+  and multi-objective problems}.
+\newblock PhD thesis, 2015.
+
+\bibitem[Gu et~al.(2014)Gu, Zhang, Zuo, and Feng]{NonCvx_RNNM_2014}
+Shuhang Gu, Lei Zhang, Wangmeng Zuo, and Xiangchu Feng.
+\newblock Weighted nuclear norm minimization with application to image
+  denoising.
+\newblock In \emph{Proceedings of the IEEE conference on computer vision and
+  pattern recognition}, pages 2862--2869, 2014.
+
+\bibitem[Hare(2011)]{ModelID_ProxGD_L1_2011}
+Warren~L Hare.
+\newblock Identifying active manifolds in regularization problems.
+\newblock In \emph{Fixed-Point Algorithms for Inverse Problems in Science and
+  Engineering}, pages 261--271. Springer, 2011.
+
+\bibitem[Horn and Johnson(2012)]{horn2012matrix}
+Roger~A Horn and Charles~R Johnson.
+\newblock \emph{Matrix analysis}.
+\newblock Cambridge university press, 2012.
+
+\bibitem[Hu et~al.(2012)Hu, Zhang, Ye, Li, and He]{Relax_NCVX_MC_via_TNN_2012}
+Yao Hu, Debing Zhang, Jieping Ye, Xuelong Li, and Xiaofei He.
+\newblock Fast and accurate matrix completion via truncated nuclear norm
+  regularization.
+\newblock \emph{IEEE transactions on pattern analysis and machine
+  intelligence}, 35\penalty0 (9):\penalty0 2117--2130, 2012.
+
+\bibitem[Hu et~al.(2021)Hu, Nie, Wang, and Li]{review_LRR_2021}
+Zhanxuan Hu, Feiping Nie, Rong Wang, and Xuelong Li.
+\newblock Low rank regularization: A review.
+\newblock \emph{Neural Networks}, 136:\penalty0 218--232, 2021.
+
+\bibitem[Huang et~al.(2014)Huang, Ding, Fang, and
+  Wen]{LRMR_APP2ImgProcess_TIP2014}
+Chen Huang, Xiaoqing Ding, Chi Fang, and Di~Wen.
+\newblock Robust image restoration via adaptive low-rank approximation and
+  joint kernel regression.
+\newblock \emph{IEEE Transactions on Image Processing}, 23\penalty0
+  (12):\penalty0 5284--5297, 2014.
+
+\bibitem[Indyk et~al.(2019)Indyk, Vakilian, and Yuan]{indyk2019learning}
+Piotr Indyk, Ali Vakilian, and Yang Yuan.
+\newblock Learning-based low-rank approximations.
+\newblock \emph{Advances in Neural Information Processing Systems}, 32, 2019.
+
+\bibitem[Jun et~al.(2019)Jun, Willett, Nowak, and Wright]{jun2019bilinear}
+KS~Jun, R~Willett, R~Nowak, and S~Wright.
+\newblock Bilinear bandits with low-rank structure.
+\newblock \emph{Proceedings of Machine Learning Research}, 97, 2019.
+
+\bibitem[Klopfenstein et~al.(2020)Klopfenstein, Bertrand, Gramfort, Salmon, and
+  Vaiter]{klopfenstein2020model}
+Quentin Klopfenstein, Quentin Bertrand, Alexandre Gramfort, Joseph Salmon, and
+  Samuel Vaiter.
+\newblock Model identification and local linear convergence of coordinate
+  descent.
+\newblock \emph{arXiv preprint arXiv:2010.11825}, 2020.
+
+\bibitem[Lai et~al.(2013)Lai, Xu, and Yin]{SpByIRSqYin_SIAM_2013}
+Ming-Jun Lai, Yangyang Xu, and Wotao Yin.
+\newblock Improved iteratively reweighted least squares for unconstrained
+  smoothed $\ell_q$ minimization.
+\newblock \emph{SIAM Journal on Numerical Analysis}, 51\penalty0 (2):\penalty0
+  927--957, 2013.
+
+\bibitem[Lee and Kim(2016)]{lee2016llorma}
+Joonseok Lee and Seungyeon Kim.
+\newblock Llorma: Local low-rank matrix approximation.
+\newblock \emph{Journal of Machine Learning Research}, 17:\penalty0 1--24,
+  2016.
+
+\bibitem[Lewis and Sendov(2005)]{NA_sgv_1}
+Adrian~S Lewis and Hristo~S Sendov.
+\newblock Nonsmooth analysis of singular values. part i: Theory.
+\newblock \emph{Set-Valued Analysis}, 13\penalty0 (3):\penalty0 213--241, 2005.
+
+\bibitem[Li and Pong(2018)]{li2018calculus}
+Guoyin Li and Ting~Kei Pong.
+\newblock Calculus of the exponent of kurdyka--{\l}ojasiewicz inequality and
+  its applications to linear convergence of first-order methods.
+\newblock \emph{Foundations of computational mathematics}, 18\penalty0
+  (5):\penalty0 1199--1232, 2018.
+
+\bibitem[Liang et~al.(2014)Liang, Fadili, and
+  Peyr{\'e}]{ModelID_LLcvgc_L1_2014}
+Jingwei Liang, Jalal Fadili, and Gabriel Peyr{\'e}.
+\newblock Local linear convergence of forward--backward under partial
+  smoothness.
+\newblock \emph{Advances in neural information processing systems}, 27, 2014.
+
+\bibitem[Liang et~al.(2017)Liang, Fadili, and
+  Peyr{\'e}]{ModelID_LLcvgc_L1_2017}
+Jingwei Liang, Jalal Fadili, and Gabriel Peyr{\'e}.
+\newblock Activity identification and local linear convergence of
+  forward--backward-type methods.
+\newblock \emph{SIAM Journal on Optimization}, 27\penalty0 (1):\penalty0
+  408--437, 2017.
+
+\bibitem[Lu et~al.(2014)Lu, Tang, Yan, and Lin]{ge_nn_LRMM_Canyi_2014}
+Canyi Lu, Jinhui Tang, Shuicheng Yan, and Zhouchen Lin.
+\newblock Generalized nonconvex nonsmooth low-rank minimization.
+\newblock In \emph{Proceedings of the IEEE conference on computer vision and
+  pattern recognition}, pages 4130--4137, 2014.
+
+\bibitem[Luo et~al.(2017)Luo, Zhou, Li, Xia, You, Zhu, and
+  Leung]{LRMM_APP2QoSDATA_IEEE2017}
+Xin Luo, MengChu Zhou, Shuai Li, Yunni Xia, Zhu-Hong You, QingSheng Zhu, and
+  Hareton Leung.
+\newblock Incorporation of efficient second-order solvers into latent factor
+  models for accurate prediction of missing qos data.
+\newblock \emph{IEEE transactions on cybernetics}, 48\penalty0 (4):\penalty0
+  1216--1228, 2017.
+
+\bibitem[Massias et~al.(2018)Massias, Gramfort, and
+  Salmon]{ModelID_LASSO_AccCD_2018}
+Mathurin Massias, Alexandre Gramfort, and Joseph Salmon.
+\newblock Celer: a fast solver for the lasso with dual extrapolation.
+\newblock In \emph{International Conference on Machine Learning}, pages
+  3315--3324. PMLR, 2018.
+
+\bibitem[Mohan and Fazel(2012)]{LRM_Rex2_Non_IRWA_2012}
+Karthik Mohan and Maryam Fazel.
+\newblock Iterative reweighted algorithms for matrix rank minimization.
+\newblock \emph{The Journal of Machine Learning Research}, 13\penalty0
+  (1):\penalty0 3441--3473, 2012.
+
+\bibitem[Nesterov(1983)]{nesterov1983method}
+Yurii~E Nesterov.
+\newblock A method for solving the convex programming problem with convergence
+  rate $o(1/k^{2})$.
+\newblock In \emph{Dokl. akad. nauk Sssr}, volume 269, pages 543--547, 1983.
+
+\bibitem[Nie et~al.(2012)Nie, Huang, and Ding]{LRMR_Sp_2012}
+Feiping Nie, Heng Huang, and Chris Ding.
+\newblock Low-rank matrix recovery via efficient schatten p-norm minimization.
+\newblock In \emph{Twenty-sixth AAAI conference on artificial intelligence},
+  2012.
+
+\bibitem[Nikolova and Tan(2018)]{KLForPGD_2018}
+Mila Nikolova and Pauline Tan.
+\newblock Alternating structure-adapted proximal gradient descent for nonconvex
+  block-regularised problems.
+\newblock 2018.
+
+\bibitem[Oh et~al.(2013)Oh, Kim, Tai, Bazin, and Kweon]{PSNN_2013}
+Tae-Hyun Oh, Hyeongwoo Kim, Yu-Wing Tai, Jean-Charles Bazin, and In~So Kweon.
+\newblock Partial sum minimization of singular values in rpca for low-level
+  vision.
+\newblock \emph{methods}, 19:\penalty0 24, 2013.
+
+\bibitem[Pal and Jain(2023)]{pal2023online}
+Soumyabrata Pal and Prateek Jain.
+\newblock Online low rank matrix completion.
+\newblock In \emph{The Eleventh International Conference on Learning
+  Representations}, 2023.
+\newblock URL \url{https://openreview.net/forum?id=47KG_AvNqeZ}.
+
+\bibitem[Phan and Nguyen(2021)]{Alg_conflict_AIRNN_2021}
+Duy~Nhat Phan and Thuy~Ngoc Nguyen.
+\newblock An accelerated irnn-iteratively reweighted nuclear norm algorithm for
+  nonconvex nonsmooth low-rank minimization problems.
+\newblock \emph{Journal of Computational and Applied Mathematics},
+  396:\penalty0 113602, 2021.
+
+\bibitem[Recht et~al.(2010)Recht, Fazel, and Parrilo]{ExpCriterion_2010}
+Benjamin Recht, Maryam Fazel, and Pablo~A Parrilo.
+\newblock Guaranteed minimum-rank solutions of linear matrix equations via
+  nuclear norm minimization.
+\newblock \emph{SIAM review}, 52\penalty0 (3):\penalty0 471--501, 2010.
+
+\bibitem[Sun et~al.(2013)Sun, Xiang, and Ye]{Relax_NCVX_CNN_RPCA_2013}
+Qian Sun, Shuo Xiang, and Jieping Ye.
+\newblock Robust principal component analysis via capped norms.
+\newblock In \emph{Proceedings of the 19th ACM SIGKDD international conference
+  on Knowledge discovery and data mining}, pages 311--319, 2013.
+
+\bibitem[Sun et~al.(2017)Sun, Jiang, and Cheng]{opt_simu_svd_2017}
+Tao Sun, Hao Jiang, and Lizhi Cheng.
+\newblock Convergence of proximal iteratively reweighted nuclear norm algorithm
+  for image processing.
+\newblock \emph{IEEE Transactions on Image Processing}, 26\penalty0
+  (12):\penalty0 5632--5644, 2017.
+
+\bibitem[Toh and Yun(2010)]{NNReg_LST_ACCProx_2010}
+Kim-Chuan Toh and Sangwoon Yun.
+\newblock An accelerated proximal gradient algorithm for nuclear norm
+  regularized linear least squares problems.
+\newblock \emph{Pacific Journal of optimization}, 6\penalty0
+  (615-640):\penalty0 15, 2010.
+
+\bibitem[Tong et~al.(2021)Tong, Ma, and Chi]{tong2021accelerating}
+Tian Tong, Cong Ma, and Yuejie Chi.
+\newblock Accelerating ill-conditioned low-rank matrix estimation via scaled
+  gradient descent.
+\newblock \emph{The Journal of Machine Learning Research}, 22\penalty0
+  (1):\penalty0 6639--6701, 2021.
+
+\bibitem[Van~Loan(1976)]{general_svd_dec}
+Charles~F Van~Loan.
+\newblock Generalizing the singular value decomposition.
+\newblock \emph{SIAM Journal on numerical Analysis}, 13\penalty0 (1):\penalty0
+  76--83, 1976.
+
+\bibitem[Wang et~al.(2021{\natexlab{a}})Wang, Zeng, Wang, and
+  Wu]{zenghao_lp2l1_adaEps_paper1}
+Hao Wang, Hao Zeng, Jiashan Wang, and Qiong Wu.
+\newblock Relating $\ell_{p}$ regularization and reweighted $\ell_{1}$
+  regularization.
+\newblock \emph{Optimization Letters}, 15\penalty0 (8):\penalty0 2639--2660,
+  2021{\natexlab{a}}.
+
+\bibitem[Wang et~al.(2021{\natexlab{b}})Wang, Zhang, Shi, and
+  Hu]{NonNon_AdaIRWM_zhang_wang_2021}
+Hao Wang, Fan Zhang, Yuanming Shi, and Yaohua Hu.
+\newblock Nonconvex and nonsmooth sparse optimization via adaptively iterative
+  reweighted methods.
+\newblock \emph{Journal of Global Optimization}, 81:\penalty0 717--748,
+  2021{\natexlab{b}}.
+
+\bibitem[Wang et~al.(2022)Wang, Zeng, and Wang]{Zeng_Acc_2022}
+Hao Wang, Hao Zeng, and Jiashan Wang.
+\newblock An extrapolated iteratively reweighted $\ell_1$ method with
+  complexity analysis.
+\newblock \emph{Computational Optimization and Applications}, 83\penalty0
+  (3):\penalty0 967--997, 2022.
+
+\bibitem[Wang et~al.(2019)Wang, Wang, Wang, and
+  Chen]{LRM_Rex2NNM_Alg_AISImpute_2019}
+Zhi Wang, Wendong Wang, Jianjun Wang, and Siqi Chen.
+\newblock Fast and efficient algorithm for matrix completion via closed-form
+  2/3-thresholding operator.
+\newblock \emph{Neurocomputing}, 330:\penalty0 212--222, 2019.
+
+\bibitem[Wang et~al.(2021{\natexlab{c}})Wang, Hu, Luo, Wang, Wang, and
+  Chen]{sp1_2021_PSNR}
+Zhi Wang, Dong Hu, Xiaohu Luo, Wendong Wang, Jianjun Wang, and Wu~Chen.
+\newblock Performance guarantees of transformed schatten-1 regularization for
+  exact low-rank matrix recovery.
+\newblock \emph{International Journal of Machine Learning and Cybernetics},
+  12\penalty0 (12):\penalty0 3379--3395, 2021{\natexlab{c}}.
+
+\bibitem[Wen et~al.(2018)Wen, Chu, Liu, and Qiu]{Intro_wen2018_survey}
+Fei Wen, Lei Chu, Peilin Liu, and Robert~C Qiu.
+\newblock A survey on nonconvex regularization-based sparse and low-rank
+  recovery in signal processing, statistics, and machine learning.
+\newblock \emph{IEEE Access}, 6:\penalty0 69883--69906, 2018.
+
+\bibitem[Wu et~al.(2018)Wu, Zhang, Wang, and Shi]{LRMR_WuQiong_2018}
+Qiong Wu, Fan Zhang, Hao Wang, and Yuanming Shi.
+\newblock Generalized low-rank matrix completion via nonconvex schatten $ p
+  $-norm minimization.
+\newblock In \emph{2018 IEEE 88th Vehicular Technology Conference (VTC-Fall)},
+  pages 1--5. IEEE, 2018.
+
+\bibitem[Xu and Yin(2013)]{KL_semi_algebraic}
+Yangyang Xu and Wotao Yin.
+\newblock A block coordinate descent method for regularized multiconvex
+  optimization with applications to nonnegative tensor factorization and
+  completion.
+\newblock \emph{SIAM Journal on imaging sciences}, 6\penalty0 (3):\penalty0
+  1758--1789, 2013.
+
+\bibitem[Zhang et~al.(2012)Zhang, Hu, Ye, Li, and
+  He]{Relax_NCVX_MC_via_TNNSame2_2012}
+Debing Zhang, Yao Hu, Jieping Ye, Xuelong Li, and Xiaofei He.
+\newblock Matrix completion by truncated nuclear norm regularization.
+\newblock In \emph{2012 IEEE Conference on computer vision and pattern
+  recognition}, pages 2192--2199. IEEE, 2012.
+
+\bibitem[Zhang et~al.(2019)Zhang, Qian, Zhang, Yang, Gong, and Wei]{KL_p_norm}
+Hengmin Zhang, Jianjun Qian, Bob Zhang, Jian Yang, Chen Gong, and Yang Wei.
+\newblock Low-rank matrix recovery via modified schatten-$ p $ norm
+  minimization with convergence guarantees.
+\newblock \emph{IEEE Transactions on Image Processing}, 29:\penalty0
+  3132--3142, 2019.
+
+\bibitem[Zhao et~al.(2020)Zhao, Peng, and Cui]{LRMR_APP2ImgProcess_SP2020}
+Fujun Zhao, Jigen Peng, and Angang Cui.
+\newblock Design strategy of thresholding operator for low-rank matrix recovery
+  problem.
+\newblock \emph{Signal Processing}, 171:\penalty0 107510, 2020.
+
+\end{thebibliography}

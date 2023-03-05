@@ -1,0 +1,51 @@
+This is BibTeX, Version 0.99d
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: sample_les_array.aux
+Reallocating 'name_of_file' (item size: 1) to 9 items.
+The style file: plainnat.bst
+Reallocating 'name_of_file' (item size: 1) to 7 items.
+Database file #1: sample.bib
+Warning--empty school in KL_definition_Hilbert
+Warning--empty journal in KLForPGD_2018
+You've used 49 entries,
+            2773 wiz_defined-function locations,
+            914 strings with 14807 characters,
+and the built_in function-call counts, 25467 in all, are:
+= -- 2294
+> -- 1541
+< -- 26
++ -- 519
+- -- 468
+* -- 2161
+:= -- 3847
+add.period$ -- 152
+call.type$ -- 49
+change.case$ -- 300
+chr.to.int$ -- 47
+cite$ -- 100
+duplicate$ -- 1117
+empty$ -- 2021
+format.name$ -- 539
+if$ -- 5346
+int.to.chr$ -- 3
+int.to.str$ -- 1
+missing$ -- 48
+newline$ -- 254
+num.names$ -- 196
+pop$ -- 578
+preamble$ -- 1
+purify$ -- 254
+quote$ -- 0
+skip$ -- 876
+stack$ -- 0
+substring$ -- 1164
+swap$ -- 145
+text.length$ -- 10
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 534
+warning$ -- 2
+while$ -- 230
+width$ -- 0
+write$ -- 644
+(There were 2 warnings)

@@ -49,10 +49,13 @@ for irank = 1:length(Rank) %3
     AMse.EPIR(irank) = AMse.EPIR(irank) + (par{iter}.MSE.EPIR)./times;
   end
   plust = nr*nc*init_rank_max;
-  AMse.PIR = (AMse.PIR)./plust;
-  AMse.AIR = (AMse.AIR)./plust;
-  AMse.EPIR = (AMse.EPIR)./plust ; 
+  AMse.PIR = (AMse.PIR)./init_rank_max;
+  AMse.AIR = (AMse.AIR)./init_rank_max;
+  AMse.EPIR = (AMse.EPIR)./init_rank_max ; 
 end
+
+Robust_Rank515.CR = Rank_RC;
+Robust_Rank515.AMse = AMse;
 
 % save("..\exp_cache\Rank_Robust.mat","Rank_RC",'-mat')
 %%

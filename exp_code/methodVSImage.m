@@ -38,7 +38,7 @@ noise = 1e0*randn(img_size(1:2));
 %   %%  % % % strictly low rank
 %   rt = ceil(min(size(img_ori(:,:,1)))/5);
 RT = [15,20,25,30,35,40];
-for iter_rt = 6:6
+for iter_rt = 4:4
 % for iter_rt = 1:length(RT)
   rt = RT(iter_rt);
   for i=1:3
@@ -124,9 +124,9 @@ for iter_rt = 6:6
     [~,optLambdaIdx] = max(SOL_PSNR(:,3)); 
     lambda_fgsr = Lambda(optLambdaIdx); 
   else
-    lambda_ir = 1;
-    lambda_scp = 1;
-    lambda_fgsr = 1; 
+    lambda_ir = 0.5;
+    lambda_scp = lambda_ir;
+    lambda_fgsr = lambda_ir; 
   end
   %% ------------------% search p----------------------------- 
   if exist('scan','var') && isfield(scan,'p') && scan.p == 1
@@ -216,7 +216,7 @@ for iter_rt = 6:6
 %       %% EPIRNN
   for i=1:3
     Xm = XM(:,:,i);
-    EPIR = ds_EPIRNN(Xm+noise,Xm,sp_ir, lambda_ir, mask, tol, optionsEP);
+    EPIR = ds_EPIRNN(Xm,Xm,sp_ir, lambda_ir, mask, tol, optionsEP);
     X_EPIR(:,:,i) = EPIR.Xsol;
   end
   Parsol{3} = X_EPIR;
@@ -228,7 +228,7 @@ for iter_rt = 6:6
     Scp_tau = 10;
     optionsScp.max_iter = 1e3 ;  
 %     lambda = norm(Xm,"fro")*1;
-    SCP = MC_SCpADMM(Xm+noise,Xm,sp_scp, lambda_scp, mask, 1e-4, optionsScp);
+    SCP = MC_SCpADMM(Xm,Xm,sp_scp, lambda_scp, mask, 1e-4, optionsScp);
     X_SCP(:,:,i) = SCP.Xsol;
   end
   Parsol{4} = X_SCP;
@@ -278,6 +278,7 @@ end
 
 
 %%
+format shortG
 for i =1:5
   PSNR_img(i) = psnr(img_ori,Parsol{i})
 end
@@ -286,8 +287,35 @@ end
 
 
 
+%%
+format shortG
+for irank = 1:6
+img_show = Tab_img{irank};
+
+% figure(1)
+% imshow(img_show.ori_img)
+% 
+% figure(2)
+% imshow(img_show.mask_img)
+% 
+% figure(3)
+% imshow(img_show.low_img)
+
+for i = 1:5
+    tempR = 0;
+    img_sol = img_show.sol{i};
+    for k =1 :3
+      tempR = tempR + rank(img_sol(:,:,k));
+    end
+    R_psnrTable(irank,2*i-1:2*i) = [psnr(img_sol,img_show.ori_img),floor(tempR/3)];    
+    
+    figure(3+i)
+    imshow(img_sol)
+%   imshow(img_sol(:,:,1))
+end
 
 
+end
 
 
 

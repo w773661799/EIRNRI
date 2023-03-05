@@ -2,8 +2,8 @@
 %% Experiment shows the EIRNRI will convergence faster than PIRNN
 % the AIRNN has the similar convergence rate with ds_ProxIRNN
 % --------------- generate data ---------------
-clc,clear,format long; rng(22)
-nr = 150; nc = 150; r = 15;
+clc,clear,format long; rng(23)
+nr = 150; nc = 150; r = 10;
 % --------------- Synthetic data ---------------
 Y = randn(nr,r) * randn(r,nc);
 % --------------- random mask ---------------
@@ -16,8 +16,8 @@ end
 mask = ~M_org; Xm = Y.*mask;
 
 % %% --------------- parameters ---------------
-lambda = 1e-1*norm(Xm,"fro");
-itmax = 5e3; 
+lambda = 1e-1*norm(Xm,inf);
+itmax = 1e3; 
 sp = 0.5; 
 tol = 1e-7; 
 klopt = 1e-5;
@@ -29,7 +29,7 @@ options.KLopt = klopt;
 options.eps = seps; 
 options.beta = 1.1; 
 % options.teps = weps;
-r=5;
+r=10;
 % Initial point
 X0 = randn(nr,r)*randn(r,nc); 
   optionsP= options;
@@ -62,7 +62,7 @@ figure(2)
   plot(PIRx,log10(PIR.RelDist(1:pPIR)),':k','linewidth',2);hold on
   plot(AIRx,log10(AIR.RelDist(1:pAIR)),'--b','linewidth',2);
   plot(EPIRx,log10(EPIR.RelDist(1:pEPI)),'-r','linewidth',2);hold off
-  xlabel("# of iteration"); ylabel("log_{10}(RelDist)")
+  xlabel("iteration"); ylabel("log_{10}(RelDist)")
   legend("PIRNN","IRNRI","EIRNRI")
 %%
 figure(3)
@@ -121,7 +121,7 @@ set (gcf,'position',[150 50 600 400] );
 % set (gca,'fontsize',12);
 
 figure(2) % Errdist
-set (gcf,'position',[50 50 600 400] );
+set (gcf,'position',[50 50 600 600] );
 % set (gca,'position',[0.08,0.08,0.9,0.9] );
   plot(log10(LEPIR{1}.RelDist),':dg','linewidth',1);hold on
   plot(log10(LEPIR{2}.RelDist),'--b','linewidth',2);

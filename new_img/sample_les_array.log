@@ -1,0 +1,801 @@
+This is XeTeX, Version 3.141592653-2.6-0.999994 (MiKTeX 23.1) (preloaded format=xelatex 2023.3.5)  6 MAR 2023 05:22
+entering extended mode
+ restricted \write18 enabled.
+ file:line:error style messages enabled.
+ %&-line parsing enabled.
+**./sample_les_array.tex
+(sample_les_array.tex
+LaTeX2e <2022-11-01> patch level 1
+L3 programming layer <2023-02-07>
+(D:\Program Files (x86)\MIKTEX\tex/latex/base\article.cls
+Document Class: article 2022/07/02 v1.4n Standard LaTeX document class
+(D:\Program Files (x86)\MIKTEX\tex/latex/base\size11.clo
+File: size11.clo 2022/07/02 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count181
+\c@section=\count182
+\c@subsection=\count183
+\c@subsubsection=\count184
+\c@paragraph=\count185
+\c@subparagraph=\count186
+\c@figure=\count187
+\c@table=\count188
+\abovecaptionskip=\skip48
+\belowcaptionskip=\skip49
+\bibindent=\dimen140
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/blindtext\blindtext.sty
+Package: blindtext 2012/01/06 V2.0 blindtext-Package
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/tools\xspace.sty
+Package: xspace 2014/10/28 v1.13 Space after command names (DPC,MH)
+)
+\c@blindtext=\count189
+\c@Blindtext=\count190
+\c@blind@countparstart=\count191
+\blind@countxx=\count192
+\blindtext@numBlindtext=\count193
+\blind@countyy=\count194
+\c@blindlist=\count195
+\c@blindlistlevel=\count196
+\c@blindlist@level=\count197
+\blind@listitem=\count198
+\c@blind@listcount=\count199
+\c@blind@levelcount=\count266
+\blind@mathformula=\count267
+\blind@Mathformula=\count268
+\c@blind@randomcount=\count269
+\c@blind@randommax=\count270
+\c@blind@pangramcount=\count271
+\c@blind@pangrammax=\count272
+) (jmlr2e.sty
+Document Style `jmlr'.
+(D:\Program Files (x86)\MIKTEX\tex/latex/graphics\epsfig.sty
+Package: epsfig 2017/06/25 v1.7b (e)psfig emulation (SPQR)
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/graphics\graphicx.sty
+Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/graphics\keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks16
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/graphics\graphics.sty
+Package: graphics 2022/03/10 v1.4e Standard LaTeX Graphics (DPC,SPQR)
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/graphics\trig.sty
+Package: trig 2021/08/11 v1.11 sin cos tan (DPC)
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/graphics-cfg\graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: xetex.def on input line 107.
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/graphics-def\xetex.def
+File: xetex.def 2022/09/22 v5.0n Graphics/color driver for xetex
+))
+\Gin@req@height=\dimen141
+\Gin@req@width=\dimen142
+)
+\epsfxsize=\dimen143
+\epsfysize=\dimen144
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/amsfonts\amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/amsfonts\amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\@emptytoks=\toks17
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+))
+(D:\Program Files (x86)\MIKTEX\tex/latex/natbib\natbib.sty
+Package: natbib 2010/09/13 8.31b (PWD, AO)
+\bibhang=\skip50
+\bibsep=\skip51
+LaTeX Info: Redefining \cite on input line 694.
+\c@NAT@ctr=\count273
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/hyperref\hyperref.sty
+Package: hyperref 2023-02-07 v7.00v Hypertext links for LaTeX
+
+(D:\Program Files (x86)\MIKTEX\tex/generic/ltxcmds\ltxcmds.sty
+Package: ltxcmds 2020-05-10 v1.25 LaTeX kernel commands for general use (HO)
+)
+(D:\Program Files (x86)\MIKTEX\tex/generic/iftex\iftex.sty
+Package: iftex 2022/02/03 v1.0f TeX engine tests
+)
+(D:\Program Files (x86)\MIKTEX\tex/generic/pdftexcmds\pdftexcmds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(D:\Program Files (x86)\MIKTEX\tex/generic/infwarerr\infwarerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode not found.
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/kvsetkeys\kvsetkeys.sty
+Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
+)
+(D:\Program Files (x86)\MIKTEX\tex/generic/kvdefinekeys\kvdefinekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+)
+(D:\Program Files (x86)\MIKTEX\tex/generic/pdfescape\pdfescape.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/hycolor\hycolor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/letltxmacro\letltxmacro.sty
+Package: letltxmacro 2019/12/03 v1.6 Let assignment for LaTeX macros (HO)
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/auxhook\auxhook.sty
+Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/hyperref\nameref.sty
+Package: nameref 2022-05-17 v2.50 Cross-referencing by name of section
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/refcount\refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+)
+(D:\Program Files (x86)\MIKTEX\tex/generic/gettitlestring\gettitlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/kvoptions\kvoptions.sty
+Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
+))
+\c@section@level=\count274
+)
+\@linkdim=\dimen145
+\Hy@linkcounter=\count275
+\Hy@pagecounter=\count276
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/hyperref\pd1enc.def
+File: pd1enc.def 2023-02-07 v7.00v Hyperref: PDFDocEncoding definition (HO)
+)
+(D:\Program Files (x86)\MIKTEX\tex/generic/intcalc\intcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+)
+(D:\Program Files (x86)\MIKTEX\tex/generic/etexcmds\etexcmds.sty
+Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
+)
+\Hy@SavedSpaceFactor=\count277
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/hyperref\puenc.def
+File: puenc.def 2023-02-07 v7.00v Hyperref: PDF Unicode definition (HO)
+)
+Package hyperref Info: Option `colorlinks' set `false' on input line 4060.
+Package hyperref Info: Hyper figures OFF on input line 4177.
+Package hyperref Info: Link nesting OFF on input line 4182.
+Package hyperref Info: Hyper index ON on input line 4185.
+Package hyperref Info: Plain pages OFF on input line 4192.
+Package hyperref Info: Backreferencing OFF on input line 4197.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4425.
+\c@Hy@tempcnt=\count278
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/url\url.sty
+\Urlmuskip=\muskip16
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 4763.
+\XeTeXLinkMargin=\dimen146
+
+(D:\Program Files (x86)\MIKTEX\tex/generic/bitset\bitset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+
+(D:\Program Files (x86)\MIKTEX\tex/generic/bigintcalc\bigintcalc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
+)
+))
+\Fld@menulength=\count279
+\Field@Width=\dimen147
+\Fld@charsize=\dimen148
+Package hyperref Info: Hyper figures OFF on input line 6042.
+Package hyperref Info: Link nesting OFF on input line 6047.
+Package hyperref Info: Hyper index ON on input line 6050.
+Package hyperref Info: backreferencing OFF on input line 6057.
+Package hyperref Info: Link coloring OFF on input line 6062.
+Package hyperref Info: Link coloring with OCG OFF on input line 6067.
+Package hyperref Info: PDF/A mode OFF on input line 6072.
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/base\atbegshi-ltx.sty
+Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
+package with kernel methods
+)
+\Hy@abspage=\count280
+\c@Item=\count281
+\c@Hfootnote=\count282
+)
+Package hyperref Info: Driver (autodetected): hxetex.
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/hyperref\hxetex.def
+File: hxetex.def 2023-02-07 v7.00v Hyperref driver for XeTeX
+
+(D:\Program Files (x86)\MIKTEX\tex/generic/stringenc\stringenc.sty
+Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
+)
+)
+\pdfm@box=\box51
+\c@Hy@AnnotLevel=\count283
+\HyField@AnnotCount=\count284
+\Fld@listcount=\count285
+\c@bookmark@seq@number=\count286
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/rerunfilecheck\rerunfilecheck.sty
+Package: rerunfilecheck 2022-07-10 v1.10 Rerun checks for auxiliary files (HO)
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/base\atveryend-ltx.sty
+Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend pac
+kage
+with kernel methods
+)
+(D:\Program Files (x86)\MIKTEX\tex/generic/uniquecounter\uniquecounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+85.
+)
+\Hy@SectionHShift=\skip52
+)
+\aftertitskip=\skip53
+\beforetitskip=\skip54
+\interauthorskip=\skip55
+\aftermaketitskip=\skip56
+\c@example=\count287
+\c@theorem=\count288
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/lastpage\lastpage.sty
+Package: lastpage 2021/09/03 v1.2n Refers to last page's name (HMM; JPG)
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/base\inputenc.sty
+Package: inputenc 2021/02/14 v1.3d Input encoding file
+\inpenc@prehook=\toks18
+\inpenc@posthook=\toks19
+
+
+Package inputenc Warning: inputenc package ignored with utf8 based engines.
+
+) (D:\Program Files (x86)\MIKTEX\tex/latex/base\fontenc.sty
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 11
+2.
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/lm\t1lmr.fd
+File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+))
+(D:\Program Files (x86)\MIKTEX\tex/latex/subfigure\subfigure.sty
+Package: subfigure 2002/07/30 v2.1.4 subfigure package
+\subfigtopskip=\skip57
+\subfigcapskip=\skip58
+\subfigcaptopadj=\dimen149
+\subfigbottomskip=\skip59
+\subfigcapmargin=\dimen150
+\subfiglabelskip=\skip60
+\c@subfigure=\count289
+\c@lofdepth=\count290
+\c@subtable=\count291
+\c@lotdepth=\count292
+
+****************************************
+* Local config file subfigure.cfg used *
+****************************************
+(D:\Program Files (x86)\MIKTEX\tex/latex/subfigure\subfigure.cfg)
+\subfig@top=\skip61
+\subfig@bottom=\skip62
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/algorithms\algorithm.sty
+Invalid UTF-8 byte or sequence at line 11 replaced by U+FFFD.
+Package: algorithm 2009/08/24 v0.1 Document Style `algorithm' - floating enviro
+nment
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/float\float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count293
+\float@exts=\toks20
+\float@box=\box52
+\@float@everytoks=\toks21
+\@floatcapt=\box53
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/base\ifthen.sty
+Package: ifthen 2022/04/13 v1.1d Standard LaTeX ifthen package (DPC)
+)
+\@float@every@algorithm=\toks22
+\c@algorithm=\count294
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/algorithms\algorithmic.sty
+Invalid UTF-8 byte or sequence at line 11 replaced by U+FFFD.
+Package: algorithmic 2009/08/24 v0.1 Document Style `algorithmic'
+\c@ALC@unique=\count295
+\c@ALC@line=\count296
+\c@ALC@rem=\count297
+\c@ALC@depth=\count298
+\ALC@tlm=\skip63
+\algorithmicindent=\skip64
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/booktabs\booktabs.sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen151
+\lightrulewidth=\dimen152
+\cmidrulewidth=\dimen153
+\belowrulesep=\dimen154
+\belowbottomsep=\dimen155
+\aboverulesep=\dimen156
+\abovetopsep=\dimen157
+\cmidrulesep=\dimen158
+\cmidrulekern=\dimen159
+\defaultaddspace=\dimen160
+\@cmidla=\count299
+\@cmidlb=\count300
+\@aboverulesep=\dimen161
+\@belowrulesep=\dimen162
+\@thisruleclass=\count301
+\@lastruleclass=\count302
+\@thisrulewidth=\dimen163
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/units\nicefrac.sty
+Package: nicefrac 1998/08/04 v0.9b Nice fractions
+\L@UnitsRaiseDisplaystyle=\skip65
+\L@UnitsRaiseTextstyle=\skip66
+\L@UnitsRaiseScriptstyle=\skip67
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/tools\bm.sty
+Package: bm 2022/01/05 v1.2f Bold Symbol Support (DPC/FMi)
+\symboldoperators=\mathgroup6
+\symboldletters=\mathgroup7
+\symboldsymbols=\mathgroup8
+Package bm Info: No bold for \OMX/cmex/m/n, using \pmb.
+Package bm Info: No bold for \U/msa/m/n, using \pmb.
+Package bm Info: No bold for \U/msb/m/n, using \pmb.
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 149.
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/xcolor\xcolor.sty
+Package: xcolor 2022/06/12 v2.14 LaTeX color extensions (UK)
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/graphics-cfg\color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: xetex.def on input line 227.
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/graphics\mathcolor.ltx)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1353.
+Package xcolor Info: Model `RGB' extended on input line 1369.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1371.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1372.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1373.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1374.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1375.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1376.
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/jknappen\mathrsfs.sty
+Package: mathrsfs 1996/01/01 Math RSFS package v1.0 (jk)
+\symrsfs=\mathgroup9
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/enumitem\enumitem.sty
+Package: enumitem 2019/06/20 v3.9 Customized lists
+\labelindent=\skip68
+\enit@outerparindent=\dimen164
+\enit@toks=\toks23
+\enit@inbox=\box54
+\enit@count@id=\count303
+\enitdp@description=\count304
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/multirow\multirow.sty
+Package: multirow 2021/03/15 v2.8 Span multiple rows of a table
+\multirow@colwidth=\skip69
+\multirow@cntb=\count305
+\multirow@dima=\skip70
+\bigstrutjot=\dimen165
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/caption\caption.sty
+Package: caption 2022/03/01 v3.6b Customizing captions (AR)
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/caption\caption3.sty
+Package: caption3 2022/03/17 v2.3b caption3 kernel (AR)
+\caption@tempdima=\dimen166
+\captionmargin=\dimen167
+\caption@leftmargin=\dimen168
+\caption@rightmargin=\dimen169
+\caption@width=\dimen170
+\caption@indent=\dimen171
+\caption@parindent=\dimen172
+\caption@hangindent=\dimen173
+Package caption Info: Unknown document class (or package),
+(caption)             standard defaults will be used.
+Package caption Info: \@makecaption = \long macro:#1#2-> \vskip 10pt \setbox \@
+tempboxa \hbox {#1: #2} \ifdim \wd \@tempboxa >\hsize \begin {list}{#1:}{ \sett
+owidth {\labelwidth }{#1:} \setlength {\leftmargin }{\labelwidth } \addtolength
+ {\leftmargin }{\labelsep } }\item #2 \end {list}\par \else \hbox to\hsize {\hf
+il \box \@tempboxa \hfil } \fi  on input line 1176.
+)
+
+Package caption Warning: Unknown document class (or package),
+(caption)                standard defaults will be used.
+See the caption package documentation for explanation.
+
+\c@caption@flags=\count306
+\c@continuedfloat=\count307
+Package caption Info: float package is loaded.
+Package caption Info: hyperref package is loaded.
+Package caption Info: subfigure package is loaded.
+) (D:\Program Files (x86)\MIKTEX\tex/latex/setspace\setspace.sty
+Package: setspace 2022/12/04 v6.7b set line spacing
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/amsmath\amsmath.sty
+Package: amsmath 2022/04/08 v2.17n AMS math features
+\@mathmargin=\skip71
+
+For additional information on amsmath, use the `?' option.
+(D:\Program Files (x86)\MIKTEX\tex/latex/amsmath\amstext.sty
+Package: amstext 2021/08/26 v2.01 AMS text
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/amsmath\amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks24
+\ex@=\dimen174
+))
+(D:\Program Files (x86)\MIKTEX\tex/latex/amsmath\amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+LaTeX Info: Redefining \boldsymbol on input line 28.
+\pmbraise@=\dimen175
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/amsmath\amsopn.sty
+Package: amsopn 2022/04/08 v2.04 operator names
+)
+\inf@bad=\count308
+LaTeX Info: Redefining \frac on input line 234.
+\uproot@=\count309
+\leftroot@=\count310
+LaTeX Info: Redefining \overline on input line 399.
+LaTeX Info: Redefining \colon on input line 410.
+\classnum@=\count311
+\DOTSCASE@=\count312
+LaTeX Info: Redefining \ldots on input line 496.
+LaTeX Info: Redefining \dots on input line 499.
+LaTeX Info: Redefining \cdots on input line 620.
+\Mathstrutbox@=\box55
+\strutbox@=\box56
+LaTeX Info: Redefining \big on input line 722.
+LaTeX Info: Redefining \Big on input line 723.
+LaTeX Info: Redefining \bigg on input line 724.
+LaTeX Info: Redefining \Bigg on input line 725.
+\big@size=\dimen176
+LaTeX Font Info:    Redeclaring font encoding OML on input line 743.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 744.
+\macc@depth=\count313
+LaTeX Info: Redefining \bmod on input line 905.
+LaTeX Info: Redefining \pmod on input line 910.
+LaTeX Info: Redefining \smash on input line 940.
+LaTeX Info: Redefining \relbar on input line 970.
+LaTeX Info: Redefining \Relbar on input line 971.
+\c@MaxMatrixCols=\count314
+\dotsspace@=\muskip17
+\c@parentequation=\count315
+\dspbrk@lvl=\count316
+\tag@help=\toks25
+\row@=\count317
+\column@=\count318
+\maxfields@=\count319
+\andhelp@=\toks26
+\eqnshift@=\dimen177
+\alignsep@=\dimen178
+\tagshift@=\dimen179
+\tagwidth@=\dimen180
+\totwidth@=\dimen181
+\lineht@=\dimen182
+\@envbody=\toks27
+\multlinegap=\skip72
+\multlinetaggap=\skip73
+\mathdisplay@stack=\toks28
+LaTeX Info: Redefining \[ on input line 2953.
+LaTeX Info: Redefining \] on input line 2954.
+)
+\c@Def=\count320
+\c@prop=\count321
+\c@ASM=\count322
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/grffile\grffile.sty
+Package: grffile 2019/11/11 v2.1 Extended file name support for graphics (legac
+y)
+Package grffile Info: This package is an empty stub for compatibility on input 
+line 40.
+)
+(D:\Program Files (x86)\MIKTEX\tex/latex/cleveref\cleveref.sty
+Package: cleveref 2018/03/27 v0.21.4 Intelligent cross-referencing
+Package cleveref Info: `hyperref' support loaded on input line 2370.
+LaTeX Info: Redefining \cref on input line 2370.
+LaTeX Info: Redefining \Cref on input line 2370.
+LaTeX Info: Redefining \crefrange on input line 2370.
+LaTeX Info: Redefining \Crefrange on input line 2370.
+LaTeX Info: Redefining \cpageref on input line 2370.
+LaTeX Info: Redefining \Cpageref on input line 2370.
+LaTeX Info: Redefining \cpagerefrange on input line 2370.
+LaTeX Info: Redefining \Cpagerefrange on input line 2370.
+LaTeX Info: Redefining \labelcref on input line 2370.
+LaTeX Info: Redefining \labelcpageref on input line 2370.
+)
+Package hyperref Info: Option `colorlinks' set `true' on input line 92.
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/l3backend\l3backend-xetex.def
+File: l3backend-xetex.def 2023-01-16 L3 backend support: XeTeX
+\g__graphics_track_int=\count323
+\l__pdf_internal_box=\box57
+\g__pdf_backend_object_int=\count324
+\g__pdf_backend_annotation_int=\count325
+\g__pdf_backend_link_int=\count326
+)
+(sample_les_array.aux)
+\openout1 = `sample_les_array.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 96.
+LaTeX Font Info:    ... okay on input line 96.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 96.
+LaTeX Font Info:    ... okay on input line 96.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 96.
+LaTeX Font Info:    ... okay on input line 96.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 96.
+LaTeX Font Info:    ... okay on input line 96.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 96.
+LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 9
+6.
+ (D:\Program Files (x86)\MIKTEX\tex/latex/base\ts1cmr.fd
+File: ts1cmr.fd 2022/07/10 v2.5l Standard LaTeX font definitions
+)
+LaTeX Font Info:    ... okay on input line 96.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 96.
+LaTeX Font Info:    ... okay on input line 96.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 96.
+LaTeX Font Info:    ... okay on input line 96.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 96.
+LaTeX Font Info:    ... okay on input line 96.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 96.
+LaTeX Font Info:    ... okay on input line 96.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 96.
+LaTeX Font Info:    ... okay on input line 96.
+Package hyperref Info: Link coloring ON on input line 96.
+(sample_les_array.out) (sample_les_array.out)
+\@outlinefile=\write3
+\openout3 = `sample_les_array.out'.
+
+Package lastpage Info: Please have a look at the pageslts package at
+(lastpage)             https://www.ctan.org/pkg/pageslts
+(lastpage)             ! on input line 96.
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: End \AtBeginDocument code.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 119
+.
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/amsfonts\umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 119
+.
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/amsfonts\umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+LaTeX Font Info:    Trying to load font information for U+rsfs on input line 11
+9.
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/jknappen\ursfs.fd
+File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
+)
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
+61.
+
+(D:\Program Files (x86)\MIKTEX\tex/latex/lm\t1lmtt.fd
+File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+) [1
+
+] [2] [3]
+Underfull \vbox (badness 2600) has occurred while \output is active []
+
+ [4]
+Overfull \hbox (55.76808pt too wide) in paragraph at lines 310--312
+\T1/lmr/m/n/10.95 where $\OML/cmm/m/it/10.95 U[]$ \T1/lmr/m/n/10.95 and $\OML/c
+mm/m/it/10.95 V[]$ \T1/lmr/m/n/10.95 are the first $\OML/cmm/m/it/10.95 r$ \T1/
+lmr/m/n/10.95 columns of $\OML/cmm/m/it/10.95 U$ \T1/lmr/m/n/10.95 and $\OML/cm
+m/m/it/10.95 V$\T1/lmr/m/n/10.95 , re-spec-tively, and $\OML/cmm/b/it/10.95 ^^[
+[]\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 X\OT1/cmr/m/n/10.95 ) = []([\OML/cmm/
+m/it/10.95 ^^[[]\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 X\OT1/cmr/m/n/10.95 )\O
+ML/cmm/m/it/10.95 ; []  ; ^^[[]\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 X\OT1/cm
+r/m/n/10.95 )])$\T1/lmr/m/n/10.95 . 
+ []
+
+[5]
+Overfull \hbox (52.36649pt too wide) in paragraph at lines 353--354
+[]
+ []
+
+
+Overfull \hbox (18.54642pt too wide) in paragraph at lines 353--354
+\T1/lmr/m/it/10.95 Let $\OML/cmm/m/it/10.95 f \OT1/cmr/m/n/10.95 : \U/msb/m/n/1
+0.95 R[] \OMS/cmsy/m/n/10.95 ! \U/msb/m/n/10.95 R$ \T1/lmr/m/it/10.95 be an ab-
+so-lutely sym-met-ric func-tion i.e., $\OML/cmm/m/it/10.95 f\OT1/cmr/m/n/10.95 
+(\OML/cmm/m/it/10.95 x[]\OT1/cmr/m/n/10.95 ; []  ; \OML/cmm/m/it/10.95 x[]\OT1/
+cmr/m/n/10.95 ) = \OML/cmm/m/it/10.95 f\OT1/cmr/m/n/10.95 (\OMS/cmsy/m/n/10.95 
+j\OML/cmm/m/it/10.95 x[]\OMS/cmsy/m/n/10.95 j\OT1/cmr/m/n/10.95 ; []  ; \OMS/cm
+sy/m/n/10.95 j\OML/cmm/m/it/10.95 x[]\OMS/cmsy/m/n/10.95 j\OT1/cmr/m/n/10.95 )$
+
+ []
+
+Missing character: There is no Ł in font ec-lmr10!
+[6]
+Overfull \hbox (0.85956pt too wide) in paragraph at lines 402--404
+[]\T1/lmr/m/it/10.95 A lo-cally Lip-s-chitz
+ []
+
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
+put line 456.
+[7] [8]
+Underfull \vbox (badness 5064) has occurred while \output is active []
+
+ [9]
+[10] [11]
+Underfull \hbox (badness 10000) in paragraph at lines 734--738
+
+ []
+
+[12] [13]
+Underfull \hbox (badness 10000) in paragraph at lines 837--838
+
+ []
+
+[14]
+Underfull \hbox (badness 10000) in paragraph at lines 881--890
+
+ []
+
+[15]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [16]
+Underfull \hbox (badness 10000) in paragraph at lines 990--999
+
+ []
+
+
+Overfull \hbox (11.87086pt too wide) in paragraph at lines 1037--1038
+[]\T1/lmr/m/it/10.95 For the Carte-sian prod-uct space
+ []
+
+[17]
+Overfull \hbox (12.32089pt too wide) detected at line 1096
+[] \OMS/cmsy/m/n/10.95 ^^T \OML/cmm/m/it/10.95 D[] [] :
+ []
+
+[18] [19]
+Overfull \hbox (18.55789pt too wide) in paragraph at lines 1214--1218
+[]\T1/lmr/m/n/10.95 (iv) Lemma [][]2[][] (i) and The-o-rem [][]5[][] (ii) show 
+$\OMS/cmsy/m/n/10.95 f[]\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 X[]; X[]; \OML/
+cmm/b/it/10.95 ^^N[]\OT1/cmr/m/n/10.95 )\OMS/cmsy/m/n/10.95 g # \OML/cmm/m/it/1
+0.95 ^^P$\T1/lmr/m/n/10.95 . If $[]\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 X[];
+ X[]; \OML/cmm/b/it/10.95 ^^N[]\OT1/cmr/m/n/10.95 ) =
+ []
+
+
+Underfull \vbox (badness 2418) has occurred while \output is active []
+
+ [20]
+Overfull \hbox (14.6229pt too wide) in paragraph at lines 1261--1264
+\T1/lmr/m/n/10.95 Taking $\OML/cmm/m/it/10.95 k \OMS/cmsy/m/n/10.95 ! 1$\T1/lmr
+/m/n/10.95 , we know $\OML/cmm/b/it/10.95 ^^N[] \OMS/cmsy/m/n/10.95 ! \OT1/cmr/
+m/n/10.95 0$ \T1/lmr/m/n/10.95 and $\OMS/cmsy/m/n/10.95 k\OML/cmm/m/it/10.95 X[
+] \OMS/cmsy/m/n/10.95 ^^@ \OML/cmm/m/it/10.95 X[]\OMS/cmsy/m/n/10.95 k[] ! \OT1
+/cmr/m/n/10.95 0$\T1/lmr/m/n/10.95 , and that $\OT1/cmr/m/n/10.95 ^^H [] \OMS/c
+msy/m/n/10.95 !
+ []
+
+
+Underfull \vbox (badness 1275) has occurred while \output is active []
+
+ [21]
+Underfull \hbox (badness 10000) in paragraph at lines 1269--1271
+
+ []
+
+
+Overfull \hbox (0.20715pt too wide) in paragraph at lines 1286--1288
+[]\T1/lmr/m/it/10.95 Suppose As-sump-tions [][]1[][]-[][]3[][] are sat-is-fied.
+ Let $\OMS/cmsy/m/n/10.95 f\OML/cmm/m/it/10.95 X[]\OMS/cmsy/m/n/10.95 g$
+ []
+
+[22] [23] [24]
+Underfull \hbox (badness 10000) in paragraph at lines 1450--1457
+
+ []
+
+[25]
+
+LaTeX Warning: Reference `fig_MatrixIden' on page 26 undefined on input line 15
+18.
+
+
+LaTeX Warning: Reference `fig_MatrixIden' on page 26 undefined on input line 15
+19.
+
+[26]
+
+LaTeX Warning: Reference `fig.???' on page 27 undefined on input line 1545.
+
+File: randRec_InitR5_Rank5.png Graphic file (type bmp)
+<randRec_InitR5_Rank5.png>
+File: randRec_InitR10_Rank10.png Graphic file (type bmp)
+<randRec_InitR10_Rank10.png>
+File: randRec_InitR15_Rank15.png Graphic file (type bmp)
+<randRec_InitR15_Rank15.png>
+File: stvAlpha_randRec_InitR5_Rank5.png Graphic file (type bmp)
+<stvAlpha_randRec_InitR5_Rank5.png>
+File: stvAlpha_randRec_InitR5_Rank10.png Graphic file (type bmp)
+<stvAlpha_randRec_InitR5_Rank10.png>
+File: stvAlpha_randRec_InitR5_Rank15.png Graphic file (type bmp)
+<stvAlpha_randRec_InitR5_Rank15.png>
+[27]
+
+LaTeX Warning: Reference `fig.???' on page 28 undefined on input line 1627.
+
+File: imgRe_Lena_Rank30_Sol1_ori.png Graphic file (type bmp)
+<imgRe_Lena_Rank30_Sol1_ori.png>
+File: imgRe_Lena_Rank30_Sol2_low.png Graphic file (type bmp)
+<imgRe_Lena_Rank30_Sol2_low.png>
+File: imgRe_Lena_Rank30_Sol3_mask.png Graphic file (type bmp)
+<imgRe_Lena_Rank30_Sol3_mask.png>
+File: imgRe_Lena_Rank30_Sol4_PIRNN.png Graphic file (type bmp)
+<imgRe_Lena_Rank30_Sol4_PIRNN.png>
+File: imgRe_Lena_Rank30_Sol5_AIRNN.png Graphic file (type bmp)
+<imgRe_Lena_Rank30_Sol5_AIRNN.png>
+File: imgRe_Lena_Rank30_Sol6_EIRNRI.png Graphic file (type bmp)
+<imgRe_Lena_Rank30_Sol6_EIRNRI.png>
+File: imgRe_Lena_Rank30_Sol7_Scp.png Graphic file (type bmp)
+<imgRe_Lena_Rank30_Sol7_Scp.png>
+File: imgRe_Lena_Rank30_Sol8_FGSR.png Graphic file (type bmp)
+<imgRe_Lena_Rank30_Sol8_FGSR.png>
+File: imgRe_R1_Rank30_Sol1_ori.png Graphic file (type bmp)
+<imgRe_R1_Rank30_Sol1_ori.png>
+File: imgRe_R1_Rank30_Sol2_low.png Graphic file (type bmp)
+<imgRe_R1_Rank30_Sol2_low.png>
+File: imgRe_R1_Rank30_Sol3_mask.png Graphic file (type bmp)
+<imgRe_R1_Rank30_Sol3_mask.png>
+File: imgRe_R1_Rank30_Sol4_PIRNN.png Graphic file (type bmp)
+<imgRe_R1_Rank30_Sol4_PIRNN.png>
+File: imgRe_R1_Rank30_Sol5_AIRNN.png Graphic file (type bmp)
+<imgRe_R1_Rank30_Sol5_AIRNN.png>
+File: imgRe_R1_Rank30_Sol6_EIRNRI.png Graphic file (type bmp)
+<imgRe_R1_Rank30_Sol6_EIRNRI.png>
+File: imgRe_R1_Rank30_Sol7_Scp.png Graphic file (type bmp)
+<imgRe_R1_Rank30_Sol7_Scp.png>
+File: imgRe_R1_Rank30_Sol8_FGSR.png Graphic file (type bmp)
+<imgRe_R1_Rank30_Sol8_FGSR.png>
+
+Overfull \hbox (28.9691pt too wide) in paragraph at lines 1700--1714
+[][] 
+ []
+
+[28] [29] (sample_les_array.bbl
+Underfull \vbox (badness 3460) has occurred while \output is active []
+
+ [30]
+[31] [32] [33]) 
+AED: lastpage setting LastPage
+[34] (sample_les_array.aux)
+
+LaTeX Warning: There were undefined references.
+
+Package rerunfilecheck Info: File `sample_les_array.out' has not changed.
+(rerunfilecheck)             Checksum: 8317FE580C74F8389B8DB796BDCF6088;2167.
+ ) 
+Here is how much of TeX's memory you used:
+ 15294 strings out of 411476
+ 255815 string characters out of 5821426
+ 1864001 words of memory out of 5000000
+ 35290 multiletter control sequences out of 15000+600000
+ 582320 words of font info for 114 fonts, out of 8000000 for 9000
+ 1348 hyphenation exceptions out of 8191
+ 87i,13n,90p,694b,704s stack positions out of 10000i,1000n,20000p,200000b,200000s
+
+Output written on sample_les_array.pdf (34 pages).
