@@ -5,15 +5,18 @@
 clear;clc;
 format long; 
 rng(22);
-parpol = parpool(16);
+% parpol = parpool(16);
 
 cwd = fileparts(pwd);
 
-path_lena = strcat(cwd,'\img_image\lena.png');
-img_ori = double(imread(path_lena))/255 ; 
+% path_lena = strcat(cwd,'\img_image\lena.png');
+% img_ori = double(imread(path_lena))/255 ; 
+% it_mask = 1;
 
-% path_re1 = strcat(cwd,'\img_image\re1.jpg');
-% img_ori = double(imread(path_re1))/255 ; 
+
+path_re1 = strcat(cwd,'\img_image\re1.jpg');
+img_ori = double(imread(path_re1))/255 ; 
+it_mask = 2;
 
 % path_sist = strcat(cwd,'\img_image\sistlibrary.jpeg');
 % img = double(imread(path_sist))/255 ; 
@@ -21,8 +24,12 @@ img_ori = double(imread(path_lena))/255 ;
 % img_ori(:,:,i) = img(:,:,i)';
 % end
 
-it_mask = 1;
-% 
+
+%   scan.p = 1; 
+%   scan.lambda = 1; 
+
+
+
 
 % img_ori = double(imread(path_lena));
 img_size = size(img_ori);
@@ -31,7 +38,8 @@ noise = 1e0*randn(img_size(1:2));
 %   %%  % % % strictly low rank
 %   rt = ceil(min(size(img_ori(:,:,1)))/5);
 RT = [15,20,25,30,35,40];
-for iter_rt = 1:length(RT)
+for iter_rt = 6:6
+% for iter_rt = 1:length(RT)
   rt = RT(iter_rt);
   for i=1:3
     [U,S,V]=svd(img_ori(:,:,i));
@@ -79,8 +87,7 @@ for iter_rt = 1:length(RT)
   optionsScp.max_iter = 5e2;    
   optionsFGSR.regul_B = "L2";
   %%
-%   scan.p = 1; 
-  scan.lambda = 1;
+
 %   options.KLopt = 1e-5;   
   %% ------------------% search lambda -----------------------------
   if exist('scan','var') && isfield(scan,'lambda') && scan.lambda == 1 
@@ -183,17 +190,29 @@ for iter_rt = 1:length(RT)
       % PIRNN
   for i =1:3
     Xm = XM(:,:,i);
-    PIR = ds_ProxIRNN(Xm+noise,Xm,sp_ir, lambda_ir, mask, tol, optionsP);
+    PIR = ds_ProxIRNN(Xm,Xm,sp_ir, lambda_ir, mask, tol, optionsP);
     X_PIR(:,:,i) = PIR.Xsol; 
   end
   Parsol{1} = X_PIR;
-%       %% AIRNN
+%    %% IRNRI
+
+%   for i=1:3
+%     Xm = XM(:,:,i);
+%     AIR = ds_AdaIRNN(Xm+noise,Xm,sp_ir, lambda_ir, mask, tol, optionsA);
+%     X_AIR(:,:,i) = AIR.Xsol; 
+%   end
+%   Parsol{2} = X_AIR;
+
+% % %%% AccIRNN_2021
+
   for i=1:3
     Xm = XM(:,:,i);
-    AIR = ds_AdaIRNN(Xm+noise,Xm,sp_ir, lambda_ir, mask, tol, optionsA);
+    AIR = AIRNN_2021(Xm,Xm,sp_ir, lambda_ir, mask, tol, options);
+%     AIR = ds_AdaIRNN(Xm+noise,Xm,sp_ir, lambda_ir, mask, tol, optionsA);
     X_AIR(:,:,i) = AIR.Xsol; 
   end
   Parsol{2} = X_AIR;
+    
 %       %% EPIRNN
   for i=1:3
     Xm = XM(:,:,i);
@@ -201,6 +220,8 @@ for iter_rt = 1:length(RT)
     X_EPIR(:,:,i) = EPIR.Xsol;
   end
   Parsol{3} = X_EPIR;
+
+
       %% SCP ADMM 
   for i=1:3
     Xm = XM(:,:,i);
@@ -240,20 +261,22 @@ end
 % save("..\exp_cache\ImgRe_RandMask_Table_BestLambda_0305.mat","Tab_img",'-mat') 
 % save for tbale
   %% imshow show 
-subplot(1,5,1)
-imshow(X_PIR)
+set(gca,'LooseInset',[0,0, 0.003,0.005] )
+figure(1)
+imshow(img_show.ori_img)
 
-subplot(1,5,2)
-imshow(X_AIR)
+figure(2)
+imshow(img_show.low_img)
 
-subplot(1,5,3)
-imshow(X_EPIR)
+figure(3)
+imshow(img_show.mask_img)
 
-subplot(1,5,4)
-imshow(X_SCP)
+for i = 1:5
+  figure(i+3)
+  imshow(Parsol{i})
+end
 
-subplot(1,5,5)
-imshow(X_FGSR)
+
 %%
 for i =1:5
   PSNR_img(i) = psnr(img_ori,Parsol{i})
