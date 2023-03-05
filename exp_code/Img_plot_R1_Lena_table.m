@@ -1,6 +1,8 @@
-clear;clc
+% clear;clc
 
 
+%% % 
+img_show = Tab_img{1};
 %%
 figure(1)
 imshow(img_show.ori_img)
@@ -10,6 +12,75 @@ imshow(img_show.mask_img)
 
 figure(3)
 imshow(img_show.low_img)
+
+%% plot lena_best_lambda
+format bank
+R_psnrTable = [];
+
+for irank = 1:6
+img_show = Tab_img{irank};
+
+for i = 1:5
+    tempR = 0;
+    img_sol = img_show.sol{i};
+    for k =1 :3
+      tempR = tempR + rank(img_sol(:,:,k));
+    end
+    R_psnrTable(irank,2*i-1:2*i) = [psnr(img_sol,img_show.ori_img),floor(tempR/3)];    
+    
+    figure(i)
+    imshow(img_sol)
+%   imshow(img_sol(:,:,1))
+end
+
+
+end
+%%
+for i = 1:6
+  img_show = Tab_img{i};
+  img_ori = img_show.ori_img;
+  img_low = img_show.low_img;
+  for j = 1:5
+    img_sol = img_show.sol{j};
+%     sPsnr = psnr(img_ori,img_sol)
+    R_psnr_Rank_Table(i,2*j-1) = vpa( psnr(img_ori,img_sol), 2);
+    tempR = 0;
+    for k =1 :3
+      tempR = tempR + rank(img_sol(:,:,k));
+    end
+    R_psnr_Rank_Table(i,2*j) = floor(tempR/3);
+  end
+end
+
+%% with ch1 red
+
+for i = 1:5
+    tempR = 0;
+    img_sol = img_show.sol{i};
+    for k =1 :3
+      tempR = tempR + rank(img_sol(:,:,k));
+    end
+    [psnr(img_sol,img_show.ori_img),floor(tempR/3)];
+    figure(i)
+    
+%   imshow(img_show.sol{i}.*ch1)
+  
+  
+  ich = 1;
+  for i=1:3
+    if i ~= ich
+      img_sol(:,:,i) = img_sol(:,:,i).*ch1; 
+    else
+      img_sol(:,:,i) = img_sol(:,:,i).*ch1 + (1-ch1); 
+    end
+  end
+  imshow(img_sol)
+%   imshow(img_sol(:,:,1))
+
+
+end
+
+
 
 %%
 

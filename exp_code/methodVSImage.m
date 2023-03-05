@@ -80,13 +80,13 @@ for iter_rt = 1:length(RT)
   optionsFGSR.regul_B = "L2";
   %%
 %   scan.p = 1; 
-%   scan.lambda = 1;
+  scan.lambda = 1;
 %   options.KLopt = 1e-5;   
   %% ------------------% search lambda -----------------------------
   if exist('scan','var') && isfield(scan,'lambda') && scan.lambda == 1 
     sp = 0.5;
 %     Lambda = 2.^-(-3:1:11);
-    Lambda = [1:0.5:8]; 
+    Lambda = [1:0.5:8,2.^(-1:-1:-16)]; 
     SOL_PSNR = zeros(size(Lambda,2),3); 
 
     parfor idx_lambda = 1: size(Lambda,2)
@@ -96,12 +96,14 @@ for iter_rt = 1:length(RT)
       
         SCP = MC_SCpADMM(Xm,Xm,sp, Lambda(idx_lambda), mask, tol, optionsScp);
 
-        FGSR = MC_FGSR_PALM(Xm,mask,Lambda(idx_lambda),optionsFGSR); 
+%         FGSR = MC_FGSR_PALM(Xm,mask,Lambda(idx_lambda),optionsFGSR); 
+% img_Rsol = {EPIR.Xsol, SCP.Xsol, Xr};
+
 %         Xr = MC_FGSR_PALM(Xm,mask,Lambda(idx_lambda),optionsFGSR); % for p=0.5 only
 %         [Xr,~,~] = RPCA_FGSR_ADMM(Xm,Lambda(idx_lambda),optionsFGSR);
-%         Xr = MC_FGSRp_PALM(Xm,mask,sp,Lambda(idx_lambda),optionsFGSR);
+        FGSR = MC_FGSRp_PALM(Xm,mask,sp,Lambda(idx_lambda),optionsFGSR);
         img_Rsol = {EPIR.Xsol, SCP.Xsol, FGSR.Xsol};
-%         img_Rsol = {EPIR.Xsol, SCP.Xsol, Xr};
+
       end
       SOL_PSNR(idx_lambda,:) = [ psnr(img_ori(:,:,1), img_Rsol{1}), ...
       psnr(img_ori(:,:,1),img_Rsol{2}), psnr(img_ori(:,:,1),img_Rsol{3})];
@@ -135,8 +137,9 @@ for iter_rt = 1:length(RT)
 
         SCP = MC_SCpADMM(Xm,Xm,op, lambda_scp, mask, tol, optionsScp);
 
-        [Xr,~,~] = RPCA_FGSR_ADMM(Xm,lambda_fgsr,optionsFGSR);
+%         [Xr,~,~] = RPCA_FGSR_ADMM(Xm,lambda_fgsr,optionsFGSR);
 %         Xr = MC_FGSRp_PALM(Xm,mask,op,lambda_fgsr,optionsFGSR);
+        Xr = MC_FGSRp_PALM(Xm,mask,sp,lambda_fgsr,optionsFGSR);
 
         img_op_Rsol = {EPIR.Xsol, SCP.Xsol, Xr.Xsol};
       end
@@ -202,16 +205,16 @@ for iter_rt = 1:length(RT)
   for i=1:3
     Xm = XM(:,:,i);
     Scp_tau = 10;
-    optionsScp.max_iter = 3e2 ;  
+    optionsScp.max_iter = 1e3 ;  
 %     lambda = norm(Xm,"fro")*1;
     SCP = MC_SCpADMM(Xm+noise,Xm,sp_scp, lambda_scp, mask, 1e-4, optionsScp);
     X_SCP(:,:,i) = SCP.Xsol;
   end
   Parsol{4} = X_SCP;
       %% FGSRp 0.5 
-  optionsFGSR.d = ceil(2.5*rt);
+  optionsFGSR.d = ceil(1.5*rt);
   optionsFGSR.alphda = 1e-1;
-  optionsFGSR.max_iter = 5e3;
+  optionsFGSR.max_iter = 1e3;
   optionsFGSR.tol = tol;
 %   lambda_fgsr = 1;
 %   sp_fgsr = 0.5; 
@@ -219,9 +222,11 @@ for iter_rt = 1:length(RT)
     Xm = XM(:,:,i);
 %     Xr = MC_FGSR_PALM(Xm,mask,lambda_fgsr,optionsFGSR); % for p=0.5 only
 %     [Xr,~,~] = RPCA_FGSR_ADMM(Xm,5e-2,optionsFGSR); X_FGSR(:,:,i) = Xr;
-    FGSR = MC_FGSR_PALM(Xm,mask,lambda_fgsr,optionsFGSR); X_FGSR(:,:,i) = FGSR.Xsol;
+    FGSR = MC_FGSRp_PALM(Xm,mask,sp_fgsr,lambda_fgsr,optionsFGSR);
+%     FGSR = MC_FGSR_PALM(Xm,mask,lambda_fgsr,optionsFGSR); X_FGSR(:,:,i) = FGSR.Xsol;
 %     Xr = MC_FGSR_PALM(Xm,mask,sp_fgsr,lambda_fgsr,optionsFGSR);
 %     X_FGSR(:,:,i) = Xr.Xsol; 
+    X_FGSR(:,:,i) = FGSR.Xsol;
   end
   Parsol{5} = X_FGSR;
   img_show.sol = Parsol;
@@ -232,7 +237,7 @@ end
 %%
 %  save("..\exp_cache\ImgRe_RandMask_R30_R1.mat","img_show",'-mat') 
 % save R1 to plot 
-save("..\exp_cache\ImgRe_RandMask_Table.mat","Tab_img",'-mat') 
+% save("..\exp_cache\ImgRe_RandMask_Table_BestLambda_0305.mat","Tab_img",'-mat') 
 % save for tbale
   %% imshow show 
 subplot(1,5,1)
@@ -253,7 +258,8 @@ imshow(X_FGSR)
 for i =1:5
   PSNR_img(i) = psnr(img_ori,Parsol{i})
 end
-
+%%
+% save("..\exp_cache\ImgRe_best_lambda_LenaR15 .mat","img_show",'-mat') 
 
 
 

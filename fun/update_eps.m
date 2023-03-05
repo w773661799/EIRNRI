@@ -9,8 +9,10 @@ function weps = update_eps(weps,Rk0,Rk1,rc,nssgv,mu)
     mk0k1 = (weps(Rk1:rc) <= weps(Rk1));
     weps(Rk1:rc) = (weps(Rk1:rc).*mk0k1) +  (weps(Rk1).*(~mk0k1)) ;
   end
-  if Rk1 < rc && (weps(Rk1+1) > (weps(Rk1)+nssgv ) ) 
-    weps(Rk1+1:rc) = mu * (weps(Rk1)+nssgv) .* ones(Rk1+1:rc) ;
+  if Rk1 < rc && (weps(Rk1+1) > (weps(Rk1)+nssgv )) 
+    mk1d1 = (weps(Rk1+1:rc) <= (weps(Rk1)+nssgv)); 
+    weps(Rk1+1:rc) = weps(Rk1+1:rc) .* mk1d1 +  (weps(Rk1)+nssgv).*(~mk1d1) ; 
+    weps(Rk1+1:rc) = mu * weps(Rk1+1:rc);
   end
 
 end
