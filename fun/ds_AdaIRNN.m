@@ -4,7 +4,7 @@ function Par = ds_AdaIRNN(X0,M,sp, lambda, mask, tol, options)
   % - beta - the augmented lagrangian parameter, default = 10*lambda
   % - tol - reconstruction error tolerance, default = 1e-6
   % - max_iter - maxibetam number of iterations, default = 1000
- 
+  
   if isfield(options,'max_iter')==0,max_iter = 2e3;
   else,max_iter = options.max_iter ;
   end

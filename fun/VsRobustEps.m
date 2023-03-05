@@ -16,6 +16,10 @@ CrRank.PIR = zeros(1,leps);
 CrRank.AIR = 0;
 CrRank.EPIR = 0;
 
+MSE.PIR = zeros(1,leps);
+MSE.AIR = 0;
+MSE.EPIR = 0;
+
 if SUCC(1) == 1
     success = SUCC(2);
 else
@@ -59,12 +63,13 @@ end
     if (PIR.RelErr(end) <= success) && (PIR.rank(end) == r) 
       Robust.PIR(iter_eps) = Robust.PIR(iter_eps) + 1;  
     end
+    MSE.PIR(iter_eps) = MSE.PIR(iter_eps) + norm(PIR.Xsol - Y,'Fro');
   end
  
 
   optionsA = options;
   optionsA.eps = 1e0;
-  optionsA.mu = 0.5;
+  optionsA.mu = 0.7;
   AIR = ds_AdaIRNN(X0,Xm,sp, lambda, mask, tol, optionsA);
 %   if (AIR.rank(end) == r) && (AIR.RelErr(end) <= success) 
 
@@ -75,7 +80,7 @@ end
     if (AIR.RelErr(end) <= success) && (AIR.rank(end) == r)
       Robust.AIR = Robust.AIR + 1;
     end
-
+    MSE.AIR = MSE.AIR + norm(AIR.Xsol - Y,'Fro');
 
   optionsEP = optionsA;
   optionsEP.alpha = 7e-1;
@@ -88,7 +93,8 @@ end
     if (EPIR.RelErr(end) <= success) && (EPIR.rank(end) == r)    
       Robust.EPIR = Robust.EPIR + 1;
     end
-
+    MSE.EPIR = MSE.EPIR + norm(EPIR.Xsol - Y,'Fro');
   Par.Robust = Robust;
   Par.CrRank = CrRank;
+  Par.MSE = MSE;
 end

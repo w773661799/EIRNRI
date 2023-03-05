@@ -12,6 +12,7 @@ for i=1:nc
   randidx=randperm(nr,nr); % random sequence
   M_org(randidx(1:ceil(nr*missrate)),i)=1; 
 end
+
 mask = ~M_org; Xm = Y.*mask;
 
 % %% --------------- parameters ---------------

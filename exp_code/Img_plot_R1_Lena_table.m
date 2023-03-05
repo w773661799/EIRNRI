@@ -2,6 +2,7 @@
 
 
 %% % 
+Tab_img = RpsnrTable;
 img_show = Tab_img{1};
 %%
 figure(1)
@@ -20,6 +21,15 @@ R_psnrTable = [];
 for irank = 1:6
 img_show = Tab_img{irank};
 
+figure(1)
+imshow(img_show.ori_img)
+
+figure(2)
+imshow(img_show.mask_img)
+
+figure(3)
+imshow(img_show.low_img)
+
 for i = 1:5
     tempR = 0;
     img_sol = img_show.sol{i};
@@ -28,7 +38,7 @@ for i = 1:5
     end
     R_psnrTable(irank,2*i-1:2*i) = [psnr(img_sol,img_show.ori_img),floor(tempR/3)];    
     
-    figure(i)
+    figure(3+i)
     imshow(img_sol)
 %   imshow(img_sol(:,:,1))
 end
