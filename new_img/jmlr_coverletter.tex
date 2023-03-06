@@ -10,14 +10,28 @@ Journal of Machine Learning Research
 
 Dear Editors:
 
-We are writing to submit our manuscript ``\red{Manuscript Title}'' to the \emph{Journal of Machine Learning Research}.
+We are writing to submit our manuscript ``\red{Iteratively Reweighted Nuclear Norm Methods for Low-Rank Minimization with Rank Identification}'' to the \emph{Journal of Machine Learning Research}.We confirm that this work is original and has not been published elsewhere, nor is it currently under consideration for publication elsewhere.
 
-Our manuscript studies \red{X, Y, and Z} which is important because of \red{A, B, and C}.
 
-This paper extends our work of \red{Conference Paper} by addressing \red{X, Y, and Z additional points}.
+In this paper, we propose iteratively reweighted nuclear norm
+methods for solving Schatten-p regularization problems.
+The importance of this work lies in the low-rank matrix minimization in machine learning research.
+We believe this manuscript is appropriate for publication by JMLR because it is a critical task that deeply relates to machine learning research.
+
+The main contribution of our work is that we show the rank identification property possessed by the proposed methods, meaning the correct rank can be detected in finite iterations. 
+This is the first work of pointing out the model identification property (a famous property in vector optimization) in matrix optimization. 
+Based on this property, we also designed a novel updating strategy for $\epsilon_{i}$ to smooth the Schatten-$p$ norm, so that $\epsilon_{i}$ associated with the positive singular values can be driven to $0$ rapidly and those associated with the 0 singular values can be automatically fixed as constants after finite iterations, so that the techniques for smooth algorithms can directly applied including acceleration techniques and convergence analysis.
+Our algorithm were illustrated empirically on test sets of synthetic and real data sets.
+
+Our submission has the following keywords:
+\red{low-rank minimization}, 
+\red{weighted Nuclear norm}, 
+\red{Schatten-$p$ norm}, 
+\red{Kurdyka-{\L}ojasiewicz property}, 
+\red{rank identification}.
+% extrapolation acceleration,  
 
 We suggest the following action editors and referees for our submission.
-
 Action Editors:
 \begin{itemize}
     \item \red{First Lastname, Institution (first.lastname@institution.edu)}
@@ -26,7 +40,6 @@ Action Editors:
     \item \red{First Lastname, Institution (first.lastname@institution.edu)}
     \item \red{First Lastname, Institution (first.lastname@institution.edu)}
 \end{itemize}
-
 Reviewers:
 \begin{itemize}
     \item \red{First Lastname, Institution (first.lastname@institution.edu)}
@@ -36,21 +49,28 @@ Reviewers:
     \item \red{First Lastname, Institution (first.lastname@institution.edu)}
 \end{itemize}
 
-Our submission has the following keywords: \red{keyword}, \red{keyword}, \red{keyword}, \red{keyword}, \red{keyword}.
-
 As the corresponding author, I confirm that none of the co-authors listed below have a conflict of interest with the action editors and referees I suggest above. Further, I confirm that all co-authors below consent to my submission of this manuscript to the \emph{Journal of Machine Learning Research}.
 
 \bigskip
-
 Sincerely,
 
 \medskip
 
-\red{Co-Author (Institution)}\\
-\red{Co-Author (Institution)}\\
-\red{Co-Author (Institution)}\\
-\red{Co-Author (Institution)}
+\red{Hao Wang (School of Information Science and Technology )}\\
+\red{YE WANG (School of Information Science and Technology)}\\
 
+% \red{Co-Author (Institution)}\\
+% \red{Co-Author (Institution)}
+% {\name  \email haw309@gmail.com \\
+    %    \addr School of Information Science and Technology\\
+    %    ShanghaiTech University\\
+    %    Shanghai, 201210, China
+    %    \AND
+    %    \name * \email wangye@shanghaitech.edu.cn\\
+    %    \addr School of Information Science and Technology\\
+    %    ShanghaiTech University\\
+    %    Shanghai, 201210, China
+    %    }
 \end{document}
 
 

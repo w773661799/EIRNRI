@@ -9,7 +9,7 @@ nr = 150; nc = 150;
 missrate = 0.5; 
 % %% --------------- parameters ---------------
 lambda = 0;
-itmax = 5e3; 
+itmax = 1e3; 
 sp = 0.5; 
 tol = 1e-7; 
 klopt = 1e-5;
@@ -27,11 +27,13 @@ init_rank_max = 20;
 % number of correct rank
 Rank_RC.PIR = zeros(length(Rank),length(WEPS));
 Rank_RC.AIR = zeros(size(Rank));
+Rank_RC.ACCI = zeros(size(Rank));
 Rank_RC.EPIR = zeros(size(Rank));
 
 % average MSE 
 AMse.PIR = zeros(length(Rank),length(WEPS));
 AMse.AIR = zeros(size(Rank));
+AMse.ACCI = zeros(size(Rank));
 AMse.EPIR = zeros(size(Rank));
 % Initial point
 for irank = 1:length(Rank) %3
@@ -44,7 +46,10 @@ for irank = 1:length(Rank) %3
     Rank_RC.PIR(irank,:) = Rank_RC.PIR(irank,:) + par{iter}.CrRank.PIR;
     Rank_RC.AIR(irank) = Rank_RC.AIR(irank) + par{iter}.CrRank.AIR;
     Rank_RC.EPIR(irank) = Rank_RC.EPIR(irank) + par{iter}.CrRank.EPIR;
+    Rank_RC.ACCI(irank) = Rank_RC.ACCI(irank) + par{iter}.CrRank.ACCI;
+    
     AMse.PIR(irank,:) = AMse.PIR(irank,:) + (par{iter}.MSE.PIR)./times;
+    AMse.ACCI(irank) = AMse.ACCI(irank) + par{iter}.MSE.ACCI;
     AMse.AIR(irank) = AMse.AIR(irank) + (par{iter}.MSE.AIR)./times;
     AMse.EPIR(irank) = AMse.EPIR(irank) + (par{iter}.MSE.EPIR)./times;
   end
@@ -63,11 +68,12 @@ Robust_Rank515.AMse = AMse;
 save("..\exp_cache\Rank_Robust.mat","Rank_RC",'-mat')
 %%
 irankplt = 3;
-X = categorical({'EPIRNN','AdaIRNN', '\epsilon=10^{-1}', '\epsilon=10^{-2}','\epsilon=10^{-3}' });
+X = categorical({'IRNRI','EIRNRI', 'PIRNN','AIRNN'});
 % X = reordercats(X,{'Medium','Extra Large'});
-X_num = [1,2,4,5,6];
-bar(X,[Rank_RC.EPIR(irankplt), Rank_RC.AIR(irankplt) , Rank_RC.PIR(irankplt,:)])
-ylabel('# Number of Correct Rank')
+X_num = [1,2,3,4];
+bar(X,[Rank_RC.EPIR(irankplt), Rank_RC.AIR(irankplt),...
+  Rank_RC.PIR(irankplt,:), Rank_RC.ACCI(irankplt)])
+ylabel('# of Correct Rank')
 % xlabel(['EPIRNN',1,3,4,5])
 %%
 % for irank = 1:length(Rank) %3

@@ -218,53 +218,66 @@
 \newlabel{exp_pro_MCrand}{{4.1}{26}{}{equation.4.1}{}}
 \newlabel{exp_pro_MCrand@cref}{{[equation][1][4]4.1}{[1][25][]26}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Synthetic data}{26}{subsection.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces The number of problems that achieve model identification for different $r^{*}$. For each $r^{*}$, 2000 problems are generated and set $\lambda = 10^{-1}\|X^{*}\|_{\infty }$ for those problems. We set different $\epsilon = 10^{-3}$ for PIRNN and the default values for our algorithm.\relax }}{27}{figure.caption.1}\protected@file@percent }
+\newlabel{fig_MatrixIden}{{1}{27}{The number of problems that achieve model identification for different $r^{*}$. For each $r^{*}$, 2000 problems are generated and set $\lambda = 10^{-1}\|X^{*}\|_{\infty }$ for those problems. We set different $\epsilon = 10^{-3}$ for PIRNN and the default values for our algorithm.\relax }{figure.caption.1}{}}
+\newlabel{fig_MatrixIden@cref}{{[figure][1][]1}{[1][27][]27}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces The average of the final relative errors of each algorithm with different $r^{*}$.\relax }}{27}{table.caption.2}\protected@file@percent }
+\newlabel{fig_MatrixIden}{{1}{27}{The average of the final relative errors of each algorithm with different $r^{*}$.\relax }{table.caption.2}{}}
+\newlabel{fig_MatrixIden@cref}{{[table][1][]1}{[1][27][]27}}
+\@writefile{lot}{\contentsline {subtable}{\numberline{(a)}{\ignorespaces {The number of CLD with $r^{*}=5$.}}}{27}{table.caption.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {subtable}{\numberline{(b)}{\ignorespaces {The number of CLD with $r^{*}=10$.}}}{27}{table.caption.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {subtable}{\numberline{(c)}{\ignorespaces {The number of CLD with $r^{*}=15$.}}}{27}{table.caption.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Comparison of matrix recovery on synthetic data with initial point $X^{0}$ satisfies ${\rm  rank}(X^{0}) = r^*$, initial parameters satisfie $\epsilon _{i}^{0} = \epsilon = 10^{-3}$. \relax }}{27}{figure.caption.3}\protected@file@percent }
+\newlabel{fig_LLrate}{{2}{27}{Comparison of matrix recovery on synthetic data with initial point $X^{0}$ satisfies ${\rm rank}(X^{0}) = r^*$, initial parameters satisfie $\epsilon _{i}^{0} = \epsilon = 10^{-3}$. \relax }{figure.caption.3}{}}
+\newlabel{fig_LLrate@cref}{{[figure][2][]2}{[1][27][]27}}
 \citation{opt_simu_svd_2017}
+\citation{Alg_conflict_AIRNN_2021}
 \citation{Relax_NCVX_CNN_RPCA_2013}
 \citation{LRMR_GroupSparse_2019}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Comparison of matrix recovery on synthetic data initial point with ${\rm  rank}(X^{0}) = {\rm  rank}(X^{*})$. We set the perturbation value to be the same for PIRNN, IRNRI, and EIRNRI at $\epsilon = 10^{-16}$, while keeping the other parameters at their default values. \relax }}{27}{figure.caption.1}\protected@file@percent }
-\newlabel{fig_LLrate}{{1}{27}{Comparison of matrix recovery on synthetic data initial point with ${\rm rank}(X^{0}) = {\rm rank}(X^{*})$. We set the perturbation value to be the same for PIRNN, IRNRI, and EIRNRI at $\epsilon = 10^{-16}$, while keeping the other parameters at their default values. \relax }{figure.caption.1}{}}
-\newlabel{fig_LLrate@cref}{{[figure][1][]1}{[1][27][]27}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces The performance for different $\alpha $ with rank$ (X^{0})=15$, SR=$0.5$, $\mu =0.8$. It presents that $\alpha $ around $0.7$ has better performance. \relax }}{27}{figure.caption.2}\protected@file@percent }
-\newlabel{fig_stvAlp}{{2}{27}{The performance for different $\alpha $ with rank$ (X^{0})=15$, SR=$0.5$, $\mu =0.8$. It presents that $\alpha $ around $0.7$ has better performance. \relax }{figure.caption.2}{}}
-\newlabel{fig_stvAlp@cref}{{[figure][2][]2}{[1][27][]27}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces The performance of EIRNRI with different $\alpha $ for three kinds of problems. \relax }}{28}{figure.caption.4}\protected@file@percent }
+\newlabel{fig_stvAlp}{{3}{28}{The performance of EIRNRI with different $\alpha $ for three kinds of problems. \relax }{figure.caption.4}{}}
+\newlabel{fig_stvAlp@cref}{{[figure][3][]3}{[1][27][]28}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Application to Image Recovery}{28}{subsection.4.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces The performance for different mmethod with different low-rank target, bold values correspond to the best results for each algorithm. It presents that the proper perturbation affecting the algorithm less, A bigger $\epsilon $ makes PIRNN converge slower, a too small $\epsilon $ may make PIRNN get a terrible solution. The experiment shows IRNRI and EIRNRI are more robust than PIRNN when the perturbation bigger than $10^{-4}$.\relax }}{28}{table.caption.5}\protected@file@percent }
-\newlabel{tab_img_recovery}{{1}{28}{The performance for different mmethod with different low-rank target, bold values correspond to the best results for each algorithm. It presents that the proper perturbation affecting the algorithm less, A bigger $\epsilon $ makes PIRNN converge slower, a too small $\epsilon $ may make PIRNN get a terrible solution. The experiment shows IRNRI and EIRNRI are more robust than PIRNN when the perturbation bigger than $10^{-4}$.\relax }{table.caption.5}{}}
-\newlabel{tab_img_recovery@cref}{{[table][1][]1}{[1][28][]28}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusion and Future Work}{28}{section.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces The performance of different methods with a random mask in image recovery with SR= $0.8$. The performance for different methods with random mask in image recovery, the (a) Original image, ${\rm  rank}(X) = 300$; (b) Low-rank image, ${\rm  rank}(X^{*}) = 30$ (c) Noised picture; (d) PIRNN: ${\rm  rank}(X) = 30$, PSNR=$28.855$; (e) IRNRI: ${\rm  rank}(X) = 30$, PSNR=$28.854$; (f) EIRNRI: ${\rm  rank}(X) = 30$, PSNR=$28.855$; (g) Scp: ${\rm  rank}(X) = 30$, PSNR=$28.971$; (h) FGSR: ${\rm  rank}(X) = 30$, PSNR=$21.806$; \relax }}{29}{figure.caption.3}\protected@file@percent }
-\newlabel{Relimg_Lena}{{3}{29}{The performance of different methods with a random mask in image recovery with SR= $0.8$. The performance for different methods with random mask in image recovery, the (a) Original image, ${\rm rank}(X) = 300$; (b) Low-rank image, ${\rm rank}(X^{*}) = 30$ (c) Noised picture; (d) PIRNN: ${\rm rank}(X) = 30$, PSNR=$28.855$; (e) IRNRI: ${\rm rank}(X) = 30$, PSNR=$28.854$; (f) EIRNRI: ${\rm rank}(X) = 30$, PSNR=$28.855$; (g) Scp: ${\rm rank}(X) = 30$, PSNR=$28.971$; (h) FGSR: ${\rm rank}(X) = 30$, PSNR=$21.806$; \relax }{figure.caption.3}{}}
-\newlabel{Relimg_Lena@cref}{{[figure][3][]3}{[1][28][]29}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {${\rm rank}(X*)=5$}}}{29}{figure.caption.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {${\rm rank}(X*)=10$}}}{29}{figure.caption.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {${\rm rank}(X*)=15$}}}{29}{figure.caption.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {the relative error}}}{29}{figure.caption.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {the relative distance}}}{29}{figure.caption.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {the value of primal problem}}}{29}{figure.caption.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Original}}}{29}{figure.caption.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Low-rank image}}}{29}{figure.caption.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Random mask}}}{29}{figure.caption.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {PIRNN}}}{29}{figure.caption.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(e)}{\ignorespaces {AIRNN}}}{29}{figure.caption.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(f)}{\ignorespaces {EIRNRI}}}{29}{figure.caption.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(g)}{\ignorespaces {Sc$p$}}}{29}{figure.caption.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(h)}{\ignorespaces {FGSR$p$}}}{29}{figure.caption.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces The performance of different methods in image recovery with a random mask(SR= $0.8$). (a) Original image, ${\rm  rank}(X) = 300$; (b) Low-rank image, ${\rm  rank}(X^{*}) = 30$ (c) Noised picture; (d) PIRNN: ${\rm  rank}(X) = 30$, PSNR=$28.855$; (e) IRNRI: ${\rm  rank}(X) = 36$, PSNR=$28.854$; (f) EIRNRI: ${\rm  rank}(X) = 30$, PSNR=$28.855$; (g) Sc$p$: ${\rm  rank}(X) = 187$, PSNR=$28.971$; (h) FGSR$p$: ${\rm  rank}(X) = 187$, PSNR=$21.806$; \relax }}{29}{figure.caption.5}\protected@file@percent }
+\newlabel{Relimg_Lena}{{4}{29}{The performance of different methods in image recovery with a random mask(SR= $0.8$). (a) Original image, ${\rm rank}(X) = 300$; (b) Low-rank image, ${\rm rank}(X^{*}) = 30$ (c) Noised picture; (d) PIRNN: ${\rm rank}(X) = 30$, PSNR=$28.855$; (e) IRNRI: ${\rm rank}(X) = 36$, PSNR=$28.854$; (f) EIRNRI: ${\rm rank}(X) = 30$, PSNR=$28.855$; (g) Sc$p$: ${\rm rank}(X) = 187$, PSNR=$28.971$; (h) FGSR$p$: ${\rm rank}(X) = 187$, PSNR=$21.806$; \relax }{figure.caption.5}{}}
+\newlabel{Relimg_Lena@cref}{{[figure][4][]4}{[1][28][]29}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {$r^*=5$}}}{29}{figure.caption.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {$r^*=10$}}}{29}{figure.caption.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {$r^*=15$}}}{29}{figure.caption.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {$r^*=5$}}}{29}{figure.caption.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {$r^*=10$}}}{29}{figure.caption.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {$r^*=15$}}}{29}{figure.caption.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Original image}}}{29}{figure.caption.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Low-rank image}}}{29}{figure.caption.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Random mask}}}{29}{figure.caption.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {PIRNN}}}{29}{figure.caption.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(e)}{\ignorespaces {AIRNN}}}{29}{figure.caption.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(f)}{\ignorespaces {EIRNRI}}}{29}{figure.caption.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(g)}{\ignorespaces {Sc$p$}}}{29}{figure.caption.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(h)}{\ignorespaces {FGSR$p$}}}{29}{figure.caption.5}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces The performance of different methods to recover random mask images. Bold values correspond to the best results for each task.\relax }}{29}{table.caption.6}\protected@file@percent }
+\newlabel{tab_img_recovery_rand_Lena}{{2}{29}{The performance of different methods to recover random mask images. Bold values correspond to the best results for each task.\relax }{table.caption.6}{}}
+\newlabel{tab_img_recovery_rand_Lena@cref}{{[table][2][]2}{[1][28][]29}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces The performance of different methods in image recovery with block mask. (a) Original image, ${\rm  rank}(X) = 300$; (b) Low-rank image, ${\rm  rank}(X^{*}) = 30$ (c) Noised picture; (d) PIRNN: ${\rm  rank}(X) = 30$, PSNR=$32.696$; (e) IRNRI: ${\rm  rank}(X) = 32$, PSNR=$16.423$; (f) EIRNRI: ${\rm  rank}(X) = 30$, PSNR=$32.654$; (g) Sc$p$: ${\rm  rank}(X) = 126$, PSNR=$33.237$; (h) FGSR$p$: ${\rm  rank}(X) = 126$, PSNR=$23.132$; \relax }}{30}{figure.caption.7}\protected@file@percent }
+\newlabel{Relimg_R1}{{5}{30}{The performance of different methods in image recovery with block mask. (a) Original image, ${\rm rank}(X) = 300$; (b) Low-rank image, ${\rm rank}(X^{*}) = 30$ (c) Noised picture; (d) PIRNN: ${\rm rank}(X) = 30$, PSNR=$32.696$; (e) IRNRI: ${\rm rank}(X) = 32$, PSNR=$16.423$; (f) EIRNRI: ${\rm rank}(X) = 30$, PSNR=$32.654$; (g) Sc$p$: ${\rm rank}(X) = 126$, PSNR=$33.237$; (h) FGSR$p$: ${\rm rank}(X) = 126$, PSNR=$23.132$; \relax }{figure.caption.7}{}}
+\newlabel{Relimg_R1@cref}{{[figure][5][]5}{[1][28][]30}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Original image}}}{30}{figure.caption.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Low-rank image}}}{30}{figure.caption.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Random mask}}}{30}{figure.caption.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {PIRNN}}}{30}{figure.caption.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(e)}{\ignorespaces {AIRNN}}}{30}{figure.caption.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(f)}{\ignorespaces {EIRNRI}}}{30}{figure.caption.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(g)}{\ignorespaces {Sc$p$}}}{30}{figure.caption.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(h)}{\ignorespaces {FGSR$p$}}}{30}{figure.caption.7}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces The performance of different mmethods in image recovery with block mask. Bold values correspond to the best results for each task. \relax }}{30}{table.caption.8}\protected@file@percent }
+\newlabel{tab_img_recovery_block_R1}{{3}{30}{The performance of different mmethods in image recovery with block mask. Bold values correspond to the best results for each task. \relax }{table.caption.8}{}}
+\newlabel{tab_img_recovery_block_R1@cref}{{[table][3][]3}{[1][28][]30}}
 \bibdata{sample}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces The performance for different methods with block mask, the (a) Original image, ${\rm  rank}(X) = 300$; (b) Low-rank image, ${\rm  rank}(X^{*}) = 30$ (c) Noised picture; (d) PIRNN: ${\rm  rank}(X) = 30$, PSNR=$28.855$; (e) IRNRI: ${\rm  rank}(X) = 30$, PSNR=$28.854$; (f) EIRNRI: ${\rm  rank}(X) = 30$, PSNR=$28.855$; (g) Scp: ${\rm  rank}(X) = 30$, PSNR=$28.971$; (h) FGSR: ${\rm  rank}(X) = 30$, PSNR=$21.806$; \relax }}{30}{figure.caption.4}\protected@file@percent }
-\newlabel{Relimg_R1}{{4}{30}{The performance for different methods with block mask, the (a) Original image, ${\rm rank}(X) = 300$; (b) Low-rank image, ${\rm rank}(X^{*}) = 30$ (c) Noised picture; (d) PIRNN: ${\rm rank}(X) = 30$, PSNR=$28.855$; (e) IRNRI: ${\rm rank}(X) = 30$, PSNR=$28.854$; (f) EIRNRI: ${\rm rank}(X) = 30$, PSNR=$28.855$; (g) Scp: ${\rm rank}(X) = 30$, PSNR=$28.971$; (h) FGSR: ${\rm rank}(X) = 30$, PSNR=$21.806$; \relax }{figure.caption.4}{}}
-\newlabel{Relimg_R1@cref}{{[figure][4][]4}{[1][28][]30}}
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Original}}}{30}{figure.caption.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Low-rank image}}}{30}{figure.caption.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {Random mask}}}{30}{figure.caption.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {PIRNN}}}{30}{figure.caption.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(e)}{\ignorespaces {AIRNN}}}{30}{figure.caption.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(f)}{\ignorespaces {EIRNRI}}}{30}{figure.caption.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(g)}{\ignorespaces {Sc$p$}}}{30}{figure.caption.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(h)}{\ignorespaces {FGSR$p$}}}{30}{figure.caption.4}\protected@file@percent }
 \bibcite{LRMM_APP_ML_ICML2007}{{1}{2007}{{Amit et~al.}}{{Amit, Fink, Srebro, and Ullman}}}
 \bibcite{attouch2009convergence}{{2}{2009}{{Attouch and Bolte}}{{}}}
 \bibcite{LRM_Rex2NNM_SVTAlg_2010}{{3}{2010}{{Cai et~al.}}{{Cai, Cand{\`e}s, and Shen}}}
 \bibcite{chiang2018using}{{4}{2018}{{Chiang et~al.}}{{Chiang, Dhillon, and Hsieh}}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusion and Future Work}{31}{section.5}\protected@file@percent }
 \bibcite{LRMR_GroupSparse_2019}{{5}{2019}{{Fan et~al.}}{{Fan, Ding, Chen, and Udell}}}
 \bibcite{LRMMRex2NNM_Phd2002}{{6}{2002}{{Fazel}}{{}}}
 \bibcite{KL_definition_Hilbert}{{7}{2015}{{Garrigos}}{{}}}
@@ -310,7 +323,7 @@
 \bibcite{Relax_NCVX_MC_via_TNNSame2_2012}{{47}{2012}{{Zhang et~al.}}{{Zhang, Hu, Ye, Li, and He}}}
 \bibcite{KL_p_norm}{{48}{2019}{{Zhang et~al.}}{{Zhang, Qian, Zhang, Yang, Gong, and Wei}}}
 \bibcite{LRMR_APP2ImgProcess_SP2020}{{49}{2020}{{Zhao et~al.}}{{Zhao, Peng, and Cui}}}
-\newlabel{LastPage}{{}{34}{}{page.34}{}}
-\xdef\lastpage@lastpage{34}
-\xdef\lastpage@lastpageHy{34}
-\gdef \@abspage@last{34}
+\newlabel{LastPage}{{}{35}{}{page.35}{}}
+\xdef\lastpage@lastpage{35}
+\xdef\lastpage@lastpageHy{35}
+\gdef \@abspage@last{35}

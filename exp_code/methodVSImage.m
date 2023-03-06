@@ -309,8 +309,8 @@ for i = 1:5
     end
     R_psnrTable(irank,2*i-1:2*i) = [psnr(img_sol,img_show.ori_img),floor(tempR/3)];    
     
-    figure(3+i)
-    imshow(img_sol)
+%     figure(3+i)
+%     imshow(img_sol)
 %   imshow(img_sol(:,:,1))
 end
 

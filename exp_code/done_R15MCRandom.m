@@ -3,7 +3,7 @@
 % the AIRNN has the similar convergence rate with ds_ProxIRNN
 % --------------- generate data ---------------
 clc,clear,format long; rng(23)
-nr = 150; nc = 150; r = 10;
+nr = 150; nc = 150; r = 15;
 % --------------- Synthetic data ---------------
 Y = randn(nr,r) * randn(r,nc);
 % --------------- random mask ---------------
@@ -29,20 +29,20 @@ options.KLopt = klopt;
 options.eps = seps; 
 options.beta = 1.1; 
 % options.teps = weps;
-r=10;
+% r=5;
 % Initial point
-X0 = randn(nr,r)*randn(r,nc); 
+% X0 = randn(nr,r)*randn(r,nc); 
   optionsP= options;
-  PIR = ds_ProxIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
+  PIR = ds_ProxIRNN(Xm,Xm,sp, lambda, mask, tol, optionsP);
 
   optionsA = options; 
-  optionsA.eps = 1;
+%   optionsA.eps = 1e-3;
   optionsA.mu = 0.1;
-  AIR = ds_AdaIRNN(X0,Xm,sp, lambda, mask, tol, optionsA); 
+  AIR = ds_AdaIRNN(Xm,Xm,sp, lambda, mask, tol, optionsA); 
 
   optionsEP = optionsA; 
   optionsEP.alpha = 7e-1; 
-  EPIR = ds_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsEP); 
+  EPIR = ds_EPIRNN(Xm,Xm,sp, lambda, mask, tol, optionsEP); 
 
 % plot 
   pPIR = min(itmax,PIR.iterTol); PIRx = (1:1:pPIR);

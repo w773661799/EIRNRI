@@ -9,15 +9,18 @@ function Par = VsRobustEps(nr,nc,r,sr,lambda,sp,missrate,tol,options,WEPS,SUCC,t
 
 leps = length(WEPS);
 Robust.PIR = zeros(1,leps);
+Robust.ACCI = 0;
 Robust.AIR = 0;
 Robust.EPIR = 0;
 
 CrRank.PIR = zeros(1,leps);
 CrRank.AIR = 0;
+CrRank.ACCI = 0;
 CrRank.EPIR = 0;
 
 MSE.PIR = zeros(1,leps);
 MSE.AIR = 0;
+MSE.ACCI = 0;
 MSE.EPIR = 0;
 
 if SUCC(1) == 1
@@ -53,47 +56,59 @@ end
 
   options.Rel = Y;
   optionsP= options;
-  for iter_eps = 1:1:leps      
-    optionsP.eps = WEPS(iter_eps);
-    PIR = ds_ProxIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
-%     if (PIR.rank(end) == r) && (PIR.RelErr(end) <= success)     
-    if PIR.rank(end) == r 
-      CrRank.PIR(iter_eps) = CrRank.PIR(iter_eps) + 1;
-    end
-    if (PIR.RelErr(end) <= success) && (PIR.rank(end) == r) 
-      Robust.PIR(iter_eps) = Robust.PIR(iter_eps) + 1;  
-    end
-    MSE.PIR(iter_eps) = MSE.PIR(iter_eps) + norm(PIR.Xsol - Y,'Fro');
+%% PIRNN 2017
+%   for iter_eps = 1:1:leps      
+%     optionsP.eps = WEPS(iter_eps);
+%     PIR = ds_ProxIRNN(X0,Xm,sp, lambda, mask, tol, optionsP);
+% %     if (PIR.rank(end) == r) && (PIR.RelErr(end) <= success)     
+%     if PIR.rank(end) == r 
+%       CrRank.PIR(iter_eps) = CrRank.PIR(iter_eps) + 1;
+%     end
+%     if (PIR.RelErr(end) <= success) && (PIR.rank(end) == r) 
+%       Robust.PIR(iter_eps) = Robust.PIR(iter_eps) + 1;  
+%     end
+%     MSE.PIR(iter_eps) = MSE.PIR(iter_eps) + norm(PIR.Xsol - Y,'Fro');
+%   end
+ %% ACCIRNN_2021
+  ACCIR = AIRNN_2021(X0,Xm,sp,lambda,mask,tol,options);
+  if rank(ACCIR.Xsol) == r 
+    CrRank.ACCI = CrRank.ACCI + 1;
   end
- 
 
-  optionsA = options;
-  optionsA.eps = 1e0;
-  optionsA.mu = 0.7;
-  AIR = ds_AdaIRNN(X0,Xm,sp, lambda, mask, tol, optionsA);
-%   if (AIR.rank(end) == r) && (AIR.RelErr(end) <= success) 
+  if (norm(ACCIR.Xsol-Y,'fro')/norm(Y,'fro') <= success) && (AIR.rank(end) == r)
+    Robust.AIR = Robust.AIR + 1;
+  end
+  MSE.ACCI = MSE.ACCI + norm(ACCIR.Xsol - Y,'Fro');  
 
-    if AIR.rank(end) == r 
-      CrRank.AIR = CrRank.AIR + 1;
-    end
-
-    if (AIR.RelErr(end) <= success) && (AIR.rank(end) == r)
-      Robust.AIR = Robust.AIR + 1;
-    end
-    MSE.AIR = MSE.AIR + norm(AIR.Xsol - Y,'Fro');
-
-  optionsEP = optionsA;
-  optionsEP.alpha = 7e-1;
-  EPIR = ds_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsEP); 
-%   if (EPIR.rank(end) == r) && (EPIR.RelErr(end) <= success) 
-
-    if EPIR.rank(end) == r 
-      CrRank.EPIR = CrRank.EPIR + 1;
-    end
-    if (EPIR.RelErr(end) <= success) && (EPIR.rank(end) == r)    
-      Robust.EPIR = Robust.EPIR + 1;
-    end
-    MSE.EPIR = MSE.EPIR + norm(EPIR.Xsol - Y,'Fro');
+%% IRNNRI
+%   optionsA = options;
+%   optionsA.eps = 1e0;
+%   optionsA.mu = 0.7;
+%   AIR = ds_AdaIRNN(X0,Xm,sp, lambda, mask, tol, optionsA);
+% %   if (AIR.rank(end) == r) && (AIR.RelErr(end) <= success) 
+% 
+%     if AIR.rank(end) == r 
+%       CrRank.AIR = CrRank.AIR + 1;
+%     end
+% 
+%     if (AIR.RelErr(end) <= success) && (AIR.rank(end) == r)
+%       Robust.AIR = Robust.AIR + 1;
+%     end
+%     MSE.AIR = MSE.AIR + norm(AIR.Xsol - Y,'Fro');
+%% EIRNNRI
+%   optionsEP = optionsA;
+%   optionsEP.alpha = 7e-1;
+%   EPIR = ds_EPIRNN(X0,Xm,sp, lambda, mask, tol, optionsEP); 
+% %   if (EPIR.rank(end) == r) && (EPIR.RelErr(end) <= success) 
+% 
+%     if EPIR.rank(end) == r 
+%       CrRank.EPIR = CrRank.EPIR + 1;
+%     end
+%     if (EPIR.RelErr(end) <= success) && (EPIR.rank(end) == r)    
+%       Robust.EPIR = Robust.EPIR + 1;
+%     end
+%     MSE.EPIR = MSE.EPIR + norm(EPIR.Xsol - Y,'Fro');
+%% save     
   Par.Robust = Robust;
   Par.CrRank = CrRank;
   Par.MSE = MSE;
