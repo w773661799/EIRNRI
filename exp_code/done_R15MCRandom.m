@@ -35,6 +35,9 @@ options.beta = 1.1;
   optionsP= options;
   PIR = ds_ProxIRNN(Xm,Xm,sp, lambda, mask, tol, optionsP);
 
+  optionsAC = options;
+  ACC = AIRNN_2021(Xm,Xm,sp, lambda, mask, tol, optionsAC);
+
   optionsA = options; 
 %   optionsA.eps = 1e-3;
   optionsA.mu = 0.1;
@@ -46,12 +49,15 @@ options.beta = 1.1;
 
 % plot 
   pPIR = min(itmax,PIR.iterTol); PIRx = (1:1:pPIR);
+  pPAC = min(itmax,ACC.iterTol); PACx = (1:1:pPAC);
   pAIR = min(itmax,AIR.iterTol); AIRx = (1:1:pAIR);
   pEPI = min(itmax,EPIR.iterTol); EPIRx = (1:1:pEPI);
 %%
 figure(1)
 % ------------ relative error plot
   plot(PIRx,log10(PIR.RelErr(1:pPIR)),':k','linewidth',2);hold on
+  plot(PACx,log10(ACC.RelErr(1:pPAC)),'--b','linewidth',2);
+  
   plot(AIRx,log10(AIR.RelErr(1:pAIR)),'--b','linewidth',2);
   plot(EPIRx,log10(EPIR.RelErr(1:pEPI)),'-r','linewidth',2); hold off
   xlabel("iteration"); ylabel("log_{10}(RelErr)")
@@ -59,6 +65,7 @@ figure(1)
 %%
 figure(2)
 % ------------ relative distance plot 
+  plot(PIRx,log10(PIR.RelDist(1:pPIR)),':k','linewidth',2);hold on
   plot(PIRx,log10(PIR.RelDist(1:pPIR)),':k','linewidth',2);hold on
   plot(AIRx,log10(AIR.RelDist(1:pAIR)),'--b','linewidth',2);
   plot(EPIRx,log10(EPIR.RelDist(1:pEPI)),'-r','linewidth',2);hold off
@@ -68,7 +75,10 @@ figure(2)
 figure(3)
 % ------------ objective value plot 
   plot(PIRx,PIR.f(1:pPIR),':k','linewidth',2);hold on; 
+  
+
   plot(AIRx,AIR.f(1:pAIR),'--b','linewidth',2);
+
   plot(EPIRx,EPIR.f(1:pEPI),'-r','linewidth',2);hold off
   xlabel("iteration"); ylabel("F(x)")
   legend("PIRNN","IRNRI","EIRNRI")

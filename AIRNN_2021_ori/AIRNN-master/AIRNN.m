@@ -5,7 +5,8 @@ output.method = 'AIRNN';
 if(isfield(para, 'maxR'))
     maxR = para.maxR;
 else
-    maxR = min(size(D));
+%     maxR = min(size(D));
+maxR = 5;
 end
 
 objstep = 1;
@@ -16,7 +17,6 @@ tol = para.tol*objstep;
 regType = para.regType;
 [row, col, data] = find(D);
 [m, n] = size(D);
-
 
 R = para.R;
 U0 = para.U0;
@@ -66,7 +66,7 @@ for i = 1:maxIter
         [Q, pwIter] = powerMethodAccMatComp( U1, V1, U0, V0, spa, bi, V0, 2, 1e-4);
         sigma = sigma1;
         acceleration(i) = 0;
-    end 
+    end
     
     w = computew(theta,sigma,regType);
     %w = theta*exp(-theta*sigma); % exponential
@@ -105,7 +105,7 @@ for i = 1:maxIter
     Time(i) = cputime - tt;
     obj(i) = objVal;
     
-    % testing performance
+    % testing performance % train/test data!
     if(isfield(para, 'test'))
         tempS = eye(size(U1,2), size(V1,2));
         if(para.test.m ~= m)
@@ -114,15 +114,23 @@ for i = 1:maxIter
             RMSE(i) = MatCompRMSE(U1, V1, tempS, para.test.row, para.test.col, para.test.data);
         end
 %         fprintf('method: %s data: %s  RMSE %.2d \n', output.method, para.data, RMSE(i));
+    else
+      
     end
-    
+%     add relative error/recovery matrix
+    if isfield(para, 'Rel')
+      RMSE(i) = (norm(para.Rel - U1*S*V1','fro'))/norm(para.Rel,'fro');
+    end
+%     RelDist(i) = 
+
+
     if(i > 1 && abs(delta) < tol)
         break;
     end
     
-    if(sum(Time) > para.maxtime)
-        break;
-    end
+%     if(sum(Time) > para.maxtime)
+%         break;
+%     end
 end
 
 output.obj = obj(1:i);
@@ -136,7 +144,7 @@ Time = cumsum(Time);
 output.Time = Time(1:i);
 output.data = para.data;
 
-
+output.iterTol = i;
 
 
 end

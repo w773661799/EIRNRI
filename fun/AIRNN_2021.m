@@ -39,7 +39,12 @@ function Par = AIRNN_2021(X0,Xm,sp, lambda, mask, tol, options)
   U0 = powerMethod(Xm, R, para.maxR, 1e-6);
   para.U0 = U0;
   
+  
+%   para.test.data = options.Rel;
+  para.Rel = options.Rel;
   [Usol,Ssol , Vsol, out] = AIRNN( Xm, lambda, sp, para);
   
   Par.Xsol =  Usol * Ssol * Vsol';
+  Par.RelErr = out.RMSE;
+  Par.iterTol = out.iterTol;
 end
